@@ -1,0 +1,22 @@
+Begin3
+Title:		Klondike --- X-Window solitaire
+Version:        1.7
+Entered-date:   24-Aug-96
+Description:    Klondike is a solitaire game for X11.
+		It's strongly influenced by the user interface
+		of Klondike for the Macintosh.
+		Features of klondike include:
+			- time-based and Casino-style scoring
+			- persistent high score list
+			- on-line help
+		Klondike will be superceeded by jacoby-2.0 when
+		it becomes available.
+Keywords:       solitaire, klondike, jacoby, X11, wishx 
+Author:         johnh@isi.edu (John Heidemann)
+Maintained-by:  johnh@isi.edu (John Heidemann)
+Primary-site:   http://www.isi.edu/~johnh/SOFTWARE/JACOBY/index.html
+Alternate-site: sunsite.unc.edu:/pub/linux/games/X11
+Platform:       Requires wishx or wish-4.1.  Tested on SunOS 4.x, Solaris/x86,
+		FreeBSD, and Linux.
+Copying-policy: BSD
+End

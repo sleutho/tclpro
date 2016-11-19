@@ -1,0 +1,24 @@
+
+TCL_PRO_COMPILER = procomp
+TCL_PRO_WRAPPER = prowrap
+
+TCL_FILES = klondike.tcl klondikeMenus.tcl klondikeRules.tcl klondikeScore.tcl table.tcl tclx_compat.tcl
+
+TBC_FILES = klondike.tbc  klondikeMenus.tbc klondikeRules.tbc klondikeScore.tbc table.tbc tclx_compat.tbc
+
+BITMAPS = CARDS/*.xbm
+
+EXENAME = klondike
+
+all : wrap
+
+klondike.tcl : klondike.in
+	del klondike.tcl
+	copy klondike.in klondike.tcl
+
+$(TBC_FILES) : $(TCL_FILES)
+	$(TCL_PRO_COMPILER) $(TCL_FILES)
+
+wrap : $(TBC_FILES)
+	$(TCL_PRO_WRAPPER) $(TBC_FILES) $(BITMAPS) -out $(EXENAME)
+

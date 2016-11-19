@@ -1,0 +1,33 @@
+#!/bin/sh
+
+# Retrieve trfcrypt distribution and modify it for use by the TclPro
+# build framework. Assume WD is parent of 'tclpro' directory.
+
+if [ -f trfcrypt2.0p3.tar.gz ]
+then
+    mv trfcrypt2.0p3.tar.gz trfcrypt2.0p3.tar.gz.old
+    rm -rf trfcrypt2.0.old
+    mv trfcrypt2.0 trfcrypt2.0.old
+fi
+
+wget http://www.purl.org/NET/akupries/soft/trfcrypt/download/trfcrypt2.0p3.tar.gz
+if test $? -ne 0
+then
+    echo "wget failed"
+    exit 1
+fi
+#cp               ~aku/web/sites/oche/soft/trfcrypt/download/trfcrypt2.0p3.tar.gz .
+
+tar xfz trfcrypt2.0p3.tar.gz
+mv trfcrypt2.0p3 trfcrypt2.0
+
+cd trfcrypt2.0
+
+ln -s ../config config
+
+chmod u+w *
+
+echo "builtin(include,config/tcl.m4)" > aclocal.m4
+echo "builtin(include,trfcrypt.m4)"  >> aclocal.m4
+rm configure
+autoconf

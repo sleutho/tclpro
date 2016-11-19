@@ -1,0 +1,24 @@
+.\" $Id: klondike.man,v 1.1 2000/07/14 18:00:05 welch Exp $
+.TH KLONDIKE 6 "8 January 1994"
+.SH NAME
+klondike \- an X version of solitaire
+.SH SYNOPSIS
+.B klondike
+.SH DESCRIPTION
+.LP
+Klondike is an X11/Tk-based implementation of the classic
+soltare game.
+.LP
+See the ``Help'' menu for a complete description of how to play and
+scoring.
+.SH BUGS
+.LP
+If you have trouble with colors,
+try removing generic X resources
+such as ``*.Background''.
+.LP
+For other bugs and desired features, see the ``Help/Release Notes'' menu.
+.SH AUTHOR
+.LP
+Klondike is Copyright (C) 1993-1996 by
+John Heidemann, <johnh@isi.edu>.

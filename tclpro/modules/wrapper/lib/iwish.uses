@@ -1,0 +1,38 @@
+# iwish.uses --
+#
+#	This file returns the command line parameters to prowrap
+#	to create a:
+#
+#		TclPro [incr Tk] Shell - Statically Linked
+#
+# Copyright (c) 1998-1999 by Scriptics Corporation.
+# All rights reserved.
+#
+# RCS: @(#) $Id: iwish.uses,v 1.3 2000/07/23 04:26:31 welch Exp $
+
+# Use either the prowrapUses.tcl in the same directory as the uses file
+# which lets us use TclPro version N to wrap files for TclPro version N+1
+# or the prowrapUses.tcl wrapped upsafely inside the prowrap executable.
+
+foreach path [list \
+	[file join [file dirname [info script]] prowrapUses.tcl] \
+	[file join wrapper lib prowrapUses.tcl]] {
+    if {[file exists $path]} {
+	source $path
+	break
+    }
+}
+
+set tcl_uses_iwish_deprecated_code {
+    namespace eval ::itcl {variable library lib/itcl3.2}
+    namespace eval ::itk {variable library lib/itk3.2}
+    set ::tcl_uses_itclsh_deprecated 1
+    set ::tcl_uses_iwish_deprecated 1
+}
+
+return [concat \
+	    [list -code $tcl_uses_iwish_deprecated_code] \
+	    [prowrapUses::buildCommandLine \
+		 [file join $prowrapUses::inDir ${prowrapUses::WRAP_BIG_TK}s.in] \
+		 tcl tk tk_demos itcl itk itk_demos]]
+

@@ -1,0 +1,11 @@
+Warning:
+
+At $info(date), $info(time) there were already $info(max) users using
+$info(name), which is your maximum limit.
+The license for $info(user) at $info(host) to use
+$info(app) was denied.
+
+This message was sent automatically from
+Ajuba Solutions License Server.  To remove yourself
+from its mailing list, please visit
+http://$Httpd(name):$Httpd(port)/admin/preferences.tml

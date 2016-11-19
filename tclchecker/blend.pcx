@@ -1,0 +1,256 @@
+# blend.pcx --
+#
+#	This file implements the TclPro Checker extension for Tcl Blend.
+#
+# Copyright (c) 1999-2000 Ajuba Solutions
+# All rights reserved.
+# 
+# RCS: @(#) $Id: blend.pcx,v 1.6 2000/05/30 22:28:47 wart Exp $
+
+package require checker
+package provide blend 1.0
+
+checker::register blend 1.0
+set configure::verTable(blend,1.2) $::projectInfo::baseTclVers
+
+package require analyzer 1.0
+namespace import -force ::analyzer::*
+
+namespace eval blend {
+
+    # aliasCmds --
+    # Define the set of commands that are created as aliases of the
+    # corresponding java::* commands.  These aliases are created only 
+    # for the current version incr Tcl.
+    
+    variable aliasCmds {
+	autolock bind call cast defineclass event field getinterp info
+	instanceof isnull load lock new prop null throw try unlock
+    }
+
+    # scanCmdsX.X --
+    # Define the set of commands that need to be recursed into when 
+    # generating a list of user defiend procs, namespace and Class 
+    # contexts and procedure name resolutions info.
+
+    variable scanCmds1.2 {
+	bind-TPC-SCAN		1		
+	java::bind-TPC-SCAN	1		
+	try-TPC-SCAN		1		
+	java::try-TPC-SCAN	1		
+    }
+
+    # Define the set of command-specific checkers used by this package.
+
+    variable checkers1.2 {
+	autolock	{checkSimpleArgs 0 1 {{checkOption {
+	    {activate {checkSimpleArgs 0 0 {}}}
+	} {}}}}
+	bind		{checkSimpleArgs 1 3 {checkWord checkWord checkBody}}
+	call		{checkHeadSwitches 0 1 {-noconvert} {
+	    checkSimpleArgs 2 -1 checkWord}
+	}
+	cast			{checkSimpleArgs 2 2 {checkWord checkWord}}
+	defineclass		{checkSimpleArgs 1 1 checkWord}
+	event		{checkSimpleArgs 0 3 {{checkSwitches 0 {
+	    {-index {checkWholeNum}}
+	} {checkSimpleArgs 0 1 checkWord}}}}
+	field		{checkHeadSwitches 0 1 {-noconvert} {
+	    checkSimpleArgs 2 -1 {checkWord checkWord blend::checkOddNumWords}}
+	}
+	getinterp		{checkSimpleArgs 0 0 {}}
+	info		{checkSimpleArgs 1 4 {{checkOption {
+	    {baseclass		{checkSimpleArgs 1 1 {checkWord}}}
+	    {class		{checkSimpleArgs 1 1 {checkWord}}}
+	    {constructors	{checkSimpleArgs 1 1 {checkWord}}}
+	    {dimensions		{checkSimpleArgs 1 1 {checkWord}}}
+	    {events		{checkSimpleArgs 1 1 {checkWord}}}
+	    {fields		{checkSimpleArgs 1 3 {{
+		checkSwitches 0 {-type {} -static {}} {
+		    checkSimpleArgs 1 1 checkWord}}}}
+	    }
+	    {methods		{checkSimpleArgs 1 3 {{
+		checkSwitches 0 {-type {} -static {}} {
+		    checkSimpleArgs 1 1 checkWord}}}}
+	    }
+	    {properties		{checkSimpleArgs 1 2 {checkWord {
+		checkSwitches 0 {-type {}} {}}}}
+	    }
+	    {superclass		{checkSimpleArgs 1 1 {checkWord}}}
+	} {}}}}
+	instanceof		{checkSimpleArgs 2 2 {checkWord checkWord}}
+	isnull			{checkSimpleArgs 1 1 checkWord}
+	load		{checkSimpleArgs 1 3 {{checkSwitches 0 {
+	    {-classpath {checkListValues 2 -1 checkFileName}}
+	} {checkSimpleArgs 1 1 checkFileName}}}}
+	lock			{checkSimpleArgs 1 1 checkWord}
+	new			{checkSimpleArgs 1 -1 checkWord}
+	prop		{checkHeadSwitches 0 1 {-noconvert} {
+	    checkSimpleArgs 2 -1 {checkWord checkWord blend::checkOddNumWords}}
+	}
+	null			{checkSimpleArgs 0 0 {}}
+	throw			{checkSimpleArgs 1 1 checkWord}
+	try			{checkSimpleArgs 1 -1 {
+	    checkBody blend::checkTry}
+	}
+	unlock			{checkSimpleArgs 1 1 checkWord}
+    }
+}
+
+proc ::blend::init {ver} {
+
+    foreach name [lsort [info vars ::blend::scanCmds*]] {
+	analyzer::addScanCmds [set $name]
+	if {$name == "::blend::scanCmds$ver"} {
+	    break
+	}
+    }
+    foreach name [lsort [info vars ::blend::checkers*]] {
+	analyzer::addCheckers [set $name]
+	if {$name == "::blend::checkers$ver"} {
+	    break
+	}
+    }
+
+    # messages --
+    # Define the set of message types and their human-readable translations. 
+
+    variable messages
+    array set messages {
+    }
+
+    # Add aliased checkers.
+    # Alias the standard java::* commands so the namespace qualifier 
+    # appears in the comand name.
+
+    set aliases {}
+    foreach name $::blend::aliasCmds {
+	if {[analyzer::topChecker $name] != {}} {
+	    lappend aliases java::$name [analyzer::topChecker $name]
+	}
+    }
+    analyzer::addCheckers $aliases
+}
+
+# blend::getMessage --
+#
+#	Convert the message type into a human readable string.  
+#
+# Arguments:
+#	mid	The messageID to look up.
+#
+# Results:
+#	Return the message string or empty string if the
+#	message type is undefined.
+
+proc blend::getMessage {mid} {
+    variable messages
+
+    if {[info exists messages($mid)]} {
+	return [lindex $messages($mid) 0]
+    } else {
+	return $mid
+    }
+}
+
+# blend::getTypes --
+#
+#	Convert the message id into a list of message types.
+#
+# Arguments:
+#	mid	The messageID to look up.
+#
+# Results:
+#	Return the list of message type keywords.
+
+proc blend::getTypes {mid} {
+    variable messages
+
+    if {[info exists messages($mid)]} {
+	return [lrange $messages($mid) 1 end]
+    } else {
+	return err
+    }
+}
+
+# blend::checkOddNumWords --
+#
+#	Check for an odd number of args, each of which must be a word.
+#	Log a numArgs error if there's an even number of args.
+#
+# Arguments:
+#	tokens		The list of word tokens for the current command.
+#	index		The index of the next word to be checked.
+#
+# Results:
+#	Returns the index of the last token + 1 (all have been checked).
+
+proc blend::checkOddNumWords {tokens index} {
+    set word [lindex $tokens $index]
+
+    set max [llength $tokens]
+
+    while {$index < $max} {
+	set index [checkWord $tokens $index]
+	if {$index >= $max} {
+	    return $index
+	}
+	set index [checkWord $tokens $index]
+    }
+    logError numArgs {}
+    return $index
+}
+
+# blend::checkTry --
+#
+#	Check args of the pattern:
+#		?catch exception_pair script ... ? ?finally script?
+#
+# Arguments:
+#	tokens		The list of word tokens for the current command.
+#	index		The index of the next word to be checked.
+#
+# Results:
+#	Returns the index of the last token + 1 (all have been checked).
+
+proc blend::checkTry {tokens index} {
+
+    set max [llength $tokens]
+
+    while {$index < $max} {
+	set word [lindex $tokens $index]
+
+	# If keyword is nonliteral, make a best guess as to which literal
+	# it is based on the remaining number of tokens.
+
+	if {![getLiteral $word literal]} {
+	    if {$index == [expr {$max - 2}]} {
+		set literal "finally"
+	    } else {
+		set literal "catch"
+	    }
+	}
+
+	if {$literal == "catch"} {
+	    if {[incr index] < $max} {
+		set index [checkListValues 2 2 checkWord \
+			$tokens $index]
+	    }
+	    if {$index >= $max} {
+		logError numArgs {}
+		return $index
+	    }
+	    set index [checkBody $tokens $index]
+	} elseif {$literal == "finally"} {
+	    if {[incr index] >= $max} {
+		logError numArgs {}
+		return $index
+	    }
+	    return [checkBody $tokens $index]
+	} else {
+	    logError badKey [getTokenRange $word] $literal "catch or finally"
+	    return $max
+	}
+    }
+    return $index
+}

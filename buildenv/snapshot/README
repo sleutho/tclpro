@@ -1,0 +1,35 @@
+
+SNAPSHOT TOOLS
+
+This directory contains snapshot tools, pieces of code currently under
+development to help us in figuring out which files and packages
+in a release were put there by which modules.
+
+After doing a successful "make" to build everything, a file called
+SNAPSHOT will have been produced in same directory where you invoke "make"
+
+For me, I'm building in /usr/tclpro/src/tclpro/freebsd-ix86, and it appears
+there.
+
+From there, run
+
+tcl ../snapshot/postpro.tcl
+
+...to produce the SNAPSHOT.merge file, grinding all of the SNAPSHOT data into
+a concise representation of what modules produced what files and packages.
+
+You can examine SNAPSHOT.merge by hand.  If it looks way out of whack,
+try doing an "rm -rf out", deleting SNAPSHOT and SOFTSTATUS (or at least
+editing SOFTSTATUS to remove all of the "install" lines) and doing a
+"make" again, then retrying postpro.tcl.
+
+Then run 
+
+tcl ../snapshot/bundle.tcl
+
+...to produce the zipfiles directory and its contents underneath the top
+level of the directory you're executing make from.
+(for me, /usr/tclpro/src/tclpro/freebsd-ix86/zipfiles) and create all
+of the zipfiles for the release.
+
+$Id: README,v 1.1 2001/03/30 16:35:06 andreas_kupries Exp $

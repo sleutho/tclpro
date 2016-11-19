@@ -1,0 +1,27 @@
+# wish-dynamic.uses --
+#
+#	This file returns the command line parameters to prowrap
+#	to create a:
+#
+#		TclPro Wish Shell - Dynamically Linked
+#
+# Copyright (c) 1998-1999 by Scriptics Corporation.
+# All rights reserved.
+#
+# RCS: @(#) $Id: wish-dynamic.uses,v 1.2 2000/06/23 07:21:25 welch Exp $
+
+# Use either the prowrapUses.tcl in the same directory as the uses file
+# which lets us use TclPro version N to wrap files for TclPro version N+1
+# or the prowrapUses.tcl wrapped upsafely inside the prowrap executable.
+
+foreach path [list \
+	[file join [file dirname [info script]] prowrapUses.tcl] \
+	[file join wrapper lib prowrapUses.tcl]] {
+    if {[file exists $path]} {
+	source $path
+	break
+    }
+}
+ 
+return [list -executable [file join $prowrapUses::inDir ${prowrapUses::WRAP_TK}.in]]
+

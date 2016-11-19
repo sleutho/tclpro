@@ -1,0 +1,14 @@
+
+Use the scripts get-memchan, get-trf and get-trfcrypt
+to
+
+a) retrieve the current distributions of the extensions (memchan, trf
+   and trfcrypt) from their master location and to
+
+b) modify them so that they can be used by the build framework.
+   (The patches are integrated with the get-... scripts).
+
+In the future the source of the extensions will be updated to be more
+compliant with TEA (the build framework) than they are now, and the
+get-... scripts will shrink. But right now the focus is on getting the
+existing distributions to work at all.

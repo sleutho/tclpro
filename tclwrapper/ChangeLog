@@ -1,0 +1,109 @@
+2002-10-15  Andreas Kupries  <andreask@pliers.activestate.com>
+
+	* configure.in: Changed to propagate an initial CFLAGS value to
+	  the final definition. A TEA condition (SHARED_BUILD == 1)
+	  squashed it, causing it the build system to loose the
+	  +DAportable we specify for the AS PA-RISC2.2 build host. This is
+	  a problem for _all_ TEA and TEA 2 based configure files.
+
+2002-10-04  Andreas Kupries  <andreask@pliers.activestate.com>
+
+	* config/tcl.m4: small fix, use expanded ${PACKAGE} instead of $@
+	  to work around trouble with some make's.
+
+2001-10-16  Andreas Kupries  <andreas_kupries@users.sourceforge.net>
+
+	* configure.in (AC_ARG_WITH unzip): Fixed broken action-if-given
+	  which used the wrong variable. Because of this a given
+	  --with-unzip was not recognized.
+
+2001-10-12  Andreas Kupries  <andreas_kupries@users.sourceforge.net>
+
+	* configure.in (SRC_TBCLOAD_DIR_NATIVE): Explicitly set to empty
+	  in case of an empty SRC_TBCLOAD_DIR. Cygpath does not like to be
+	  called without path argument.
+
+2001-01-23  Brent Welch <welch@ajubasolutions.com>
+
+	* Nuked old license directory
+
+2000-08-24  Brent Welch <welch@ajubasolutions.com>
+
+	* configure.in:
+	* Makefile.in:
+	Added dependency on Tk to builds so that Tk_Main can be
+	found (and tk.h)
+
+2000-08-03  Brent Welch <welch@ajubasolutions.com>
+
+	* src/proInit.c:
+	Moved the TclPro_Init function from the proshells module into this
+	library so users can use it in custom shells.
+	* src/proWrapTclMain.c:
+	* src/proWrapTkMain.c:
+	The ProWrap_TclMain and ProWrap_TkMain APIs are now trivially implemented
+	by calls to TclPro_Init and Tcl_Main or Tk_Main, as appropriate.
+	* Makefile.in:
+	* configure.in:
+	Nuked the unused PROWRAPU, which is made by proshells now.
+
+2000-08-02  Brent Welch <welch@ajubasolutions.com>
+
+	* Makefile.in:
+	* configure.in:
+	Added all the appropriate object files from ../unzip build area so
+	that the wrapper library is a superset of the unzip library.  Users
+	of the wrapper library shouldn't need the unzip library anymore.
+
+2000-07-30  Brent Welch <welch@ajubasolutions.com>
+
+	* Remove the util subdirectory, which became the license module.
+
+2000-07-22  Brent Welch <welch@ajubasolutions.com>
+	* Changed name to "libwrapper1.4.so" and "wrapper14.dll"
+	from "tclwrapper".
+	Fixed memory channel to disallow writing, which was unimplemented
+	and caused infinite loops in Tcl's FlushChannel routine.
+
+2000-07-18  Brent Welch <welch@ajubasolutions.com>
+	* configure.in, - Fixed so tclreg and tcldde are only linked
+	in to static prowrapU shells.
+
+2000-07-12  Brent Welch <welch@ajubasolutions.com>
+	* Makefile.in, - added TCL_EXTRA_FLAGS to get -n32 on IRIX.
+
+2000-07-11  Brent Welch <welch@ajubasolutions.com>
+	* Makefile.in, configure.in - build working to be able to
+	bootstrap tclpro/modules/prowrap from the prowrap14U built here.
+
+2000-06-23  Brent Welch <welch@ajubasolutions.com>
+	* Makefile.in, configure.in - fixed up EXT_INCLUDES to
+	get compiler and wrapper headers.
+
+2000-06-06  Mike Thomas  <wart@ajubasolutions.com>
+
+	* Turned boot83.uses into a .in file so that we can patch
+	the prefix.  This is needed in order to find the installed
+	Tcl library files for wrapping.
+
+2000-06-05  Mike Thomas  <wart@ajubasolutions.com>
+
+	* configure.in:  Removed unused "$(LDFLAGS)" from link line on
+	unix.
+	* Makefile.in:  Run procomp with the -nologo flag to suppress
+	the copyright notice during builds.
+	* boot83.uses:  Fixed path to http package.
+
+1999-07-21  Melissa Hirschl  <hershey@matisse.scriptics.com>
+
+	* prowrap.tcl: fixed bug 2345.  If -uses is specified with an
+	absolute path, the wrapper will not look for the file in any place
+	other than that path.  Changed -encodingDir to -tcllibrary.  This
+	was just a name change, not a change in functionality.
+
+1999-07-09  Melissa Hirschl  <hershey@matisse.scriptics.com>
+
+	* prowrap.tcl: changed usage string to print the name of the
+	executable file rather than the hardcoded string "prowrap".  I
+	just rolled the code back to the 1.2 code.
+

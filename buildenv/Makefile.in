@@ -1,0 +1,54 @@
+# Makefile for the build environment.  Notice how little it does.  These
+# files are supposed to be used directly from the source directory.
+
+srcdir = @srcdir@
+
+CYGPATH = @CYGPATH@
+TCLSH_PROG = @TCLSH_PROG@
+INSTALL = @INSTALL@
+
+HELP_SOURCES = \
+	$(srcdir)/buildModule.tcl \
+	$(srcdir)/module_hints.tcl \
+	$(srcdir)/gui/gui.tcl \
+	$(srcdir)/gui/module_ops.tcl
+
+all:
+
+binaries:
+
+libraries:
+
+doc:
+
+# This doc target generates tml documentation from the code itself using
+# Sandeep's parseCode package.  It's not part of the main doc target because
+# we don't have access to parseCode during the nightly builds.
+
+tml: $(HELP_SOURCES)
+	@for i in $(HELP_SOURCES) ; do \
+	    echo "Generating tml from $$i" ; \
+	    TCLLIBPATH=/home/wart/cvs/connect2.0/parseCode ; \
+	    $(TCLSH_PROG) /home/wart/cvs/connect2.0/parseCode/parseExample.tcl $$i ; \
+	done;
+	@for i in *.tml ; do \
+	    echo "Installing $$i" ; \
+	    $(INSTALL) $$i $(srcdir)/doc ; \
+	done;
+
+install:
+
+install-binaries:
+
+install-libraris:
+
+install-doc:
+
+test: binaries libraries
+	TESTTMPDIR=`pwd` ; \
+	$(TCLSH_PROG) `@CYGPATH@ $(srcdir)/tests/all.tcl` \
+	-tmpdir `@CYGPATH@ $$TESTTMPDIR | tr '\\\\' '/'` $(TESTFLAGS)
+
+dist:
+
+.PHONY: tml

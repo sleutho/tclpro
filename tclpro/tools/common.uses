@@ -1,0 +1,42 @@
+# common.uses --
+#
+#	This file extends the standard wish-dynamic .uses file to 
+#	handle command line arguments differently.
+#
+# Copyright (c) 1999 by Scriptics Corporation.
+# All rights reserved.
+# 
+# RCS: @(#) $Id: common.uses,v 1.1.1.1 1999/11/23 22:04:19 hershey Exp $
+
+# Load the standard prowrap tables.
+
+source [file join wrapper lib prowrapUses.tcl]
+
+# This code moves a -display argument to the beginning of the argument list
+# and then inserts a -- argument to ensure that all of the remaining arguments
+# are passed directly to the script instead of being handled by the wish
+# exectuable.  This makes it possible to use "-help" as a switch to the script
+# instead of getting the standard wish -help message.  Note that we also have
+# to check for a preexisting -- argument.
+
+set code {
+    if {[info exists argv]} {
+	set last [lsearch -exact $argv --]
+	if {$last == -1} {
+	    set last end
+	}
+	set id [lsearch -exact [lrange $argv 0 $last] -display]
+	if {$::tcl_platform(platform) != "windows" && $id != -1} {
+	    set prefix [lrange $argv $id [expr {$id + 1}]]
+	    set tail [lreplace $argv $id [expr {$id + 1}]]
+	} else {
+	    set prefix {}
+	    set tail $argv
+	}
+	set argv [concat $prefix -- $tail]
+	unset last id prefix tail
+    }
+}
+
+return [list -executable [file join $prowrapUses::inDir \
+	${prowrapUses::WRAP_TK}.in] -code $code]

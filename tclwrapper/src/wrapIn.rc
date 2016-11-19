@@ -1,0 +1,21 @@
+/*
+ * Resource file for the TclPro wrapper input executable.
+ * Contains the VS_VERSION_INFO resource and main icon.
+ *
+ * RCS: @(#) $Id: wrapIn.rc,v 1.3 2000/03/15 00:15:33 berry Exp $
+ */
+
+#define RESOURCE_INCLUDED
+#include "tcl.h"
+
+/*
+ * Icon
+ */
+
+/*
+ * Icon with lowest ID value placed first to ensure application icon
+ * remains consistent on all systems.
+ */
+
+PROWRAPIN_ICON	ICON	DISCARDABLE	"rc/wrapperIn.ico"
+

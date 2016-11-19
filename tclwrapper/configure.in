@@ -1,0 +1,496 @@
+#--------------------------------------------------------------------
+# configure.in for Tclwrapper. 
+#--------------------------------------------------------------------
+
+#--------------------------------------------------------------------
+# This very first macro is used to verify that the configure script can 
+# find the sources.  The argument to AC_INIT should be a unique filename
+# for this package, and can be a relative path, such as:
+#
+# AC_INIT(../generic/tcl.h)
+#--------------------------------------------------------------------
+
+AC_INIT(src/proWrap.c)
+
+AC_CONFIG_AUX_DIR(config)
+CONFIGDIR=${srcdir}/config
+AC_SUBST(CONFIGDIR)
+
+#--------------------------------------------------------------------
+# Set your package name and version numbers here.  The NODOT_VERSION is
+# required for constructing the library name on systems that don't like
+# dots in library names (Windows).  The VERSION variable is used on the
+# other systems.
+#--------------------------------------------------------------------
+
+PACKAGE=wrapper
+
+MAJOR_VERSION=1
+MINOR_VERSION=4
+PATCHLEVEL=
+
+VERSION=${MAJOR_VERSION}.${MINOR_VERSION}${PATCHLEVEL}
+NODOT_VERSION=${MAJOR_VERSION}${MINOR_VERSION}
+
+
+AC_SUBST(PACKAGE)
+AC_SUBST(VERSION)
+
+#--------------------------------------------------------------------
+# We put this here so that you can compile with -DVERSION="1.2" to
+# encode the package version directly into the source files.
+#--------------------------------------------------------------------
+
+eval AC_DEFINE_UNQUOTED(VERSION, "${VERSION}")
+
+#--------------------------------------------------------------------
+# We need to put the native path to prefix in the .uses file so that
+# wrapping the wrapper can find the installed tcl library files.
+#--------------------------------------------------------------------
+
+if test x"${exec_prefix}" = x"NONE" ; then
+    if test x"${prefix}" != x"NONE" ; then
+	exec_prefix="${prefix}"
+    else
+	prefix=/usr/local
+	exec_prefix=/usr/local
+    fi
+fi
+
+#--------------------------------------------------------------------
+# Check whether --enable-gcc or --disable-gcc was given.  Do this 
+# before AC_CYGWIN is called so the compiler can 
+# be fully tested by built-in autoconf tools.
+# This macro also calls AC_PROG_CC to set the compiler if --enable-gcc
+# was not used.
+#--------------------------------------------------------------------
+
+SC_ENABLE_GCC
+
+AC_CONFIG_AUX_DIR(config)
+CONFIGDIR=${srcdir}/config
+AC_SUBST(CONFIGDIR)
+
+AC_PROG_INSTALL
+
+#--------------------------------------------------------------------
+# Checks to see if the make program sets the $MAKE variable.
+#--------------------------------------------------------------------
+
+AC_PROG_MAKE_SET
+
+#--------------------------------------------------------------------
+# Find ranlib
+#--------------------------------------------------------------------
+
+AC_PROG_RANLIB
+
+#--------------------------------------------------------------------
+# This macro performs additional compiler tests.
+#--------------------------------------------------------------------
+
+AC_CYGWIN
+
+#--------------------------------------------------------------------
+# Determines the correct binary file extension (.o, .obj, .exe etc.)
+#--------------------------------------------------------------------
+
+AC_OBJEXT
+AC_EXEEXT
+
+#--------------------------------------------------------------------
+# "cygpath" is used on windows to generate native path names for include
+# files.
+# These variables should only be used with the compiler and linker since
+# they generate native path names.
+#
+# Unix tclConfig.sh points SRC_DIR at the top-level directory of
+# the Tcl sources, while the Windows tclConfig.sh points SRC_DIR at
+# the win subdirectory.  Hence the different usages of SRC_DIR below.
+#
+# This must be done before calling SC_PUBLIC_TCL_HEADERS
+#--------------------------------------------------------------------
+
+case "`uname -s`" in
+    *win32* | *WIN32* | *CYGWIN_NT*|*CYGWIN_98*|*CYGWIN_95*)
+	CYGPATH="cygpath -w"
+    ;;
+    *)
+	CYGPATH=echo
+    ;;
+esac
+
+AC_SUBST(CYGPATH)
+
+PREFIX_NATIVE=`${CYGPATH} ${prefix}`
+AC_SUBST(PREFIX_NATIVE)
+
+# This include directory contains all the installed headers,
+# so this catches all the extension's header files.
+
+EXT_INCLUDE_DIR=${prefix}/include
+AC_SUBST(EXT_INCLUDE_DIR)
+
+EXT_INCLUDE_NATIVE=\"`${CYGPATH} ${EXT_INCLUDE_DIR}`\"
+AC_SUBST(EXT_INCLUDE_NATIVE)
+EXT_INCLUDES=-I${EXT_INCLUDE_NATIVE}
+AC_SUBST(EXT_INCLUDES)
+
+# For some reason proWrap.h is not installed - should be!
+
+WRAPPER_INCLUDE_DIR=${srcdir}/hdr
+AC_SUBST(WRAPPER_INCLUDE_DIR)
+
+WRAPPER_INCLUDE_DIR_NATIVE=\"`${CYGPATH} ${WRAPPER_INCLUDE_DIR}`\"
+AC_SUBST(WRAPPER_INCLUDE_DIR_NATIVE)
+WRAPPER_INCLUDES=-I${WRAPPER_INCLUDE_DIR_NATIVE}
+AC_SUBST(WRAPPER_INCLUDES)
+
+#--------------------------------------------------------------------
+#	Find unzip dir
+#	Need to know the sources for -I, and need to know
+#	the build area to get the matching library.
+#--------------------------------------------------------------------
+SRC_UNZIP_DIR=""
+UNZIP_VERSION=5
+UNZIP_PATCH_LEVEL_LIST="31"
+AC_ARG_WITH(unzip, [  --with-unzip=DIR          use unzip sources from DIR],
+    SRC_UNZIP_DIR=$withval,
+    [for patchlevel in $UNZIP_PATCH_LEVEL_LIST ; do
+	UNZIP_UNIX_DIR=$srcdir/../infozip/unzip-$UNZIP_VERSION.$patchlevel
+	if test -d $UNZIP_UNIX_DIR ; then
+ 	    SRC_UNZIP_DIR=`cd $UNZIP_UNIX_DIR; pwd`
+	    break
+	fi
+	UNZIP_UNIX_DIR=$srcdir/../../infozip/unzip-$UNZIP_VERSION.$patchlevel
+	if test -d $UNZIP_UNIX_DIR ; then
+ 	    SRC_UNZIP_DIR=`cd $UNZIP_UNIX_DIR; pwd`
+	    break
+	fi
+     done])
+if test "$SRC_UNZIP_DIR" = "" ; then
+    AC_MSG_ERROR(I could not find an unzip source directory; please specify one with --with-unzip)
+fi
+if test ! -d $SRC_UNZIP_DIR; then
+    AC_MSG_ERROR(Unzip directory $SRC_UNZIP_DIR doesn't exist)
+fi
+
+SRC_UNZIP_DIR_NATIVE=`${CYGPATH} ${SRC_UNZIP_DIR}`
+
+# We need to include a the unzip library into the wrapper library,
+# so we reach over into its build area and take its objects.
+
+AC_ARG_WITH(unzip-build, [  --with-unzip-build=DIR          use unzip library from DIR],
+    UNZIP_BUILD_DIR=$withval)
+SC_LIB_SPEC(unzip,${UNZIP_BUILD_DIR})
+
+# There is either an nt.obj or a unix.o for its platform-specific stuff
+
+case "`uname -s`" in
+    *win32* | *WIN32* | *CYGWIN_NT*|*CYGWIN_98*|*CYGWIN_95*)
+	UNZIP_SYSTEM_OBJS="${UNZIP_BUILD_DIR}/nt.obj ${UNZIP_BUILD_DIR}/win32.obj"
+	;;
+    *)
+	UNZIP_SYSTEM_OBJS=${UNZIP_BUILD_DIR}/unix.o
+	;;
+esac
+
+AC_SUBST(SRC_UNZIP_DIR)
+AC_SUBST(SRC_UNZIP_DIR_NATIVE)
+AC_SUBST(UNZIP_BUILD_DIR)
+AC_SUBST(UNZIP_SYSTEM_OBJS)
+#--------------------------------------------------------------------
+#	Find tbcload dir
+#--------------------------------------------------------------------
+AC_MSG_CHECKING(for TclPro tbcload static library)
+AC_ARG_WITH(tbcload, [ --with-tbcload      directory containing the TclPro tbcload static library.], with_tbcload=${withval})
+
+if test x"${with_tbcload}" != x ; then
+    SC_LIB_SPEC(tbcload,${with_tbcload})
+    EXT_LIBRARIES="${EXT_LIBRARIES} ${tbcload_LIB_SPEC}"
+    AC_DEFINE(TCLPRO_USE_TBCLOAD)
+else
+   AC_MSG_WARN(tbcload not specified.  Building shell without TclPro Compiler extensions)
+fi
+AC_SUBST(TCLPRO_USE_TBCLOAD)
+AC_SUBST(EXT_LIBRARIES)
+
+
+if test "X" = "X${SRC_TBCLOAD_DIR}"
+then
+    SRC_TBCLOAD_DIR_NATIVE=""
+else
+    SRC_TBCLOAD_DIR_NATIVE=`${CYGPATH} ${SRC_TBCLOAD_DIR}`
+fi
+
+AC_SUBST(SRC_TBCLOAD_DIR)
+AC_SUBST(SRC_TBCLOAD_DIR_NATIVE)
+#--------------------------------------------------------------------'
+# Load the tclConfig.sh file
+#--------------------------------------------------------------------
+
+SC_PATH_TCLCONFIG
+SC_LOAD_TCLCONFIG
+
+# We need Tk to compile proWrapTkMain.c
+
+SC_PATH_TKCONFIG
+SC_LOAD_TKCONFIG
+
+AC_SUBST(TK_VERSION)
+AC_SUBST(TK_DEFS)
+AC_SUBST(TK_LIBS)
+AC_SUBST(TK_EXEC_PREFIX)
+AC_SUBST(TK_XINCLUDES)
+AC_SUBST(TK_XLIBSW)
+AC_SUBST(TK_LD_SEARCH_FLAGS)
+AC_SUBST(TK_BUILD_LIB_SPEC)
+AC_SUBST(TK_LIB_SPEC)
+AC_SUBST(TK_BUILD_STUB_LIB_SPEC)
+AC_SUBST(TK_STUB_LIB_SPEC)
+
+#--------------------------------------------------------------------
+# __CHANGE__
+# Choose which headers you need.  Extension authors should try very
+# hard to only rely on the Tcl public header files.  Internal headers
+# contain private data structures and are subject to change without
+# notice.
+# This MUST be called after SC_PATH_TCLCONFIG/SC_LOAD_TCLCONFIG
+#--------------------------------------------------------------------
+
+# SC_PUBLIC_TCL_HEADERS
+SC_PRIVATE_TCL_HEADERS
+
+SC_PUBLIC_TK_HEADERS
+
+#--------------------------------------------------------------------
+# __CHANGE__
+# A few miscellaneous platform-specific items:
+#
+# Define a special symbol for Windows (BUILD_exampleA in this case) so
+# that we create the export library with the dll.  See sha1.h on how
+# to use this.
+#
+# Windows creates a few extra files that need to be cleaned up.
+# You can add more files to clean if your extension creates any extra
+# files.
+#
+# Define any extra compiler flags in the PACKAGE_CFLAGS variable.
+# These will be appended to the current set of compiler flags for
+# your system.
+#--------------------------------------------------------------------
+
+case "`uname -s`" in
+    *win32* | *WIN32* | *CYGWIN_NT*|*CYGWIN_98*|*CYGWIN_95*)
+	AC_DEFINE_UNQUOTED(BUILD_${PACKAGE})
+	AC_DEFINE_UNQUOTED(WIN32)
+	CLEANFILES="*.lib *.dll *.exp *.ilk *.pdb vc50.pch"
+	AC_SUBST(CLEANFILES)
+    ;;
+    *)
+	CLEANFILES=
+    ;;
+esac
+
+#--------------------------------------------------------------------
+# Check whether --enable-threads or --disable-threads was given.
+# So far only Tcl responds to this one.
+#--------------------------------------------------------------------
+
+SC_ENABLE_THREADS
+
+#--------------------------------------------------------------------
+# The statement below defines a collection of symbols related to
+# building as a shared library instead of a static library.
+#--------------------------------------------------------------------
+
+SC_ENABLE_SHARED
+
+#--------------------------------------------------------------------
+# This macro figures out what flags to use with the compiler/linker
+# when building shared/static debug/optimized objects.  This information
+# is all taken from the tclConfig.sh file.
+#--------------------------------------------------------------------
+
+SC_CONFIG_CFLAGS
+
+#--------------------------------------------------------------------
+# This macro figures out what flags to use with the compiler/linker
+# when building shared/static debug/optimized objects.  This information
+# is all taken from the tclConfig.sh file.
+#--------------------------------------------------------------------
+
+CFLAGS_DEBUG=${TCL_CFLAGS_DEBUG}
+CFLAGS_OPTIMIZE=${TCL_CFLAGS_OPTIMIZE}
+LDFLAGS_DEBUG=${TCL_LDFLAGS_DEBUG}
+LDFLAGS_OPTIMIZE=${TCL_LDFLAGS_OPTIMIZE}
+SHLIB_LD=${TCL_SHLIB_LD}
+STLIB_LD=${TCL_STLIB_LD}
+SHLIB_CFLAGS=${TCL_SHLIB_CFLAGS}
+
+AC_SUBST(CFLAGS_DEBUG)
+AC_SUBST(CFLAGS_OPTIMIZE)
+AC_SUBST(LDFLAGS_DEBUG)
+AC_SUBST(LDFLAGS_OPTIMIZE)
+AC_SUBST(STLIB_LD)
+AC_SUBST(SHLIB_LD)
+AC_SUBST(SHLIB_CFLAGS)
+AC_SUBST(SHLIB_LDFLAGS)
+
+#--------------------------------------------------------------------
+# Set the default compiler switches based on the --enable-symbols 
+# option.
+#--------------------------------------------------------------------
+
+SC_ENABLE_SYMBOLS
+
+
+if test "${SHARED_BUILD}" = "1" ; then
+    CFLAGS="${CFLAGS} \${CFLAGS_DEFAULT} \${CFLAGS_WARNING} \${SHLIB_CFLAGS}"
+else
+    CFLAGS="${CFLAGS} \${CFLAGS_DEFAULT} \${CFLAGS_WARNING}"
+fi
+
+#--------------------------------------------------------------------
+# Everyone should be linking against the Tcl stub library.  If you
+# can't for some reason, remove this definition.  If you aren't using
+# stubs, you also need to modify the SHLIB_LD_LIBS setting below to
+# link against the non-stubbed Tcl library.
+#--------------------------------------------------------------------
+
+## AC_DEFINE(USE_TCL_STUBS)
+
+#--------------------------------------------------------------------
+# This macro generates a line to use when building a library.  It
+# depends on values set by the SC_ENABLE_SHARED, SC_ENABLE_SYMBOLS,
+# and SC_LOAD_TCLCONFIG macros above.
+#--------------------------------------------------------------------
+
+SC_MAKE_LIB
+
+if test "${DBGX}x" = "x" ; then
+    TCLEXT=tbc
+else
+    TCLEXT=tcl
+fi
+AC_SUBST(TCLEXT)
+
+#--------------------------------------------------------------------
+# Two variations on the library are built.  It is always a static
+# library, hence UNSHARED_LIB_SUFFIX.  But, in the odd
+# SHARED_BUILD case it means we are creating an archive of
+# files linked against the dynamic C runtime.  (Thanks, windows!)
+# This wierd case is distinguished by an "x" in the lib suffix.
+#--------------------------------------------------------------------
+
+AC_ARG_WITH(lib-mark, [  --with-lib-mark=x          Character to tag library with],
+    LIB_MARK=$withval,LIB_MARK=)
+
+# TCL_SHARED_LIB_SUFFIX embeds a reference to $DBGX, which we pollute
+# with the library marker here.
+
+DBGX=${LIB_MARK}${DBGX}
+
+#--------------------------------------------------------------------
+# eval these two values to dereference the ${DBGX} variable.
+#--------------------------------------------------------------------
+
+eval "SHARED_LIB_SUFFIX=${TCL_SHARED_LIB_SUFFIX}"
+eval "UNSHARED_LIB_SUFFIX=${TCL_UNSHARED_LIB_SUFFIX}"
+
+
+case "`uname -s`" in
+    *win32* | *WIN32* | *CYGWIN_NT*|*CYGWIN_98*|*CYGWIN_95*)
+	if test "${SHARED_BUILD}" = "1" ; then
+	    SHLIB_LD_LIBS="\"`cygpath -w ${TCL_BIN_DIR}/${TCL_STUB_LIB_FILE}`\" ${TCL_SHLIB_LD_LIBS}"
+	    RANLIB=:
+	fi
+	eval "${PACKAGE}_LIB_FILE=${PACKAGE}${UNSHARED_LIB_SUFFIX}"
+	;;
+    *)
+	if test "${SHARED_BUILD}" = "1" ; then
+	    SHLIB_LD_LIBS="${TCL_STUB_LIB_SPEC}"
+	    RANLIB=:
+	fi
+	eval "${PACKAGE}_LIB_FILE=lib${PACKAGE}${UNSHARED_LIB_SUFFIX}"
+	;;
+esac
+
+AC_SUBST(SHARED_BUILD)
+
+TCL_APP_INIT=tclAppInit
+case "`uname -s`" in
+    *win32* | *WIN32* | *CYGWIN_NT*|*CYGWIN_98*|*CYGWIN_95*)
+        TCL_APP_INIT_SOURCE=${TCL_SRC_DIR}/tclAppInit.c
+	LINK="link"
+	LINK_FLAGS="-nologo -subsystem:console \$(LDFLAGS)"
+	LINK_OUT_FLAG="-out:"
+	PLATFORM_LIBS="	KERNEL32.LIB USER32.LIB ADVAPI32.LIB"
+    ;;
+    *)
+        TCL_APP_INIT_SOURCE=${TCL_SRC_DIR}/unix/tclAppInit.c
+	LINK='$(CCLD)' 
+	LINK_FLAGS='$(AM_CFLAGS) $(CFLAGS)'
+	LINK_OUT_FLAG="-o "
+	PLATFORM_LIBS=${TCL_LIBS}
+    ;;
+esac
+
+AC_SUBST(TCL_APP_INIT)
+AC_SUBST(TCL_APP_INIT_SOURCE)
+AC_SUBST(LINK)
+AC_SUBST(LINK_FLAGS)
+AC_SUBST(TCL_LD_FLAGS)
+AC_SUBST(LINK_OUT_FLAG)
+
+#--------------------------------------------------------------------
+# __CHANGE__
+# Change the name from exampeA_LIB_FILE to match your package name.
+#--------------------------------------------------------------------
+
+AC_SUBST(wrapper_LIB_FILE)
+AC_SUBST(SHLIB_LD_LIBS)
+
+# Extra seach for Tcl library to get correct build spec on windows
+SC_LIB_SPEC(tcl,$TCL_BIN_DIR)
+
+# tclreg library is WIN32 only
+case "`uname -s`" in
+    *win32* | *WIN32* | *CYGWIN_NT*|*CYGWIN_98*|*CYGWIN_95*)
+	PW_LIBS="${unzip_LIB_SPEC} ${tbcload_LIB_SPEC} ${tcl_LIB_SPEC} ${PLATFORM_LIBS}"    
+	if test "x${SHARED_BUILD}" != "x1" ; then
+
+	    # Bind in static references to these windows extensions
+
+	    AC_DEFINE(TCLPRO_WINDOWS_EXTENSIONS)
+	    SC_LIB_SPEC(tcldde,${TCL_BIN_DIR})
+	    SC_LIB_SPEC(tclreg,${TCL_BIN_DIR})
+	    PW_LIBS="${PW_LIBS} ${tclreg_LIB_SPEC} ${tcldde_LIB_SPEC}"
+	fi
+	;;
+    *)
+	PW_LIBS="${unzip_LIB_SPEC} ${tbcload_LIB_SPEC} ${tcl_LIB_SPEC} ${PLATFORM_LIBS}"    
+    ;;
+esac
+
+
+AC_SUBST(unzip_LIB_SPEC)
+AC_SUBST(PW_LIBS)
+
+#--------------------------------------------------------------------
+# Find tclsh so that we can run pkg_mkIndex to generate the pkgIndex.tcl
+# file during the install process.  Don't run the TCLSH_PROG through
+# ${CYGPATH} because it's being used directly by make.
+# Require that we use a tclsh shell version 8.2 or later since earlier
+# versions have bugs in the pkg_mkIndex routine.
+#--------------------------------------------------------------------
+
+SC_PROG_TCLSH
+
+SC_SIMPLE_EXEEXT
+
+#--------------------------------------------------------------------
+# Finally, substitute all of the various values into the Makefile.
+#--------------------------------------------------------------------
+
+AC_OUTPUT([Makefile])

@@ -1,0 +1,8 @@
+// RCS: @(#) $Id: scicons.rc,v 1.1 2000/07/19 01:24:57 welch Exp $
+//
+
+dbg                      ICON    DISCARDABLE     "dbg.ico"
+prowish			 ICON	 DISCARDABLE     "prowish.ico"
+protclsh		 ICON	 DISCARDABLE     "protclsh.ico"
+comptcl			 ICON	 DISCARDABLE     "comptcl.ico"
+dbgProject		 ICON	 DISCARDABLE     "dbgProject.ico"

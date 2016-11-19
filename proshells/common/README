@@ -1,0 +1,82 @@
+README for src/tclpro1.4
+
+The files in this directory are used when you create custom Tcl/Tk
+shells that can be used with TclPro Wrapper.  This process has been
+cleaned up and simplified in comparison with previous versions of
+TclPro.  If you are unfamiliar with creating custom Tcl/Tk shells, you
+should consult the TclPro manual.  If you alread have some experience
+in this area, then these notes may be all you need.
+
+TclPro_Init
+
+TclPro 1.4 adds a new API, TclPro_Init, which is implemented by the
+wrapper library (wrapper14x.lib or libwrapper1.4.a).  This function
+initializes the TclPro Wrapper runtime system and turns a regular
+Tcl/Tk shell into a "wrapper input", the executable that knows how to
+find files that have been wrapped up.  If a modified shell is used
+without anything wrapped up it behaves like a regular Tcl/Tk shell.
+
+The source code for TclPro_Init is here in the proInit.c file, but you
+should not have to compile this source file.  Just use the precompiled
+version in the wrapper library.  The source is just for your reference,
+especially if you created custom shells using earlier versions of
+TclPro.
+
+Providing your own main()
+
+If you are providing your own main() routine and embedding Tcl into
+your application, then you are probably using Tcl_Main or Tk_Main to
+initialize Tcl or Tk.  You can easily adapt your main program so it
+works with TclPro Wrapper simply by calling TclPro_Init before you call
+Tcl_Main or Tk_Main.  If you are calling the lower level
+Tcl_CreateInterp API directly, then you still just need to call
+TclPro_Init before you call any other Tcl APIs.
+
+You can see that the new implementations of ProWrap_TclMain and
+ProWrap_TkMain are now just 2 lines of code.  These APIs remain for
+compatibility with previous releases of TclPro.
+
+Using the main() from Tcl or Tk 8.3
+
+The standard main() programs distributed with Tcl/Tk 8.3 now contain a
+configuration hook that can be used to call the TclPro_Init function.
+If you define the TCL_LOCAL_MAIN_HOOK macro when compiling
+tcl8.3/unix/tclAppInit.c (or tcl8.3/win/tclAppInit.c) then that
+function is called from the main() program before the Tcl interpreter
+is created.  The TclPro_Init API is designed to be called at this hook
+point.
+
+The arrangement with Tk is similar.  If you define the
+TK_LOCAL_MAIN_HOOK macro when compiling tk8.3/unix/tkAppInit.c (or
+tk8.3/win/winMain.c) then that function is called from the main()
+program before the Tcl interpreter is created.
+
+This approach eliminates the bulky proWrapTclMain.c and proWrapTkMain.c
+files, which used to be slightly modified copies of the tclAppInit.c
+and tkAppInit.c source files from Tcl and Tk.
+
+The standard main() programs distributed with Tcl/Tk 8.3 have a second
+configuration hook that is used to define the application
+initialization procedure called after the Tcl interpreter has been
+created.  This is commonly known as "Tcl_AppInit", and this procedure
+is passed as a parameter to Tcl_Main or Tk_Main.  By default, Tcl and
+Tk have their own Tcl_AppInit and Tk_AppInit functions.  However, if
+you define the TCL_LOCAL_APP_INIT (or TK_LOCAL_APP_INIT) macros while
+compiling Tcl (or Tk), then the standard main programs will call your
+application init function.
+
+The Application Initialization API
+
+Tcl_Main and Tk_Main take a callback procedure that completes the
+initialization of the Tcl interpreter.  This is where you can add your
+own Tcl commands or initialize other Tcl extensions you want to include
+in your application.
+
+The sampleAppInit.c file shows application initialization procedure for
+the TclPro wrapper shells If you want to create a variation on the
+"bigwish" wrapper shell, for example, you can start with the
+sampleAppInit.c and add more extension initialization calls to it.  For
+the complete custom shell recipie, you will need the Tcl or Tk source
+distribution in order to use its tclAppInit.c or tkAppInit.c files that
+implement the main program.
+

@@ -1,0 +1,111 @@
+AC_INIT(src/startup.tcl)
+
+SC_SIMPLE_EXEEXT
+
+if test "x${EXEEXT}" = "x"; then
+   BIN_EXEEXT=.bin
+else
+   BIN_EXEEXT=${EXEEXT}
+fi
+
+AC_SUBST(BIN_EXEEXT)
+
+AC_PROG_INSTALL
+
+#--------------------------------------------------------------------
+# "cygpath" is used on windows to generate native path names for include
+# files.
+# These variables should only be used with the compiler and linker since
+# they generate native path names.
+#
+# Unix tclConfig.sh points SRC_DIR at the top-level directory of
+# the Tcl sources, while the Windows tclConfig.sh points SRC_DIR at
+# the win subdirectory.  Hence the different usages of SRC_DIR below.
+#
+# This must be done before calling SC_PUBLIC_TCL_HEADERS
+#--------------------------------------------------------------------
+
+SC_SET_PLATFORM
+
+#--------------------------------------------------------------------
+# Find tclsh so that we can run pkg_mkIndex to generate the pkgIndex.tcl
+# file during the install process.  Don't run the TCLSH through
+# ${CYGPATH} because it's being used directly by make.
+# Require that we use a tclsh shell version 8.2 or later since earlier
+# versions have bugs in the pkg_mkIndex routine.
+#--------------------------------------------------------------------
+
+SC_PROG_TCLSH
+
+#--------------------------------------------------------------------
+# Only make the /bin/sh wrapper scripts on UNIX
+#--------------------------------------------------------------------
+
+case `uname -s` in
+    *win32* | *WIN32* | *CYGWIN_NT*|*CYGWIN_98*|*CYGWIN_95*)
+	WRAPPER_SCRIPT=
+    ;;
+    *)
+	WRAPPER_SCRIPT=procheck
+    ;;
+esac
+AC_SUBST(WRAPPER_SCRIPT)
+
+# wrap.sh is a template used to create /bin/sh wrappers around
+# the TclPro executables.  We do not need these on Windows,
+# and we sometimes use different templates for different
+# product lines.
+
+AC_ARG_WITH(wrap-sh, [ --with-wrap-sh=wrap.sh         Template for wrap.sh], WRAP_SH=${withval}, WRAP_SH="wrap.sh")
+AC_SUBST(WRAP_SH)
+
+#--------------------------------------------------------------------
+# Find TclPro Wrapper.
+#--------------------------------------------------------------------
+
+SC_PATH_PROTOOLS
+
+AC_PATH_PROGS(PROWRAP, prowrap${EXEEXT} prowrap11${EXEEXT}, :, ${PROTOOLSDIR}/${PLATFORM}/bin:${PATH})
+
+if test "x${PROWRAP}" = "x:" ; then
+    AC_MSG_WARN(No prowrap executable found.  You will not be able to build wrapped executables.)
+fi
+AC_SUBST(PROWRAP)
+
+# Check the --enable-symbols option and switch between .tcl and .tbc files.
+
+SC_ENABLE_SYMBOLS
+
+if test "${DBGX}x" = "x" ; then
+    FILES='${TBC_FILES}'
+    STARTUP_FILE='${STARTUP_TBC}'
+else
+    FILES='${TCL_FILES}'
+    STARTUP_FILE='${STARTUP_TCL}'
+fi
+
+AC_PATH_PROGS(PROCOMP, procomp${EXEEXT} procomp0.10${EXEEXT} procomp10${EXEEXT}, :, ${PROTOOLSDIR}/${PLATFORM}/bin:${PATH})
+
+if test "x${PROCOMP}" = "x:" ; then
+    AC_MSG_WARN(No procomp executable found.  Using .tcl instead of .tbc files..)
+    FILES='${TCL_FILES}'
+    STARTUP_FILE='${STARTUP_TCL}'
+fi
+AC_SUBST(PROCOMP)
+
+AC_SUBST(FILES)
+AC_SUBST(STARTUP_FILE)
+
+AC_MSG_CHECKING(for procheckU shell)
+AC_ARG_WITH(procheckU, [ --with-procheckU      procheckU executable], with_procheckU=${withval})
+
+if test x"${with_procheckU}" != x ; then
+    AC_PATH_PROGS(PROCHECK_U, procheckUs.in, :, ${with_procheckU}:${exec_prefix}/lib)
+else
+   AC_MSG_WARN(procheckU not specified.)
+fi
+AC_SUBST(PROCHECK_U)
+
+
+AC_OUTPUT([Makefile],
+	chmod +x ${srcdir}/install-sh ${srcdir}/mkinstalldirs)

@@ -1,0 +1,180 @@
+
+Klondike --- X-Window solitaire
+-------------------------------
+by John Heidemann <johnh@isi.edu>
+
+
+Executive Summary
+-----------------
+
+Klondike is a solitaire game for X11.  It's strongly influenced
+by the user interface of Klondike for the Macintosh.
+
+Features of klondike include:
+	- time-based and Casino-style scoring
+	- persistent high score list
+	- on-line help
+
+See the "Release Notes" menu item for details about what's new in 
+Klondike.
+
+
+Installation
+------------
+
+The quick answer to installation is to type:
+	./configure
+	make install
+And then run /usr/local/games/klondike.
+
+0.  Install either wishx or the wish from Tk-4.1 (or later).
+	Standard Tcl/Tk is missing some features I need for Klondike,
+	so I originally wrote it using the extended features of TclX
+	(using wishx).
+
+	Wishx was great, but not nearly as widely available as
+	standard Tcl/Tk.  After some detours (including a perl-5-based
+	tclx emulator) tcl picked up some of the missing functions
+	and I put together the rest.
+
+1.  Run "./configure".  GNU configure will find wishx and build the
+	Makefile.  By default klondike will install over the existing
+	version, or in /usr/local/games.
+
+	Klondike has two parts: the executable program,
+	some data files, and some man pages.
+	Unfortunately there are many reasonable ways to install
+	these for games.  We try the best from these choices:
+
+	EXECUTABLE	DATA		MAN		SYSTEM
+	P/games		P/lib/games	P/man		Linux/RedHat
+	P/games		P/share/games	P/man		FreeBSD
+	P/games		P/games/lib	P/man		SunOS
+	P/bin		P/lib		P/man		normal programs
+
+	(where P is first /usr/local and then /usr).
+
+	You can override installation in two ways, with --prefix=P
+	(which sets P), or with --bindir=BD, --datadir=DD, and --mandir=MD.
+
+	GNU configure will also try to find TclPro Compiler (procomp) and
+	TclPro Wrapper (prowrap).  You can force configure to use a path
+	for both programs with --with-tclpro=TD.
+	
+	Note: if you use TclPro to wrap the program, there is no DATA
+	directory needed.
+
+2.  Run "make install" to do the installation.
+	You may need to run this as root if you're writing
+	to directories you don't own.
+
+
+Installation if you have TclPro
+-------------------------------
+
+Here's the text about how to build klondike using the TclPro tools
+(copied from their README and slightly reformatted):
+
+	UNIX Builds
+	-----------
+	
+	In addition to the behavior from the original makefile, the new
+	makefile contains the following targets:
+	
+	binary
+			Build the wrapped application by running TclPro
+	                Compiler on the sources to generate .tbc
+	                files, then running TclPro Wrapper to wrap the
+	                application in a single binary, and then
+	                placing it in a subdirectory called bin. The
+	                executable result can be copied anywhere for
+	                there.
+
+	binary-install
+			Build the wrapped application (using the
+	                "binary" target) then install it using the
+	                rules in the original makefile.  The
+	                difference here is that it does not need a
+	                data directory (the CARDS subdirectory is
+	                wrapped and SCORES is located in the same
+	                directory as the wrapped executable). This
+	                target also installs the UNIX man pages.
+	
+	To build the UNIX makefile, see the README.klondike file.
+	
+	Windows Builds
+	--------------
+	
+	For Windows, the makefile.vc provides only one target.  When
+	you build the application using "nmake -f makefile.vc", the
+	wrapped executable is called "klondike.exe" and can be copied
+	to any location on any Windows NT/95/98 machine and run from
+	its new location.
+
+(Thanks for the patches to make these tools work, Scriptics!)
+
+
+Updates
+-------
+
+The latest version of klondike can be found at 
+<http://www.isi.edu/~johnh/SOFTWARE/JACOBY/index.html>.
+
+Various versions of this software have been tested by the author on
+SunOS 4.1, Solaris/x86 2.1, FreeBSD 2.0, and Linux/Slackware 2.x and
+3.0.
+
+
+Release Notes
+-------------
+
+This README file is $Id: README.klondike,v 1.1 2000/07/14 18:00:04 welch Exp $.
+
+Klondike 1.1---The first network release.
+
+Klondike 1.4---Screen scaled for a 640x480 display, uses GNU configure.
+
+Klondike 1.5---Pwishx and Tk-4.0 support added.
+
+Klondike 1.6---Pwishx support removed; Tk-4.1 supported added.
+Accelerator support added to the menus.
+
+Klondike 1.7---Installation and copyright cleaned-up.
+
+Klondike 1.8 (April 1997)---Released as an RedHat Linux RPM and a
+FreeBSD package in addition to source.  Works with Tcl-7.6, Tk-4.2,
+and mostly on PCs and Macs (although the installation may not).  Menu
+accelerators supported.
+
+Klondike 1.9 (February 1999)---After nearly two years some new code.
+Scriptics was interested in using klondike as an example for how to
+wrap programs.  Thanks to them for contributing some code and advice
+about the changes in this version:
+  - Klondike should now look better on non-Unix platforms, using
+native menubars and not using tk_bisque (ah...nostalgia).
+  - Makefile/configure support for TclPro wrapping tools.
+  - It now passes all of the TclPro debugger warnings.
+
+
+Ispell Words
+------------
+
+Ispell LocalWords:  Klondike README Exp wishx Tcl Tk ftp berkeley tcl tk tclX
+Ispell LocalWords:  POSIX klondike Ispell LocalWords Sager Casteel usr lib hier
+Ispell LocalWords:  Los TclX perl FreeBSD Slackware isi Pwishx Pwish tclx html
+
+
+Credit
+------
+
+This program was written by John Heidemann, but it employs
+bitmaps from Gary Sager and text from Mike Casteel.  Thanks
+to them for their contributions.
+
+Comments on klondike should be sent to:
+
+   -John Heidemann
+    <johnh@isi.edu>
+    Los Angeles, California
+
+ LocalWords:  menubars TclPro RedHat bindir BD datadir DD mandir Macs Scriptics

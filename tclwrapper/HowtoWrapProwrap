@@ -1,0 +1,29 @@
+T:\tools\tools\1.3\win32-ix86\bin\prowrap11
+	-nologo
+	-uses		Z:\WS\ws-pro-19990812-2221\pro\srcs\wrapper\..\tclpro\uses\tclsh
+	-executable	Z:\WS\ws-pro-19990812-2221\pro\out\Release\win32-ix86\bin\prowrapU.exe
+	-out		Z:\WS\ws-pro-19990812-2221\pro\out\Release\win32-ix86\bin\prowrap.exe
+	-startup	wrapper/startup.tbc
+	-relativeto	Z:\WS\ws-pro-19990812-2221\pro\srcs\wrapper\..
+		Z:\WS\ws-pro-19990812-2221\pro\srcs\wrapper\..\wrapper\lib\prowrapUses.tcl
+		Z:\WS\ws-pro-19990812-2221\pro\srcs\wrapper\..\wrapper\lib\tclsh.uses
+		Z:\WS\ws-pro-19990812-2221\pro\srcs\wrapper\..\wrapper\lib\wish.uses
+		Z:\WS\ws-pro-19990812-2221\pro\srcs\wrapper\..\wrapper\lib\iwish.uses
+		Z:\WS\ws-pro-19990812-2221\pro\srcs\wrapper\..\wrapper\lib\itclsh.uses
+		Z:\WS\ws-pro-19990812-2221\pro\srcs\wrapper\..\wrapper\lib\tclsh-dynamic.uses
+		Z:\WS\ws-pro-19990812-2221\pro\srcs\wrapper\..\wrapper\lib\wish-dynamic.uses
+		Z:\WS\ws-pro-19990812-2221\pro\srcs\wrapper\..\wrapper\lib\bigwish.uses
+		Z:\WS\ws-pro-19990812-2221\pro\srcs\wrapper\..\wrapper\lib\bigtclsh.uses
+	-relativeto	cmp
+		cmp/wrapper/startup.tbc
+		cmp/wrapper/prowrap.tbc
+		cmp/util/lclient.tbc
+		cmp/util/licdata.tbc
+		cmp/util/licparse.tbc
+		cmp/util/licio.tbc
+		cmp/license/lictty.tbc
+		cmp/util/version.tbc
+		cmp/util/cmdline.tbc
+
+
+

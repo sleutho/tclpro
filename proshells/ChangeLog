@@ -1,0 +1,162 @@
+2001-11-23  Andreas Kupries  <andreas_kupries@users.sourceforge.net>
+
+	* common/proAppInit.c: Changed the order in which files are
+	  included. [Incr Tcl] defines its own EXTERN macro which messes
+	  up all packages which expect the EXTERN macro from tcl
+	  itself. Moved its inclusion to the end of the list. This problem
+	  was found when building the big shells.
+
+2001-10-15  Andreas Kupries  <andreas_kupries@users.sourceforge.net>
+
+	* prowish/aclocal.m4 (SC_LIB_SPEC_SUFFIX): Check explicitly for an
+	  empty LIB_PATH_NAME and set LIB_SPEC explicitly for that
+	  case. Cygpath chokes if it is called without a path argument.
+
+2000-10-02 Scott Redman   <redman@ajubasolutions.com>
+
+	* prowish/configure.in:
+	* prowish/aclocal.m4:
+	Fixed search order for libwrapper to prevent from using the debug
+	version in a non-debug build.
+
+	* bigtclsh/*:
+	* bigwish/*:
+	* procheck/*:
+	* procomp/*:
+	* prodebug/*:
+	* protclsh/*:
+	Removed all of the files that are no longer used.  Only prowish
+	should be used.  Need to merge the code in common/ and prowish/
+	and make only one set of files, but not right now.
+
+2000-08-06 Brent Welch  <welch@ajubasolutions.com>
+
+	* prowish/configure.in:
+	Fixed the library order of Itcl and Itk so that symbols from
+	the Itcl library can be referenced from Itk.  This was breaking
+	static builds after changes in the Itk stubs implementation.
+
+2000-08-03 Brent Welch  <welch@ajubasolutions.com>
+
+	* prowish/configure.in:
+	Cleanup of comments and ordering of macros.
+	Added Wsock32.lib to TclX libraries
+	* prowish/Makefile.in:
+	Added CFLAGS_DEFAULT to the COMPILE rule, which was the real reason that
+	the Windows compiles didn't get the right runtime flags.
+	* common/proAppInit.c:
+	Removed the TclPro_Init function as this is now in the wrapper library.
+	* common/sampleAppInit.c:
+	Sanitized version of proAppInit.c for source example distribution.
+
+2000-08-02 Brent Welch  <welch@ajubasolutions.com>
+
+	* prowish/configure.in:
+	Had to add a check from Expect to find the -lutil library on
+	Linux in order to satisfy the openpty() symbol.
+	Also made the check for Expect only occur on UNIX
+
+2000-07-30 Brent Welch  <welch@ajubasolutions.com>
+
+	* prowish/configure.in:
+	Oops - had forgotten the configure stuff for TclX, Itcl, and Expect.
+	Copied that in from the bigwish configure.in.
+
+2000-07-30 Brent Welch  <welch@ajubasolutions.com>
+
+	* prowish/Makefile.in:
+	* prowish/configure.in:
+	Made fixes because of changes to TCL_SRC_DIR, TK_SRC_DIR,
+	and the rename of GRAHIC_LIBS to LIBS_GUI.
+
+2000-07-28 Brent Welch  <welch@ajubasolutions.com>
+
+	* prowish/Makefile.in:  Fixed permissions on installing
+	binaries.
+
+2000-07-26 David Gravereaux  <davygrvy@ajubasolutions.com>
+
+	* bigtclsh/configure.in:
+	* bigwish/configure.in:
+	* procheck/configure.in:
+	* procomp/configure.in:
+	* prodebug/configure.in:
+	* protclsh/configure.in:
+	* prowish/configure.in:  Added "-nologo -incremental:no" to
+	LINK_FLAGS variable under windows.  I hate those warning messages.
+
+2000-07-25 Brent Welch  <welch@ajubasolutions.com>
+
+	* shell.rc.in - Finally got the correct icon names for
+	windows so the proshells do not always use the Tk icon.
+	* configure.in, Makefile.in, common/proAppInit.c -
+	added support for static Winico and Winutil (dbgext) modules.
+
+2000-07-22 Brent Welch  <welch@ajubasolutions.com>
+
+	* Finally unified the configure.in/Makefile.in into the instances
+	in the prowish directory.  Those files can now build 11 different
+	shells: wrapwish, wrapwishdyn, wraptclsh, wraptclshdyn, bigtclsh,
+	bigtclshdyn, bigwish, bigwishdyn, procheckU, procompU, prodebugU.
+
+2000-07-19 Brent Welch  <welch@ajubasolutions.com>
+
+	* {bigwish,bigtclsh}/configure.in - lacked AC_SUBST for DL_LIB, MATH_LIB
+
+2000-07-14 Brent Welch  <welch@ajubasolutions.com>
+
+	* */configure.in: Changed librarys so that tclreg and tcldde
+	libraries are only linked into static windows builds.
+	* common/proAppInit.c: Added static packages for TclParser
+	and TclCompiler for building procheckU, procompU, and prodebugU
+	* procomp, prodebug, procheck: Static wrapper shells for these
+	tools.
+
+2000-07-14 Brent Welch  <welch@ajubasolutions.com>
+
+	* */Makefile.in: Fixes for -n32 on IRIX.
+
+2000-07-12 Brent Welch  <welch@ajubasolutions.com>
+
+	* Added tclreg and tcldde libraries to Windows builds as static packages.
+	* Fixed XINCLUDES bug.  @XINCLUDES@ or @TK_XNCLUDES@, must always be last
+	in a Makefile line because they may contain a comment character!
+
+2000-07-10 Brent Welch  <welch@ajubasolutions.com>
+
+	* Another snapshot of all 8 wrapper inputs.
+	These actually seem to be correctly linked on windows
+	and usable by the wrapper.
+
+2000-06-23 Brent Welch  <welch@ajubasolutions.com>
+
+	* Working snapshot of all 8 wrapper inputs, except that
+	Expect is missing (itcl, TclX, tbcload, all done)
+
+2000-06-21 Brent Welch  <welch@ajubasolutions.com>
+
+	* Added bigwish and bigtclsh modules for wrapper inputs that
+	bundle extensions
+
+2000-05-30 Scott Redman  <redman@ajubasolutions.com>
+
+	* common/proAppInit.c:
+	* common/tcl.m4:
+	* protclsh/Makefile.in:
+	* protclsh/protclsh.rc.in:
+	* prowish/Makefile.in:
+	* prowish/prowish.rc.in: Changed copyright strings to Ajuba
+	Solutions to reflect the change in the company name.
+
+2000-04-18    <redman@scriptics.com>
+
+	* protclsh/Makefile.in:
+	* protclsh/configure.in:
+	* protclsh/protclsh.rc.in:
+	* prowish/Makefile.in:
+	* prowish/configure.in:
+	* prowish/protclsh.rc.in:  Add support for --with-icon=<icon> to
+	allow the Windows icon to be set during the build process.
+
+	
+

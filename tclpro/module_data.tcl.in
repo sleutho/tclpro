@@ -1,0 +1,652 @@
+# module_data.tcl
+#
+# This file contains the information specific to each module.  This file
+# is used so that we can change the information in one place instead of
+# having to edit 40+ files.
+
+namespace eval ModuleData {
+    # Name of the software package that we are building
+    variable packageName   {@PACKAGE@}
+
+    # Name of the workspace where this build is happening.  This is
+    # recorded for support reasons.
+    variable wsDir    {@WSDIR@}
+
+    # Build identifier.
+    variable buildId	[clock format [clock seconds] -format "%Y%m%d%H%M"]
+
+    # prefix is the location where platform-independent files are put.
+    variable prefix   {@prefix@}
+
+    # exec_prefix is the location where platform-dependent files are put.
+    # Should use quotes around this since it often defaults to the value
+    # of $prefix.  Curly braces still seem to work, but I don't want
+    # to guarantee it.
+    variable exec_prefix   "@exec_prefix@"
+
+    # build_prefix is the location where temporary build files (.o, .obj,
+    # Makefile, etc.) are put.
+    variable build_prefix {@build_prefix@}
+
+    # Symbolic name of the current platform.  Either "solaris-sparc" or
+    # "win32-ix86"
+    variable platform {@PLATFORM@}
+
+    # The "arch" is unix, win, (or mac).  This is used to find the
+    # build subdirectories of certain modules.
+
+    variable arch
+    switch $platform {
+	win32-ix86 {
+	    set arch win
+	}
+	default {
+	    set arch unix
+	}
+    }
+
+    # List of modules to build for this platform.  Note that this list
+    # is platform-dependent.  For example, "expect" won't appear in the
+    # module list for windows, and "tclcom" won't appear in the module
+    # list for unix.
+    variable MODULE_LIST "@MODULE_LIST@"
+
+    # The locations of the toplevel directories containing each module.
+    variable topDir
+    set topDir(buildenv) {@MODULE_DIR_buildenv@}
+    set topDir(buildInfo) {@MODULE_DIR_buildInfo@}
+    set topDir(buildutil) {@MODULE_DIR_buildutil@}
+    set topDir(documentation) {@MODULE_DIR_documentation@}
+    set topDir(expect) {@MODULE_DIR_expect@}
+    set topDir(extras) {@MODULE_DIR_extras@}
+    set topDir(icons) {@MODULE_DIR_icons@}
+    set topDir(itcl) {@MODULE_DIR_itcl@}
+    set topDir(mclistbox) {@MODULE_DIR_mclistbox@}
+    set topDir(procomp) {@MODULE_DIR_procomp@}
+    set topDir(procompU) {@MODULE_DIR_procompU@}
+    set topDir(procheck) {@MODULE_DIR_procheck@}
+    set topDir(procheckU) {@MODULE_DIR_procheckU@}
+    set topDir(prodebug) {@MODULE_DIR_prodebug@}
+    set topDir(prodebugU) {@MODULE_DIR_prodebugU@}
+    set topDir(prowrap) {@MODULE_DIR_prowrap@}
+    set topDir(prowrapU) {@MODULE_DIR_prowrapU@}
+    set topDir(projectInfo) {@MODULE_DIR_projectInfo@}
+    set topDir(protools) {@PROTOOLSDIR@}
+    set topDir(tbcload) {@MODULE_DIR_tbcload@}
+    set topDir(tclcompiler_static) {@MODULE_DIR_tclcompiler_static@}
+    set topDir(tclchecker) {@MODULE_DIR_tclchecker@}
+    set topDir(tcldebugger) {@MODULE_DIR_tcldebugger@}
+    set topDir(tclhttpd) {@MODULE_DIR_tclhttpd@}
+    set topDir(tcllib) {@MODULE_DIR_tcllib@}
+    set topDir(tclwrapper) {@MODULE_DIR_tclwrapper@}
+    set topDir(libwrapper) {@MODULE_DIR_libwrapper@}
+    set topDir(tcl) {@MODULE_DIR_tcl@}
+    set topDir(tclparser) {@MODULE_DIR_tclparser@}
+    set topDir(tclparser_static) {@MODULE_DIR_tclparser_static@}
+    set topDir(tclpro) {@MODULE_DIR_tclpro@}
+    set topDir(tclPro) {@PROTOOLSDIR@}
+    set topDir(tclx) {@MODULE_DIR_tclx@}
+    set topDir(tk) {@MODULE_DIR_tk@}
+    set topDir(tools) {@MODULE_DIR_tools@}
+    set topDir(winico) {@MODULE_DIR_winico@}
+    set topDir(winutil) {@MODULE_DIR_winutil@}
+
+    set topDir(wraptclshdyn) {@MODULE_DIR_wraptclshdyn@}
+    set topDir(wrapwishdyn) {@MODULE_DIR_wrapwishdyn@}
+    set topDir(wraptclsh) {@MODULE_DIR_wraptclsh@}
+    set topDir(wrapwish) {@MODULE_DIR_wrapwish@}
+
+    set topDir(bigtclshdyn) {@MODULE_DIR_bigtclshdyn@}
+    set topDir(bigwishdyn) {@MODULE_DIR_bigwishdyn@}
+    set topDir(bigtclsh) {@MODULE_DIR_bigtclsh@}
+    set topDir(bigwish) {@MODULE_DIR_bigwish@}
+
+    set topDir(zip)  {@MODULE_DIR_zip@}
+    set topDir(unzip)  {@MODULE_DIR_unzip@}
+
+    # The locations of the configure.in files for each module, relative
+    # to the topDir.  Topdir is assumed if not specified.
+    variable srcSubDir
+    set srcSubDir(tclx)		{unix}
+    set srcSubDir(tclx,win32-ix86) {win}
+    set srcSubDir(tcl)		{unix}
+    set srcSubDir(tcl,win32-ix86) {win}
+    set srcSubDir(tk)		{unix}
+    set srcSubDir(tk,win32-ix86) {win}
+    set srcSubDir(libwrapper)   {$topDir/src}
+
+    # The location of the test suite for each module.  This is needed
+    # for running the integration and system tests.  Modules tests are
+    # run using "make test".
+    variable testDir
+    set testsDir(expect) [list [file join $topDir(expect) tests]]
+    set testsDir(itcl) [list [file join $topDir(itcl) tests]]
+    set testsDir(mclistbox) {}
+    set testsDir(tbcload) [list [file join $topDir(tbcload) tests]]
+    set testsDir(tcl) [list [file join $topDir(tcl) tests]]
+    set testsDir(tclchecker) [list [file join $topDir(tclchecker) tests]]
+    set testsDir(tcldebugger) [list [file join $topDir(tcldebugger) tests]]
+    set testsDir(tclparser) [list [file join $topDir(tclparser) tests]]
+    set testsDir(tclx) [list [file join $topDir(tclx) tcl tests] \
+            [file join $topDir(tclx) tk tests]]
+    set testsDir(tk) [list [file join $topDir(tk) tests]]
+    set testsDir(tclpro) [list [file join $topDir(tclpro) tests]]
+
+    # Clones for modules that need to be compiled a second time to
+    # build static libraries for wrapper shells
+
+    foreach m {tcl tk itcl tclx expect tbcload tclwrapper
+		unzip icons} {
+	set topDir(${m}_static) $topDir($m)
+	if {[info exist testsDir($m)]} {
+	    set testsDir(${m}_static) $testsDir($m)
+	}
+	if {[info exist srcSubDir($m)]} {
+	    set srcSubDir(${m}_static) $srcSubDir($m)
+	}
+	if {[info exist srcSubDir($m,win32-ix86)]} {
+	    set srcSubDir(${m}_static,win32-ix86) $srcSubDir($m,win32-ix86)
+	}
+    }
+
+    # Windows needs a third hybrid form: a static link library that
+    # has been linked against the dynamic C runtime.  This is "tbcload_dyn"
+    # This is for creating dynamic shells that have parts statically linked in.
+
+    foreach m {tbcload tclwrapper unzip} {
+	set topDir(${m}_dyn) $topDir($m)
+	if {[info exist testsDir($m)]} {
+	    set testsDir(${m}_dyn) $testsDir($m)
+	}
+	if {[info exist srcSubDir($m)]} {
+	    set srcSubDir(${m}_dyn) $srcSubDir($m)
+	}
+	if {[info exist srcSubDir($m,win32-ix86)]} {
+	    set srcSubDir(${m}_dyn,win32-ix86) $srcSubDir($m,win32-ix86)
+	}
+    }
+
+    # configure switches for the various modules.  The configure switches
+    # are additive.  The order in which they are added is:
+    #
+    #	$srcdir (added automatically by build_module.tcl)
+    #	standard
+    #	$moduleName
+    #	$platform
+    #	$flavorStr
+    #	$moduleName,$platform
+    #	$moduleName,$flavorStr
+    #	$moduleName,$flavorStr,$platform
+    #
+    # You don't need to specify --srcdir here.  That flag is automatically
+    # added during the build.
+    variable configureSwitch
+
+    set configureSwitch(standard)	"--prefix=$prefix --exec-prefix=$exec_prefix --with-tcl=[file join $build_prefix tcl $arch]"
+
+    set configureSwitch(Debug)		"--enable-symbols"
+    set configureSwitch(Release)	"--disable-symbols"
+
+    set configureSwitch(linux-ix86)	"--enable-gcc"
+    set configureSwitch(solaris-sparc)	"--enable-gcc"
+    set configureSwitch(hpux-parisc)	"--enable-gcc"
+    set configureSwitch(irix-mips)	""
+    set configureSwitch(aix-risc)	""
+    set configureSwitch(freebsd-ix86)	"--enable-gcc"
+    set configureSwitch(win32-ix86)	""
+
+    set configureSwitch(buildInfo)	"--with-wsname=$wsDir --with-buildid=$buildId"
+    set configureSwitch(buildutil)	"--with-wrap-sh=pro_wrap.sh"
+    set configureSwitch(buildutil,win32-ix86)	--with-wrap-sh=
+
+    # The non-static versions of Tcl and Tk don't need any extra flags
+    set configureSwitch(tcl_static)	"--disable-shared"
+    set configureSwitch(tk_static)	"--disable-shared \
+		--with-tcl=[file join $build_prefix tcl_static $arch]"
+
+    set configureSwitch(expect)	"-with-tk=../tk/$arch \
+	    --with-tclinclude=[file join $topDir(tcl) generic] \
+	    --with-tkinclude=[file join $topDir(tk) generic] \
+	    --enable-shared"
+    set configureSwitch(expect_static)	"-with-tk=../tk_static/$arch \
+	    --with-tclinclude=[file join $topDir(tcl) generic] \
+	    --with-tkinclude=[file join $topDir(tk) generic]"
+
+    set configureSwitch(documentation)  "--with-product=tclpro"
+
+    set configureSwitch(extras)		"\
+	    --with-wrap-sh=$prefix/etc/pro_wrap.sh \
+	    --with-toolsdir=$topDir(tools)"
+
+    set configureSwitch(itcl)		"--with-tcl=../../tcl/$arch \
+	--with-tk=../../tk/$arch \
+	--enable-shared"
+    set configureSwitch(itcl_static)	"--with-tcl=../../tcl_static/$arch \
+	--with-tk=../../tk_static/$arch \
+	--disable-shared"
+
+    set configureSwitch(procheck)	"
+	--with-protools=$topDir(tclPro) \
+	--with-procheckU=../procheckU/procheckUs.in \
+	--with-wrap-sh=$prefix/etc/pro_wrap.sh"
+
+    set configureSwitch(procomp)	"
+	--with-protools=$topDir(tclPro) \
+	--with-procompU=../procompU/procompUs.in \
+	--with-wrap-sh=$prefix/etc/pro_wrap.sh"
+
+    set configureSwitch(prodebug)	"
+	--with-protools=$topDir(tclPro) \
+	--with-prodebugU=../prodebugU/prodebugUs.in \
+	--with-wrap-sh=$prefix/etc/pro_wrap.sh"
+
+    set configureSwitch(tclpro)		"
+	--with-protools=$topDir(tclPro) "
+
+    set configureSwitch(tclchecker)	"
+	--with-protools=$topDir(tclPro) \
+	--with-wrap-sh=$prefix/etc/pro_wrap.sh"
+
+    set configureSwitch(tcldebugger)	"
+	--with-protools=$topDir(tclPro) \
+	--with-wrap-sh=$prefix/etc/pro_wrap.sh"
+
+    # Three versions of tbcload.
+    # "tbcload" - vanilla extention compiled for dynamic linking, stubs,
+    #	and the dynamic link windows runtime.
+    # "tbcload_static" - vanilla static build, no stubs, static runtime.
+    # "tbcload_dyn" - static build, no stubs, dynamic runtime.  This last
+    #	version is used to statically link tbcload into a dynamic wrapper core.
+
+    set configureSwitch(tbcload)	"--enable-shared \
+		--with-tcl=[file join $build_prefix tcl $arch] \
+		"
+    set configureSwitch(tbcload_static)	"--disable-shared \
+		--with-tcl=[file join $build_prefix tcl_static $arch] \
+		"
+    set configureSwitch(tbcload_dyn)	"--disable-shared \
+		--with-tcl=[file join $build_prefix tcl $arch] \
+		"
+
+    set configureSwitch(tclwrapper)	"--with-protools=$topDir(tclPro) \
+		--with-tcl=[file join $build_prefix tcl $arch] \
+		--with-tk=[file join $build_prefix tk $arch] \
+		--with-unzip-build=../unzip \
+		--with-tbcload=../tbcload"
+    set configureSwitch(tclwrapper_static) "--with-protools=$topDir(tclPro) \
+		--with-tcl=[file join $build_prefix tcl_static $arch] \
+		--with-tk=[file join $build_prefix tk_static $arch] \
+		--disable-shared \
+		--enable-prowrapu \
+		--with-unzip-build=../unzip_static \
+		--with-tbcload=../tbcload_static"
+    set configureSwitch(tclwrapper_dyn) "--with-protools=$topDir(tclPro) \
+		--with-tcl=[file join $build_prefix tcl $arch] \
+		--with-tk=[file join $build_prefix tk $arch] \
+		--disable-shared \
+		--with-lib-mark=x \
+		--with-unzip-build=../unzip_dyn \
+		--with-tbcload=../tbcload_dyn"
+
+    set configureSwitch(unzip_static)		"--disable-shared \
+	    --with-tcl=[file join $build_prefix tcl_static $arch] \
+	    "
+    set configureSwitch(unzip)		"--enable-shared \
+	    --with-tcl=[file join $build_prefix tcl $arch] \
+	    "
+    set configureSwitch(unzip_dyn)		"--disable-shared \
+	    --with-tcl=[file join $build_prefix tcl $arch] \
+	    "
+    set configureSwitch(zip)		"--disable-shared
+	    --with-tcl=[file join $build_prefix tcl_static $arch] \
+	    "
+
+    set configureSwitch(icons) "\
+		--with-tcl=[file join $build_prefix tcl $arch] \
+		--enable-shared \
+		"
+
+    set configureSwitch(winico) "\
+		--with-tcl=[file join $build_prefix tcl $arch] \
+		--with-tk=[file join $build_prefix tk $arch] \
+		--enable-shared \
+		"
+
+    set configureSwitch(tclcompiler_static) "--with-protools=$topDir(tclPro) \
+		--with-tcl=[file join $build_prefix tcl_static $arch] \
+		--disable-shared \
+		--with-tbcload=../tbcload_static"
+
+    set configureSwitch(tclparser) "--with-protools=$topDir(tclPro) \
+		--enable-shared \
+		--with-tbcload=../tbcload"
+
+    set configureSwitch(tclparser_static) "--with-protools=$topDir(tclPro) \
+		--with-tcl=[file join $build_prefix tcl_static $arch] \
+		--disable-shared \
+		--with-tbcload=../tbcload_static"
+
+    set configureSwitch(prowrap)	"\
+	--with-boot-wrapper=../prowrapU \
+	--with-wrap-sh=$prefix/etc/pro_wrap.sh"
+
+    set configureSwitch(tclx)		"--enable-shared \
+	    --with-tcl=../../tcl/$arch \
+	    --with-help=./help_out \
+	    --with-tk=../../tk/$arch"
+    set configureSwitch(tclx_static)	"--disable-shared  \
+	    --with-tk=../../tk_static/$arch \
+	    --with-help=./help_out \
+	    --with-tcl=../../tcl_static/$arch" 
+
+    set configureSwitch(winutil)	"
+		--with-tk=[file join $build_prefix tk $arch] \
+		"
+
+    set configureSwitch(winico)		"
+		--with-tk=[file join $build_prefix tk $arch] \
+		"
+
+    set configureSwitch(wraptclshdyn)	"\
+	--with-libwrapper=../tclwrapper_dyn \
+	--with-tbcload=../tbcload_dyn \
+	--with-exename=wraptclsh@TCL_MAJOR_VERSION@@TCL_MINOR_VERSION@ \
+	--with-product-name=tcl \
+	--with-major-version=@TCL_MAJOR_VERSION@ \
+	--with-minor-version=@TCL_MINOR_VERSION@ \
+	--with-patchlevel=@TCL_PATCHLEVEL@ \
+	--with-build-id=$buildId \
+	--with-wrapext=.in"
+
+    set configureSwitch(wraptclsh)	"\
+	--with-tcl=../tcl_static/$arch \
+	--with-libwrapper=../tclwrapper_static \
+	--with-tbcload=../tbcload_static \
+	--with-exename=wraptclsh@TCL_MAJOR_VERSION@@TCL_MINOR_VERSION@s \
+	--with-major-version=@TCL_MAJOR_VERSION@ \
+	--with-minor-version=@TCL_MINOR_VERSION@ \
+	--with-patchlevel=@TCL_PATCHLEVEL@ \
+	--with-build-id=$buildId \
+	--with-wrapext=.in \
+	--disable-shared"
+
+    # procompU is tclsh + the parser + compiler
+
+    set configureSwitch(procompU)	"\
+	--with-tcl=../tcl_static/$arch \
+	--with-libwrapper=../tclwrapper_static \
+	--with-parser=../tclparser_static \
+	--with-compiler=../tclcompiler_static \
+	--with-tbcload=../tbcload_static \
+	--with-exename=procompUs \
+	--with-product-name=ProComp \
+	--with-major-version=@MAJOR_VERSION@ \
+	--with-minor-version=@MINOR_VERSION@ \
+	--with-patchlevel=@PATCHLEVEL@ \
+	--with-build-id=$buildId \
+	--with-icon=$exec_prefix/lib/icons/compiler.ico \
+	--with-wrapext=.in \
+	--disable-shared"
+
+    # procheckU is tclsh + the parser
+
+    set configureSwitch(procheckU)	"\
+	--with-tcl=../tcl_static/$arch \
+	--with-libwrapper=../tclwrapper_static \
+	--with-parser=../tclparser_static \
+	--with-tbcload=../tbcload_static \
+	--with-exename=procheckUs \
+	--with-product-name=ProCheck \
+	--with-major-version=@MAJOR_VERSION@ \
+	--with-minor-version=@MINOR_VERSION@ \
+	--with-patchlevel=@PATCHLEVEL@ \
+	--with-build-id=$buildId \
+	--with-icon=$exec_prefix/lib/icons/checker.ico \
+	--with-wrapext=.in \
+	--disable-shared"
+
+    # This is used to boot-strap the wrapper, so it is built
+    # like the other wrapper inputs, but installed as an
+    # executable.  This replaces the special-purpose shell
+    # built by the tclwrapper module.
+
+    set configureSwitch(prowrapU)	"\
+	--with-tcl=../tcl_static/$arch \
+	--with-libwrapper=../tclwrapper_static \
+	--with-tbcload=../tbcload_static \
+	--with-exename=prowrapUs \
+	--with-product-name=ProWrap \
+	--with-major-version=@MAJOR_VERSION@ \
+	--with-minor-version=@MINOR_VERSION@ \
+	--with-patchlevel=@PATCHLEVEL@ \
+	--with-build-id=$buildId \
+	--with-icon=$exec_prefix/lib/icons/wrapper.ico \
+	--with-wrapext=.exe \
+	--disable-shared"
+
+    set configureSwitch(wrapwishdyn)	"\
+	--with-tk=../tk/$arch \
+	--with-libwrapper=../tclwrapper_dyn \
+	--with-tbcload=../tbcload_dyn \
+	--with-exename=wrapwish@TCL_MAJOR_VERSION@@TCL_MINOR_VERSION@ \
+	--with-major-version=@TCL_MAJOR_VERSION@ \
+	--with-minor-version=@TCL_MINOR_VERSION@ \
+	--with-patchlevel=@TCL_PATCHLEVEL@ \
+	--with-build-id=$buildId \
+	--with-product-name=Tk \
+	--with-wrapext=.in"
+
+    set configureSwitch(wrapwish)	"\
+	--with-tcl=../tcl_static/$arch \
+	--with-tk=../tk_static/$arch \
+	--with-tbcload=../tbcload_static \
+	--with-libwrapper=../tclwrapper_static \
+	--with-exename=wrapwish@TCL_MAJOR_VERSION@@TCL_MINOR_VERSION@s \
+	--with-major-version=@TCL_MAJOR_VERSION@ \
+	--with-minor-version=@TCL_MINOR_VERSION@ \
+	--with-patchlevel=@TCL_PATCHLEVEL@ \
+	--with-build-id=$buildId \
+	--with-product-name=Tk \
+	--with-wrapext=.in \
+	--disable-shared"
+
+    # prodebugU is wish + the parser
+
+    set configureSwitch(prodebugU)	"\
+	--with-tcl=../tcl_static/$arch \
+	--with-tk=../tk_static/$arch \
+	--with-tbcload=../tbcload_static \
+	--with-libwrapper=../tclwrapper_static \
+	--with-parser=../tclparser_static \
+	--with-exename=prodebugUs \
+	--with-product-name=ProDebug \
+	--with-major-version=@MAJOR_VERSION@ \
+	--with-minor-version=@MINOR_VERSION@ \
+	--with-patchlevel=@PATCHLEVEL@ \
+	--with-build-id=$buildId \
+	--with-icon=$exec_prefix/lib/icons/dbg.ico \
+	--with-wrapext=.in \
+	--disable-shared"
+
+    set configureSwitch(bigtclshdyn)	"\
+	--with-itcl=../itcl/itcl \
+	--with-tbcload=../tbcload_dyn \
+	--with-expect=../expect \
+	--with-libwrapper=../tclwrapper_dyn \
+	--with-exename=wrapbigtclsh@TCL_MAJOR_VERSION@@TCL_MINOR_VERSION@ \
+	--with-major-version=@TCL_MAJOR_VERSION@ \
+	--with-minor-version=@TCL_MINOR_VERSION@ \
+	--with-patchlevel=@TCL_PATCHLEVEL@ \
+	--with-build-id=$buildId \
+	--with-product-name=BigTcl \
+	--with-wrapext=.in"
+
+    set configureSwitch(bigtclsh)	"\
+	--with-tcl=../tcl_static/$arch \
+	--with-itcl=../itcl_static/itcl \
+	--with-libwrapper=../tclwrapper_static \
+	--with-tbcload=../tbcload_static \
+	--with-expect=../expect_static \
+	--with-exename=wrapbigtclsh@TCL_MAJOR_VERSION@@TCL_MINOR_VERSION@s \
+	--with-major-version=@TCL_MAJOR_VERSION@ \
+	--with-minor-version=@TCL_MINOR_VERSION@ \
+	--with-patchlevel=@TCL_PATCHLEVEL@ \
+	--with-build-id=$buildId \
+	--with-product-name=BigTcl \
+	--with-wrapext=.in \
+	--disable-shared"
+
+    set configureSwitch(bigwishdyn)	"\
+	--with-itcl=../itcl/itcl \
+	--with-itk=../itcl/itk \
+	--with-expect=../expect \
+	--with-tk=../tk/$arch \
+	--with-libwrapper=../tclwrapper_dyn \
+	--with-tbcload=../tbcload_dyn \
+	--with-product-name=BigTk \
+	--with-exename=wrapbigwish@TCL_MAJOR_VERSION@@TCL_MINOR_VERSION@ \
+	--with-major-version=@TCL_MAJOR_VERSION@ \
+	--with-minor-version=@TCL_MINOR_VERSION@ \
+	--with-patchlevel=@TCL_PATCHLEVEL@ \
+	--with-build-id=$buildId \
+	--with-wrapext=.in"
+
+    set configureSwitch(bigwish)	"\
+	--with-tcl=../tcl_static/$arch \
+	--with-tk=../tk_static/$arch \
+	--with-itcl=../itcl_static/itcl \
+	--with-itk=../itcl_static/itk \
+	--with-expect=../expect_static \
+	--with-libwrapper=../tclwrapper_static \
+	--with-tbcload=../tbcload_static \
+	--with-wrapext=.in \
+	--with-product-name=BigTk \
+	--with-exename=wrapbigwish@TCL_MAJOR_VERSION@@TCL_MINOR_VERSION@s \
+	--with-major-version=@TCL_MAJOR_VERSION@ \
+	--with-minor-version=@TCL_MINOR_VERSION@ \
+	--with-patchlevel=@TCL_PATCHLEVEL@ \
+	--with-build-id=$buildId \
+	--disable-shared"
+
+    # Tclx builds have a completely different directory structure on Windows!
+    # tclx/tcl/unix
+    # tclx/tk/unix
+    # tclx/win
+
+    foreach {DYN TCLX} {dyn tclx "" tclx_static} {
+	set configureSwitch(bigtclsh$DYN,win32-ix86)	"--with-tclx=../$TCLX/win" 
+	set configureSwitch(bigwish$DYN,win32-ix86)	"--with-tclx=../$TCLX/win \
+						    	--with-tkx=../$TCLX/win" 
+	foreach a {linux-ix86 solaris-sparc irix-mips hpux-parisc
+		    aix-risc freebsd-ix86} {
+	    set configureSwitch(bigtclsh$DYN,$a)	"--with-tclx=../$TCLX/tcl/unix"
+	    set configureSwitch(bigwish$DYN,$a)		"--with-tclx=../$TCLX/tcl/unix \
+						    	--with-tkx=../$TCLX/tk/unix"
+	}
+    }
+
+    # Module dependencies.  The dependent modules are installed before
+    # the master module is configured and built.  If a file named
+    # "DEPENDENCIES" exists in the topdir for a module, it's contents
+    # take precedence over these values.
+    # Invalid modules in a dependency list are silently ignored.
+    variable moduleDep
+    set moduleDep(buildutil)	{}
+
+    # We must build the static versions first because they install
+    # tclConfig.sh files that we don't really want.  Then, when
+    # Tcl is built next, it installs the tclConfig.sh that we want.
+
+    set moduleDep(tcl)		{tcl_static}
+    set moduleDep(tk)		{tk_static}
+
+    set moduleDep(expect)	{tcl tk expect_static}
+    set moduleDep(extras)	{tk}
+    set moduleDep(itcl)		{tk tcl itcl_static}
+    set moduleDep(mclistbox)	{tk}
+    set moduleDep(procheckU)	{tcl_static tclparser_static tbcload_static
+				buildutil  icons}
+    set moduleDep(procheck)	{tcllib prowrap tclchecker projectInfo
+				buildutil procheckU icons}
+    set moduleDep(prodebugU)	{tcl_static tk_static tclparser_static
+				tbcload_static buildutil icons_static icons}
+    set moduleDep(prodebug)	{prowrap tcldebugger projectInfo winico winutil
+				prodebugU buildutil tcllib }
+    set moduleDep(tclpro)	{@MODULE_LIST@}
+
+    # tbcload has a DEPENDENCIES file that overrides this
+    set moduleDep(tbcload)	{tbcload_static tbcload_dyn tcl}
+
+    set moduleDep(tbcload_static)	{tcl_static}
+    set moduleDep(tbcload_dyn)	{tcl}
+
+    # tclchecker has a DEPENDENCIES file that overrides this
+    set moduleDep(tclchecker)	{prowrap procheckU tclparser_static}
+
+    set moduleDep(tclhttpd)	{tcl}
+    set moduleDep(tclcompiler_static)	{tcl_static}
+    set moduleDep(procompU)		{tclcompiler_static tclparser_static tclwrapper_static}
+    set moduleDep(procomp)		{procompU}
+    set moduleDep(tclwrapper_static)	{unzip_static tbcload_static}
+    set moduleDep(tclwrapper)		{unzip}
+    set moduleDep(tclwrapper_dyn)	{unzip_dyn}
+    set moduleDep(prowrap)	{prowrapU tclwrapper tcllib winico winutil 
+				libwrapper zip projectInfo
+				unzip tbcload tcl_static tk_static itcl_static
+				expect_static tclx_static}
+    set moduleDep(prowrapU)	{tcl tcllib tclwrapper_static icons}
+
+    # tcldebugger has a DEPENDENCIES file that overrides this
+    set moduleDep(tcldebugger)	{tk tclparser_static tcllib projectInfo winico winutil}
+
+    set moduleDep(tclparser_static)	{tcl_static}
+
+    # tclparser has a DEPENDENCIES file that overrides this
+    set moduleDep(tclparser)	{tcl}
+
+    set moduleDep(tcllib)	{tcl}
+    set moduleDep(tclx)		{tclx_static tcl tk}
+    set moduleDep(tclx_static)	{tcl_static}
+    set moduleDep(tk)		{tcl tk_static}
+    set moduleDep(winico)	{tk}
+##    set moduleDep(winuptil)	{}
+    set moduleDep(wraptclshdyn)	{tcl unzip_dyn tclwrapper_dyn tbcload_dyn icons}
+    set moduleDep(wrapwishdyn)	{tcl tk unzip_dyn tclwrapper_dyn tbcload_dyn icons}
+    set moduleDep(wraptclsh)	{tcl_static tclwrapper_static tbcload_static icons}
+    set moduleDep(wrapwish)	{tcl_static tk_static tclwrapper_static tbcload_static icons}
+
+    set moduleDep(bigtclshdyn)	{tcl unzip_dyn tclx itcl tclwrapper_dyn tbcload_dyn icons itcl tclx expect}
+    set moduleDep(bigwishdyn)	{tcl tk unzip_dyn tclx itcl tclwrapper_dyn tbcload_dyn icons itcl tclx expect}
+    set moduleDep(bigtclsh)	{tcl_static unzip_static tclx_static itcl_static expect_static tclwrapper_static tbcload_static icons}
+    set moduleDep(bigwish)	{tcl_static tk_static unzip_static tclx_static itcl_static expect_static tclwrapper_static tbcload_static icons}
+
+    set moduleDep(winico)	{winico_static}
+    set moduleDep(zip)		{}
+    set moduleDep(unzip)	{}
+
+	set topDir(memchan)          {@MODULE_DIR_memchan@}
+	set testsDir(memchan)        [list [file join $topDir(memchan) tests]]
+	set configureSwitch(memchan) "--with-tcl=../tcl/$arch --enable-shared"
+	set moduleDep(memchan)       {tcl}
+
+	set topDir(trf)          {@MODULE_DIR_trf@}
+	set testsDir(trf)        [list [file join $topDir(trf) tests]]
+	set configureSwitch(trf) "--with-tcl=../tcl/$arch --enable-shared"
+	set moduleDep(trf)       {tcl memchan}
+
+	set topDir(trfcrypt)          {@MODULE_DIR_trfcrypt@}
+	set testsDir(trfcrypt)        [list [file join $topDir(trfcrypt) tests]]
+	set configureSwitch(trfcrypt) "--with-tcl=../tcl/$arch --enable-shared"
+	set moduleDep(trfcrypt)       {tcl trf memchan}
+
+	set topDir(setops)          {@MODULE_DIR_setops@}
+	set testsDir(setops)        [list [file join $topDir(setops) tests]]
+	set configureSwitch(setops) "--with-tcl=../tcl/$arch --enable-shared"
+	set moduleDep(setops)       {tcl}
+    
+	set topDir(expand)          {@MODULE_DIR_expand@}
+	set testsDir(expand)        [list [file join $topDir(expand) tests]]
+	set configureSwitch(expand) ""
+	set moduleDep(expand)       {tcl}
+    
+}

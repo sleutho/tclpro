@@ -1,0 +1,29 @@
+# bigtclsh.uses --
+#
+#	This file returns the command line parameters to prowrap
+#	to create a:
+#
+#		TclPro Tcl Shell - Statically Linked - All Extensions
+#
+# Copyright (c) 1998-1999 by Scriptics Corporation.
+# All rights reserved.
+#
+# RCS: @(#) $Id: bigtclsh-lite.uses,v 1.1 2000/07/23 04:26:31 welch Exp $
+
+# Use either the prowrapUses.tcl in the same directory as the uses file
+# which lets us use TclPro version N to wrap files for TclPro version N+1
+# or the prowrapUses.tcl wrapped upsafely inside the prowrap executable.
+
+foreach path [list \
+	[file join [file dirname [info script]] prowrapUses.tcl] \
+	[file join wrapper lib prowrapUses.tcl]] {
+    if {[file exists $path]} {
+	source $path
+	break
+    }
+}
+
+return [prowrapUses::buildCommandLine \
+                [file join $prowrapUses::inDir ${prowrapUses::WRAP_BIG_TCL}s.in] \
+                tcl itcl expect tclx ]
+

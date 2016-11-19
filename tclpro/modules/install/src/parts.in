@@ -1,0 +1,1192 @@
+# parts.in --
+#
+#     Parts list file for TclPro
+#
+# Copyright (c) 1998-1999 by Scriptics Corporation.
+# All rights reserved.
+#
+# RCS: @(#) $Id: parts.in,v 1.31 2001/03/06 21:23:33 andreas_kupries Exp $
+
+# Variable definitions - use Tcl set syntax all on one line.
+# You'll be able to reference these variables in the parts list later,
+# but know that each line is subject to a "subst" - this isn't quite Tcl code
+
+eval set ProVers	151
+eval set Pro.Vers	1.5
+eval set Pro.Vers.Ptch	1.5.1
+eval set TclVers	83
+eval set Tcl.Vers	8.3
+eval set TclxVers	83
+eval set Tclx.Vers	8.3
+eval set ItclVers	32
+eval set Itcl.Vers	3.2
+eval set Iwidgets.Vers	3.0.1
+eval set Expect.Vers	5.32
+eval set Httpd.Vers	3.2
+eval set HttpdVers	32
+eval set Tcllib.Vers	0.8
+
+# Here we assume that the debug builds are in parallel
+# directories to the release builds - e.g., 
+# tclpro/out/Release and tclpro/out/Debug.
+# The Makefile/configure process is presumed to be done
+# from the Release build area.
+eval set Debug		${prefix}/../Debug
+eval set Release	${prefix}
+
+# These are source areas
+eval set Installer	tclpro/modules/install
+eval set Icons		tclpro/modules/icons
+eval set Demos		tclpro/modules/demos
+eval set Doc		/ws/doc/TclPro/pro1.4
+eval set TclSrc		tcl8.3.2
+eval set TkSrc		tk8.3.2
+eval set ItclSrc	itcl3.2
+
+# platforms:  These are short names that correspond to longer
+# architecture names.
+#	all
+#	win
+#	sol
+#	hp
+#	lin
+#	sgi
+#	aix
+#	bsd
+#
+#	  unix (hp sol, lin, sgi)
+#
+# Any platform id can have a /cd suffix to indicate that the file
+# should only be included in the CD-ROM distribution.
+
+# shippath		buildpath				file			plat	done/built?
+# =========================================================================================================
+# -- TclPro --
+.			${Doc}				README			all	y
+.			${Installer}/src		license.txt		all	y
+
+# -- General stuff --
+win32-ix86/bin		/tools/1.3/win32-ix86/distrib	msvcrt.dll		win	y
+
+# -- Wrapper script
+
+# The installer uses this to create wrapper shell scripts on UNIX that set up LD_LIBRARY_PATH
+# and friends.
+
+solaris-sparc/lib	${Release}/solaris-sparc/lib	pro_wrap.sh		sol	y
+linux-ix86/lib		${Release}/linux-ix86/lib	pro_wrap.sh		lin	y
+hpux-parisc/lib		${Release}/hpux-parisc/lib	pro_wrap.sh		hp	y
+irix-mips/lib		${Release}/irix-mips/lib	pro_wrap.sh		sgi	y
+aix-risc/lib		${Release}/aix-risc/lib		pro_wrap.sh		aix	y
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib	pro_wrap.sh		bsd	y
+
+# -- Libraries and executables
+
+# For each DLL or EXE, there are versions linked against MSVCRT
+# (nodebug) and MSVCRTD (debug).  We can only distribute MSVCRT.DLL,
+# so the *d versions are only useful if VC++ is installed.  Also, for
+# each library that has public C APIs, we provide dynamic (with .dll &
+# .lib) as well as static versions
+
+
+# "protclsh83" is in the User Manual
+# "tclsh83" is what Tcl users expect
+
+win32-ix86/bin		${Release}/win32-ix86/bin	protclsh${TclVers}.exe		win	y
+win32-ix86/bin		${Debug}/win32-ix86/bin		protclsh${TclVers}d.exe		win/cd
+
+win32-ix86/bin		${Release}/win32-ix86/bin	tclsh${TclVers}.exe		win	y
+
+win32-ix86/bin		${Release}/win32-ix86/bin	prowish${TclVers}.exe		win	y
+win32-ix86/bin		${Debug}/win32-ix86/bin		prowish${TclVers}d.exe		win/cd
+
+win32-ix86/bin		${Release}/win32-ix86/bin	wish${TclVers}.exe		win	y
+
+# The TclX shells have stub problems
+#win32-ix86/bin		${Release}/win32-ix86/bin	wishx.exe			win	y
+#win32-ix86/bin		${Release}/win32-ix86/bin	tclxsh.exe			win	y
+
+win32-ix86/bin		${Release}/win32-ix86/bin	tcl${TclVers}.dll		win	y
+win32-ix86/lib		${Release}/win32-ix86/lib	tcl${TclVers}.lib		win/cd	y
+win32-ix86/lib		${Release}/win32-ix86/lib	tcl${TclVers}s.lib		win/cd	y
+win32-ix86/bin		${Debug}/win32-ix86/bin		tcl${TclVers}d.dll		win/cd	y
+win32-ix86/lib		${Debug}/win32-ix86/lib		tcl${TclVers}d.lib		win/cd	y
+win32-ix86/lib		${Debug}/win32-ix86/lib		tcl${TclVers}sd.lib		win/cd	y
+
+win32-ix86/lib		${Release}/win32-ix86/lib	tclstub${TclVers}.lib		win/cd	y
+
+win32-ix86/bin		${Release}/win32-ix86/bin	tk${TclVers}.dll		win	y
+win32-ix86/lib		${Release}/win32-ix86/lib	tk${TclVers}.lib		win/cd	y
+win32-ix86/lib		${Release}/win32-ix86/lib	tk${TclVers}s.lib		win/cd	y
+win32-ix86/bin		${Debug}/win32-ix86/bin		tk${TclVers}d.dll		win/cd	y
+win32-ix86/lib		${Debug}/win32-ix86/lib		tk${TclVers}d.lib		win/cd	y
+win32-ix86/lib		${Debug}/win32-ix86/lib		tk${TclVers}sd.lib		win/cd	y
+
+win32-ix86/lib		${Release}/win32-ix86/lib	tkstub${TclVers}.lib		win/cd	y
+
+win32-ix86/bin		${Release}/win32-ix86/bin	itcl${ItclVers}.dll		win	y
+win32-ix86/lib		${Release}/win32-ix86/lib	itcl${ItclVers}.lib		win/cd	y
+win32-ix86/lib		${Release}/win32-ix86/lib	itcl${ItclVers}s.lib		win/cd	y
+win32-ix86/bin		${Debug}/win32-ix86/bin		itcl${ItclVers}d.dll		win/cd	y
+win32-ix86/lib		${Debug}/win32-ix86/lib		itcl${ItclVers}d.lib		win/cd	y
+win32-ix86/lib		${Debug}/win32-ix86/lib		itcl${ItclVers}sd.lib		win/cd	y
+win32-ix86/lib/itcl${Itcl.Vers}	${Release}/win32-ix86/lib/itcl${Itcl.Vers}	pkgIndex.tcl		win	y
+
+win32-ix86/lib		${Release}/win32-ix86/lib	itclstub${ItclVers}.lib		win/cd	y
+
+win32-ix86/bin		${Release}/win32-ix86/bin	itk${ItclVers}.dll		win	y
+win32-ix86/lib		${Release}/win32-ix86/lib	itk${ItclVers}.lib		win/cd	y
+win32-ix86/lib		${Release}/win32-ix86/lib	itk${ItclVers}s.lib		win/cd	y
+win32-ix86/bin		${Debug}/win32-ix86/bin		itk${ItclVers}d.dll		win/cd	y
+win32-ix86/lib		${Debug}/win32-ix86/lib		itk${ItclVers}d.lib		win/cd	y
+win32-ix86/lib		${Debug}/win32-ix86/lib		itk${ItclVers}sd.lib		win/cd	y
+win32-ix86/lib/itk${Itcl.Vers}	${Release}/win32-ix86/lib/itk${Itcl.Vers}	pkgIndex.tcl		win	y
+
+win32-ix86/lib		${Release}/win32-ix86/lib	itkstub${ItclVers}.lib		win/cd	y
+
+win32-ix86/bin		${Release}/win32-ix86/bin	tclx${TclxVers}.dll		win	y
+win32-ix86/lib		${Release}/win32-ix86/lib	tclx${TclxVers}.lib		win/cd	y
+win32-ix86/lib		${Release}/win32-ix86/lib	tclx${TclxVers}s.lib		win/cd	y
+win32-ix86/bin		${Debug}/win32-ix86/bin		tclx${TclxVers}d.dll		win/cd	y
+win32-ix86/lib		${Debug}/win32-ix86/lib		tclx${TclxVers}d.lib		win/cd	y
+win32-ix86/lib		${Debug}/win32-ix86/lib		tclx${TclxVers}sd.lib		win/cd	y
+win32-ix86/lib/tclX${Tclx.Vers}	${Release}/win32-ix86/lib/tclX${Tclx.Vers}	pkgIndex.tcl		win	y
+win32-ix86/bin		${Release}/win32-ix86/bin	tkx${TclxVers}.dll		win	y
+win32-ix86/lib		${Release}/win32-ix86/lib	tkx${TclxVers}.lib		win/cd	y
+win32-ix86/lib		${Release}/win32-ix86/lib	tkx${TclxVers}s.lib		win/cd	y
+win32-ix86/bin		${Debug}/win32-ix86/bin		tkx${TclxVers}d.dll		win/cd	y
+win32-ix86/lib		${Debug}/win32-ix86/lib		tkx${TclxVers}d.lib		win/cd	y
+win32-ix86/lib		${Debug}/win32-ix86/lib		tkx${TclxVers}sd.lib		win/cd	y
+win32-ix86/lib/tkX${Tclx.Vers}	${Release}/win32-ix86/lib/tkX${Tclx.Vers}	pkgIndex.tcl		win	y
+
+win32-ix86/lib/reg1.0	${Release}/win32-ix86/lib/reg1.0	tclreg${TclVers}.dll	win	y
+win32-ix86/lib/reg1.0	${Debug}/win32-ix86/lib/reg1.0		tclreg${TclVers}d.dll	win/cd	y
+win32-ix86/lib/reg1.0	${Release}/win32-ix86/lib/reg1.0	pkgIndex.tcl		win	y
+
+win32-ix86/lib/dde1.1	${Release}/win32-ix86/lib/dde1.1	tcldde${TclVers}.dll	win	y
+win32-ix86/lib/dde1.1	${Debug}/win32-ix86/lib/dde1.1		tcldde${TclVers}d.dll	win/cd	y
+win32-ix86/lib/dde1.1	${Release}/win32-ix86/lib/dde1.1	pkgIndex.tcl		win	y
+
+win32-ix86/bin		${Release}/win32-ix86/bin		crypt10.dll		win	y
+win32-ix86/lib/crypt1.0	${Release}/win32-ix86/lib/crypt1.0	pkgIndex.tcl		win	y
+
+win32-ix86/bin			${Release}/win32-ix86/bin		winico04.dll		win	y
+win32-ix86/lib/wwinico0.4	${Release}/win32-ix86/lib/winico0.4	pkgIndex.tcl		win	y
+win32-ix86/lib/wwinico0.4	${Release}/win32-ix86/lib/winico0.4	license.terms		win	y
+win32-ix86/lib/wwinico0.4	${Release}/win32-ix86/lib/winico0.4	Readme			win	y
+
+win32-ix86/bin			${Release}/win32-ix86/bin		dbgext10.dll		win	y
+win32-ix86/lib/dbgext1.0	${Release}/win32-ix86/lib/dbgext1.0	pkgIndex.tcl		win	y
+win32-ix86/lib/dbgext1.0	${Release}/win32-ix86/lib/dbgext1.0	Readme			win	y
+
+win32-ix86/bin		${Release}/win32-ix86/bin	tclpip${TclVers}.dll		win	y
+
+win32-ix86/lib/icons	${Icons}			*.ico				win	
+win32-ix86/bin		${Release}/win32-ix86/bin	scicons.dll			win	
+
+# The .bin files are dynamically linked executables, RPATH must be patched
+# The installer automatically generates wrapper scripts for each .bin
+# file that sets up th LD_LIBRARY_PATH
+
+solaris-sparc/bin	${Release}/solaris-sparc/bin	protclsh${TclVers}.bin		sol	y
+solaris-sparc/bin	${Release}/solaris-sparc/bin	prowish${TclVers}.bin		sol	y
+
+solaris-sparc/bin	${Release}/solaris-sparc/bin	tclsh${Tcl.Vers}		sol	y
+solaris-sparc/bin	${Release}/solaris-sparc/bin	wish${Tcl.Vers}			sol	y
+
+# dynamic and static libraries, TCL_LIBRARY must be patched
+solaris-sparc/lib	${Release}/solaris-sparc/lib	libtcl${Tcl.Vers}.so		sol	y
+solaris-sparc/lib	${Release}/solaris-sparc/lib	libtcl${Tcl.Vers}.a		sol/cd	y
+solaris-sparc/lib	${Release}/solaris-sparc/lib	libtclstub${Tcl.Vers}.a		sol/cd	y
+
+solaris-sparc/lib	${Release}/solaris-sparc/lib	libtk${Tcl.Vers}.so		sol	y
+solaris-sparc/lib	${Release}/solaris-sparc/lib	libtk${Tcl.Vers}.a		sol/cd	y
+solaris-sparc/lib	${Release}/solaris-sparc/lib	libtkstub${Tcl.Vers}.a		sol/cd	y
+
+solaris-sparc/lib	${Release}/solaris-sparc/lib	libitcl${Itcl.Vers}.so		sol	y
+solaris-sparc/lib	${Release}/solaris-sparc/lib	libitcl${Itcl.Vers}.a		sol/cd	y
+solaris-sparc/lib	${Release}/solaris-sparc/lib	libitclstub${Itcl.Vers}.a	sol/cd	y
+solaris-sparc/lib/itcl${Itcl.Vers}	${Release}/solaris-sparc/lib/itcl${Itcl.Vers}	pkgIndex.tcl		sol	y
+
+solaris-sparc/lib	${Release}/solaris-sparc/lib	libitk${Itcl.Vers}.so		sol	y
+solaris-sparc/lib	${Release}/solaris-sparc/lib	libitk${Itcl.Vers}.a		sol/cd	y
+solaris-sparc/lib	${Release}/solaris-sparc/lib	libitkstub${Itcl.Vers}.a	sol/cd	y
+solaris-sparc/lib/itk${Itcl.Vers}	${Release}/solaris-sparc/lib/itk${Itcl.Vers}	pkgIndex.tcl		sol	y
+
+solaris-sparc/lib	${Release}/solaris-sparc/lib	libtclx${Tclx.Vers}.so		sol	y
+solaris-sparc/lib	${Release}/solaris-sparc/lib	libtclx${Tclx.Vers}.a		sol/cd	y
+solaris-sparc/bin	${Release}/solaris-sparc/bin	tcl				sol/cd	y
+solaris-sparc/lib/tclX${Tclx.Vers}	${Release}/solaris-sparc/lib/tclX${Tclx.Vers}	pkgIndex.tcl		sol	y
+
+solaris-sparc/lib	${Release}/solaris-sparc/lib	libtkx${Tclx.Vers}.so		sol	y
+solaris-sparc/lib	${Release}/solaris-sparc/lib	libtkx${Tclx.Vers}.a		sol/cd	y
+solaris-sparc/lib/tkX${Tclx.Vers}	${Release}/solaris-sparc/lib/tkX${Tclx.Vers}	pkgIndex.tcl		sol	y
+solaris-sparc/bin	${Release}/solaris-sparc/bin	wishx				sol/cd	y
+
+solaris-sparc/lib	${Release}/solaris-sparc/lib	libexpect${Expect.Vers}.so	sol	y
+solaris-sparc/lib	${Release}/solaris-sparc/lib	libexpect${Expect.Vers}.a	sol/cd	y
+solaris-sparc/bin	${Release}/solaris-sparc/bin	expect				sol	y
+solaris-sparc/bin	${Release}/solaris-sparc/bin	expectk				sol	y
+solaris-sparc/lib/expect${Expect.Vers}	${Release}/solaris-sparc/lib/expect${Expect.Vers}	pkgIndex.tcl	sol	y
+
+solaris-sparc/lib		${Release}/solaris-sparc/lib		liblimit1.0.so	sol	y
+solaris-sparc/lib/limit1.0	${Release}/solaris-sparc/lib/limit1.0	pkgIndex.tcl	sol	y
+
+solaris-sparc/lib		${Release}/solaris-sparc/lib		libcrypt1.0.so	sol	y
+solaris-sparc/lib/crypt1.0	${Release}/solaris-sparc/lib/crypt1.0	pkgIndex.tcl	sol	y
+
+# The .bin files are dynamically linked executables, SHLIB_PATH must be patched
+hpux-parisc/bin		${Release}/hpux-parisc/bin	protclsh${TclVers}.bin		hp
+hpux-parisc/bin		${Release}/hpux-parisc/bin	prowish${TclVers}.bin		hp
+
+hpux-parisc/bin		${Release}/hpux-parisc/bin	tclsh${Tcl.Vers}		hp	y
+hpux-parisc/bin		${Release}/hpux-parisc/bin	wish${Tcl.Vers}			hp	y
+
+# dynamic and static libraries, TCL_LIBRARY must be patched
+hpux-parisc/lib		${Release}/hpux-parisc/lib	libtcl${Tcl.Vers}.sl		hp
+hpux-parisc/lib		${Release}/hpux-parisc/lib	libtcl${Tcl.Vers}.a		hp/cd
+hpux-parisc/lib		${Release}/hpux-parisc/lib	libtclstub${Tcl.Vers}.a		hp/cd
+
+hpux-parisc/lib		${Release}/hpux-parisc/lib	libtk${Tcl.Vers}.sl		hp
+hpux-parisc/lib		${Release}/hpux-parisc/lib	libtk${Tcl.Vers}.a		hp/cd
+hpux-parisc/lib		${Release}/hpux-parisc/lib	libtkstub${Tcl.Vers}.a		hp/cd
+
+hpux-parisc/lib		${Release}/hpux-parisc/lib	libitcl${Itcl.Vers}.sl		hp
+hpux-parisc/lib		${Release}/hpux-parisc/lib	libitcl${Itcl.Vers}.a		hp/cd
+hpux-parisc/lib		${Release}/hpux-parisc/lib	libitclstub${Itcl.Vers}.a	hp/cd
+hpux-parisc/lib/itcl${Itcl.Vers}	${Release}/hpux-parisc/lib/itcl${Itcl.Vers}	pkgIndex.tcl		hp	y
+
+hpux-parisc/lib		${Release}/hpux-parisc/lib	libitk${Itcl.Vers}.sl		hp
+hpux-parisc/lib		${Release}/hpux-parisc/lib	libitk${Itcl.Vers}.a		hp/cd
+hpux-parisc/lib		${Release}/hpux-parisc/lib	libitkstub${Itcl.Vers}.a	hp/cd
+hpux-parisc/lib/itk${Itcl.Vers}	${Release}/hpux-parisc/lib/itk${Itcl.Vers}		pkgIndex.tcl		hp	y
+
+hpux-parisc/lib		${Release}/hpux-parisc/lib	libtclx${Tclx.Vers}.sl		hp
+hpux-parisc/lib		${Release}/hpux-parisc/lib	libtclx${Tclx.Vers}.a		hp/cd
+hpux-parisc/lib/tclX${Tclx.Vers}	${Release}/hpux-parisc/lib/tclX${Tclx.Vers}	pkgIndex.tcl		hp	y
+hpux-parisc/lib		${Release}/hpux-parisc/lib	libtkx${Tclx.Vers}.sl		hp
+hpux-parisc/lib		${Release}/hpux-parisc/lib	libtkx${Tclx.Vers}.a		hp/cd
+hpux-parisc/lib/tkX${Tclx.Vers}	${Release}/hpux-parisc/lib/tkX${Tclx.Vers}		pkgIndex.tcl		hp	y
+
+hpux-parisc/lib		${Release}/hpux-parisc/lib	libexpect${Expect.Vers}.sl	hp
+hpux-parisc/lib		${Release}/hpux-parisc/lib	libexpect${Expect.Vers}.a	hp/cd
+hpux-parisc/bin		${Release}/hpux-parisc/bin	expect				hp	y
+hpux-parisc/bin		${Release}/hpux-parisc/bin	expectk				hp	y
+hpux-parisc/lib/expect${Expect.Vers}	${Release}/hpux-parisc/lib/expect${Expect.Vers}	pkgIndex.tcl	hp	y
+
+hpux-parisc/lib		${Release}/hpux-parisc/lib	libcrypt1.0.sl			hp	y
+hpux-parisc/lib/crypt1.0	${Release}/hpux-parisc/lib/crypt1.0	pkgIndex.tcl	hp	y
+
+hpux-parisc/lib		${Release}/hpux-parisc/lib	liblimit1.0.sl			hp	y
+hpux-parisc/lib/limit1.0	${Release}/hpux-parisc/lib/limit1.0	pkgIndex.tcl	hp	y
+
+# The .bin files are dynamically linked executables, RPATH must be patched
+linux-ix86/bin		${Release}/linux-ix86/bin	protclsh${TclVers}.bin		lin	
+linux-ix86/bin		${Release}/linux-ix86/bin	prowish${TclVers}.bin		lin	
+
+linux-ix86/bin		${Release}/linux-ix86/bin	tclsh${Tcl.Vers}		lin	y
+linux-ix86/bin		${Release}/linux-ix86/bin	wish${Tcl.Vers}			lin	y
+
+# dynamic and static libraries, TCL_LIBRARY must be patched
+linux-ix86/lib		${Release}/linux-ix86/lib	libtcl${Tcl.Vers}.so		lin	
+linux-ix86/lib		${Release}/linux-ix86/lib	libtcl${Tcl.Vers}.a		lin/cd	
+linux-ix86/lib		${Release}/linux-ix86/lib	libtclstub${Tcl.Vers}.a		lin/cd	
+
+linux-ix86/lib		${Release}/linux-ix86/lib	libtk${Tcl.Vers}.so		lin	
+linux-ix86/lib		${Release}/linux-ix86/lib	libtk${Tcl.Vers}.a		lin/cd
+linux-ix86/lib		${Release}/linux-ix86/lib	libtkstub${Tcl.Vers}.a		lin/cd
+
+linux-ix86/lib		${Release}/linux-ix86/lib	libitcl${Itcl.Vers}.so		lin	
+linux-ix86/lib		${Release}/linux-ix86/lib	libitcl${Itcl.Vers}.a		lin/cd
+linux-ix86/lib		${Release}/linux-ix86/lib	libitclstub${Itcl.Vers}.a	lin/cd
+linux-ix86/lib/itcl${Itcl.Vers}	${Release}/linux-ix86/lib/itcl${Itcl.Vers}	pkgIndex.tcl		lin	y
+
+linux-ix86/lib		${Release}/linux-ix86/lib	libitk${Itcl.Vers}.so		lin	
+linux-ix86/lib		${Release}/linux-ix86/lib	libitk${Itcl.Vers}.a		lin/cd	
+linux-ix86/lib		${Release}/linux-ix86/lib	libitkstub${Itcl.Vers}.a	lin/cd	
+linux-ix86/lib/itk${Itcl.Vers}	${Release}/linux-ix86/lib/itk${Itcl.Vers}	pkgIndex.tcl		lin	y
+
+linux-ix86/lib		${Release}/linux-ix86/lib	libtclx${Tclx.Vers}.so		lin	y
+linux-ix86/lib		${Release}/linux-ix86/lib	libtclx${Tclx.Vers}.a		lin/cd	y
+linux-ix86/lib/tclX${Tclx.Vers}	${Release}/linux-ix86/lib/tclX${Tclx.Vers}	pkgIndex.tcl		lin	y
+
+linux-ix86/lib		${Release}/linux-ix86/lib	libtkx${Tclx.Vers}.so		lin	y
+linux-ix86/lib		${Release}/linux-ix86/lib	libtkx${Tclx.Vers}.a		lin/cd	y
+linux-ix86/lib/tkX${Tclx.Vers}	${Release}/linux-ix86/lib/tkX${Tclx.Vers}	pkgIndex.tcl		lin	y
+
+linux-ix86/lib		${Release}/linux-ix86/lib	libexpect${Expect.Vers}.so	lin	y
+linux-ix86/lib		${Release}/linux-ix86/lib	libexpect${Expect.Vers}.a	lin/cd	y
+linux-ix86/bin		${Release}/linux-ix86/bin	expect				lin	y
+linux-ix86/bin		${Release}/linux-ix86/bin	expectk				lin	y
+linux-ix86/lib/expect${Expect.Vers}	${Release}/linux-ix86/lib/expect${Expect.Vers}	pkgIndex.tcl	lin	y
+
+linux-ix86/lib		${Release}/linux-ix86/lib		libcrypt1.0.so		lin	y
+linux-ix86/lib/crypt1.0	${Release}/linux-ix86/lib/crypt1.0	pkgIndex.tcl		lin	y
+
+linux-ix86/lib		${Release}/linux-ix86/lib		liblimit1.0.so		lin	y
+linux-ix86/lib/limit1.0	${Release}/linux-ix86/lib/limit1.0	pkgIndex.tcl		lin	y
+
+# The .bin files are dynamically linked executables, RPATH must be patched
+irix-mips/bin		${Release}/irix-mips/bin	protclsh${TclVers}.bin		sgi	y
+irix-mips/bin		${Release}/irix-mips/bin	prowish${TclVers}.bin		sgi	y
+
+irix-mips/bin		${Release}/irix-mips/bin	tclsh${Tcl.Vers}		sgi	y
+irix-mips/bin		${Release}/irix-mips/bin	wish${Tcl.Vers}			sgi	y
+
+# dynamic and static libraries, TCL_LIBRARY must be patched
+irix-mips/lib		${Release}/irix-mips/lib		libtcl${Tcl.Vers}.so	sgi	y
+irix-mips/lib		${Release}/irix-mips/lib		libtcl${Tcl.Vers}.a	sgi/cd	y
+irix-mips/lib		${Release}/irix-mips/lib		libtclstub${Tcl.Vers}.a	sgi/cd	y
+
+irix-mips/lib		${Release}/irix-mips/lib		libtk${Tcl.Vers}.so	sgi	y
+irix-mips/lib		${Release}/irix-mips/lib		libtk${Tcl.Vers}.a	sgi/cd	y
+irix-mips/lib		${Release}/irix-mips/lib		libtkstub${Tcl.Vers}.a	sgi/cd	y
+
+irix-mips/lib		${Release}/irix-mips/lib		libitcl${Itcl.Vers}.so	sgi	y
+irix-mips/lib		${Release}/irix-mips/lib		libitcl${Itcl.Vers}.a	sgi/cd	y
+irix-mips/lib		${Release}/irix-mips/lib		libitclstub${Itcl.Vers}.a	sgi/cd	y
+irix-mips/lib/itcl${Itcl.Vers}	${Release}/irix-mips/lib/itcl${Itcl.Vers}	pkgIndex.tcl	sgi	y
+
+irix-mips/lib		${Release}/irix-mips/lib		libitk${Itcl.Vers}.so	sgi	y
+irix-mips/lib		${Release}/irix-mips/lib		libitk${Itcl.Vers}.a	sgi/cd	y
+irix-mips/lib		${Release}/irix-mips/lib		libitkstub${Itcl.Vers}.a	sgi/cd	y
+irix-mips/lib/itk${Itcl.Vers}	${Release}/irix-mips/lib/itk${Itcl.Vers}	pkgIndex.tcl	sgi	y
+
+irix-mips/lib		${Release}/irix-mips/lib		libtclx${Tclx.Vers}.so	sgi	y
+irix-mips/lib		${Release}/irix-mips/lib		libtclx${Tclx.Vers}.a	sgi/cd	y
+irix-mips/lib/tclX${Tclx.Vers}	${Release}/irix-mips/lib/tclX${Tclx.Vers}	pkgIndex.tcl	sgi	y
+
+irix-mips/lib		${Release}/irix-mips/lib		libtkx${Tclx.Vers}.so		sgi	y
+irix-mips/lib		${Release}/irix-mips/lib		libtkx${Tclx.Vers}.a		sgi/cd	y
+irix-mips/lib/tkX${Tclx.Vers}	${Release}/irix-mips/lib/tkX${Tclx.Vers}	pkgIndex.tcl	sgi	y
+
+irix-mips/lib		${Release}/irix-mips/lib		libexpect${Expect.Vers}.so	sgi	y
+irix-mips/lib		${Release}/irix-mips/lib		libexpect${Expect.Vers}.a	sgi/cd	y
+irix-mips/bin		${Release}/irix-mips/bin		expect			sgi	y
+irix-mips/bin		${Release}/irix-mips/bin		expectk			sgi	y
+irix-mips/lib/expect${Expect.Vers}	${Release}/irix-mips/lib/expect${Expect.Vers}	pkgIndex.tcl	sgi	y
+
+irix-mips/lib		${Release}/irix-mips/lib		libcrypt1.0.so		sgi	y
+irix-mips/lib/crypt1.0	${Release}/irix-mips/lib/crypt1.0	pkgIndex.tcl		sgi	y
+
+# IRIX version of limit dumps core
+#irix-mips/lib		${Release}/irix-mips/lib		liblimit1.0.so		sgi	y
+#irix-mips/lib/limit1.0	${Release}/irix-mips/lib/limit1.0	pkgIndex.tcl		sgi	y
+
+# The .bin files are dynamically linked executables, RPATH must be patched
+aix-risc/bin		${Release}/aix-risc/bin		protclsh${TclVers}.bin		aix	y
+aix-risc/bin		${Release}/aix-risc/bin		prowish${TclVers}.bin		aix	y
+
+aix-risc/bin		${Release}/aix-risc/bin		tclsh${Tcl.Vers}		aix	y
+aix-risc/bin		${Release}/aix-risc/bin		wish${Tcl.Vers}			aix	y
+
+# dynamic and static libraries, TCL_LIBRARY must be patched
+aix-risc/lib		${Release}/aix-risc/lib		libtcl${Tcl.Vers}.so		aix	y
+aix-risc/lib		${Release}/aix-risc/lib		libtcl${Tcl.Vers}.a		aix/cd	y
+aix-risc/lib		${Release}/aix-risc/lib		libtclstub${Tcl.Vers}.a		aix/cd	y
+
+aix-risc/lib		${Release}/aix-risc/lib		libtk${Tcl.Vers}.so		aix	y
+aix-risc/lib		${Release}/aix-risc/lib		libtk${Tcl.Vers}.a		aix/cd	y
+aix-risc/lib		${Release}/aix-risc/lib		libtkstub${Tcl.Vers}.a		aix/cd	y
+	
+aix-risc/lib		${Release}/aix-risc/lib		libitcl${Itcl.Vers}.so		aix	y
+aix-risc/lib		${Release}/aix-risc/lib		libitcl${Itcl.Vers}.a		aix/cd	y
+aix-risc/lib		${Release}/aix-risc/lib		libitclstub${Itcl.Vers}.a	aix/cd	y
+aix-risc/lib/itcl${Itcl.Vers}	${Release}/aix-risc/lib/itcl${Itcl.Vers}	pkgIndex.tcl	aix	y
+
+aix-risc/lib		${Release}/aix-risc/lib		libitk${Itcl.Vers}.so		aix	y
+aix-risc/lib		${Release}/aix-risc/lib		libitk${Itcl.Vers}.a		aix/cd	y
+aix-risc/lib		${Release}/aix-risc/lib		libitkstub${Itcl.Vers}.a	aix/cd	y
+aix-risc/lib/itk${Itcl.Vers}	${Release}/aix-risc/lib/itk${Itcl.Vers}	pkgIndex.tcl	aix	y
+
+aix-risc/lib		${Release}/aix-risc/lib		libtclx${Tclx.Vers}.so		aix	y
+aix-risc/lib		${Release}/aix-risc/lib		libtclx${Tclx.Vers}.a		aix/cd	y
+aix-risc/lib/tclX${Tclx.Vers}	${Release}/aix-risc/lib/tclX${Tclx.Vers}	pkgIndex.tcl	aix	y
+
+aix-risc/lib		${Release}/aix-risc/lib		libtkx${Tclx.Vers}.so		aix	y
+aix-risc/lib		${Release}/aix-risc/lib		libtkx${Tclx.Vers}.a		aix/cd	y
+aix-risc/lib/tkX${Tclx.Vers}	${Release}/aix-risc/lib/tkX${Tclx.Vers}	pkgIndex.tcl	aix	y
+
+aix-risc/lib		${Release}/aix-risc/lib		libexpect${Expect.Vers}.so	aix	y
+aix-risc/lib		${Release}/aix-risc/lib		libexpect${Expect.Vers}.a	aix/cd	y
+aix-risc/bin		${Release}/aix-risc/bin		expect				aix	y
+aix-risc/bin		${Release}/aix-risc/bin		expectk				aix	y
+aix-risc/lib/expect${Expect.Vers}	${Release}/aix-risc/lib/expect${Expect.Vers}	pkgIndex.tcl	aix	y
+
+aix-risc/lib		${Release}/aix-risc/lib		libcrypt1.0.so			aix	y
+aix-risc/lib/crypt1.0	${Release}/aix-risc/lib/crypt1.0	pkgIndex.tcl		aix	y
+
+aix-risc/lib		${Release}/aix-risc/lib		liblimit1.0.so			aix	y
+aix-risc/lib/limit1.0	${Release}/aix-risc/lib/limit1.0	pkgIndex.tcl		aix	y
+
+# The .bin files are dynamically linked executables, RPATH must be patched
+freebsd-ix86/bin	${Release}/freebsd-ix86/bin	protclsh${TclVers}.bin			bsd	y
+freebsd-ix86/bin	${Release}/freebsd-ix86/bin	prowish${TclVers}.bin			bsd	y
+
+freebsd-ix86/bin	${Release}/freebsd-ix86/bin	tclsh${Tcl.Vers}			bsd	y
+freebsd-ix86/bin	${Release}/freebsd-ix86/bin	wish${Tcl.Vers}				bsd	y
+
+# dynamic and static libraries, TCL_LIBRARY must be patched
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		libtcl${Tcl.Vers}.so		bsd	y
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		libtcl${Tcl.Vers}.a		bsd/cd	y
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		libtclstub${Tcl.Vers}.a		bsd/cd	y
+
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		libtk${Tcl.Vers}.so		bsd	y
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		libtk${Tcl.Vers}.a		bsd/cd	y
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		libtkstub${Tcl.Vers}.a		bsd/cd	y
+
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		libitcl${Itcl.Vers}.so		bsd	y
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		libitcl${Itcl.Vers}.a		bsd/cd	y
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		libitclstub${Itcl.Vers}.a	bsd/cd	y
+freebsd-ix86/lib/itcl${Itcl.Vers}	${Release}/freebsd-ix86/lib/itcl${Itcl.Vers}	pkgIndex.tcl	bsd	y
+
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		libitk${Itcl.Vers}.so		bsd	y
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		libitk${Itcl.Vers}.a		bsd/cd	y
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		libitkstub${Itcl.Vers}.a	bsd/cd	y
+freebsd-ix86/lib/itk${Itcl.Vers}	${Release}/freebsd-ix86/lib/itk${Itcl.Vers}	pkgIndex.tcl	bsd	y
+
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		libtclx${Tclx.Vers}.so		bsd	y
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		libtclx${Tclx.Vers}.a		bsd/cd	y
+freebsd-ix86/lib/tclX${Tclx.Vers}	${Release}/freebsd-ix86/lib/tclX${Tclx.Vers}	pkgIndex.tcl	bsd	y
+
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		libtkx${Tclx.Vers}.so		bsd	y
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		libtkx${Tclx.Vers}.a		bsd/cd	y
+freebsd-ix86/lib/tkX${Tclx.Vers}	${Release}/freebsd-ix86/lib/tkX${Tclx.Vers}	pkgIndex.tcl	bsd	y
+
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		libexpect${Expect.Vers}.so	bsd	y
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		libexpect${Expect.Vers}.a	bsd/cd	y
+freebsd-ix86/bin	${Release}/freebsd-ix86/bin		expect				bsd	y
+freebsd-ix86/bin	${Release}/freebsd-ix86/bin		expectk				bsd	y
+freebsd-ix86/lib/expect${Expect.Vers}	${Release}/freebsd-ix86/lib/expect${Expect.Vers}	pkgIndex.tcl	bsd	y
+
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		libcrypt1.0.so			bsd	y
+freebsd-ix86/lib/crypt1.0	${Release}/freebsd-ix86/lib/crypt1.0	pkgIndex.tcl		bsd	y
+
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		liblimit1.0.so			bsd	y
+freebsd-ix86/lib/limit1.0	${Release}/freebsd-ix86/lib/limit1.0	pkgIndex.tcl		bsd	y
+
+# -- Various tclConfig.sh files --
+
+solaris-sparc/lib	${Release}/solaris-sparc/lib		*Config.sh		sol	y
+linux-ix86/lib		${Release}/linux-ix86/lib		*Config.sh		lin	y
+hpux-parisc/lib		${Release}/hpux-parisc/lib		*Config.sh		hp	y
+irix-mips/lib		${Release}/irix-mips/lib		*Config.sh		sgi	y
+aix-risc/lib		${Release}/aix-risc/lib			*Config.sh		aix	y
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		*Config.sh		bsd	y
+
+# this is not yet patched
+#win32-ix86/lib		${Release}/win32-ix86/lib		*Config.sh		win	y
+
+# -- Tcl library --
+lib/tcl${Tcl.Vers}/tcltest1.0	${Release}/lib/tcl${Tcl.Vers}/tcltest1.0	*.tcl		all	y
+lib/tcl${Tcl.Vers}/http2.3	${Release}/lib/tcl${Tcl.Vers}/http2.3	*.tcl			all	y
+lib/tcl${Tcl.Vers}/http1.0	${Release}/lib/tcl${Tcl.Vers}/http1.0	*.tcl			all	y
+lib/tcl${Tcl.Vers}/opt0.4	${Release}/lib/tcl${Tcl.Vers}/opt0.4	*.tcl			all	y
+lib/tcl${Tcl.Vers}/msgcat1.0	${Release}/lib/tcl${Tcl.Vers}/msgcat1.0	*.tcl			all	y
+lib/tcl${Tcl.Vers}/encoding	${Release}/lib/tcl${Tcl.Vers}/encoding	*.enc			all	y
+lib/tcl${Tcl.Vers}		${Release}/lib/tcl${Tcl.Vers}		*.tcl			all	y
+lib/tcl${Tcl.Vers}		${Release}/lib/tcl${Tcl.Vers}		tclIndex		all	y
+
+# -- Standard Tcl Library --
+
+lib/tcllib${Tcllib.Vers}		${Release}/lib/tcllib${Tcllib.Vers}		pkgIndex.tcl	all	y
+lib/tcllib${Tcllib.Vers}/base64		${Release}/lib/tcllib${Tcllib.Vers}/base64	*		all	y
+lib/tcllib${Tcllib.Vers}/cmdline	${Release}/lib/tcllib${Tcllib.Vers}/cmdline	*		all	y
+lib/tcllib${Tcllib.Vers}/fileutil	${Release}/lib/tcllib${Tcllib.Vers}/fileutil	*		all	y
+lib/tcllib${Tcllib.Vers}/ftp		${Release}/lib/tcllib${Tcllib.Vers}/ftp 	*		all	y
+lib/tcllib${Tcllib.Vers}/html		${Release}/lib/tcllib${Tcllib.Vers}/html	*		all	y
+lib/tcllib${Tcllib.Vers}/math		${Release}/lib/tcllib${Tcllib.Vers}/math	*		all	y
+lib/tcllib${Tcllib.Vers}/mime		${Release}/lib/tcllib${Tcllib.Vers}/mime	*		all	y
+lib/tcllib${Tcllib.Vers}/ncgi		${Release}/lib/tcllib${Tcllib.Vers}/ncgi	*		all	y
+lib/tcllib${Tcllib.Vers}/nntp		${Release}/lib/tcllib${Tcllib.Vers}/nntp	*		all	y
+lib/tcllib${Tcllib.Vers}/pop3		${Release}/lib/tcllib${Tcllib.Vers}/pop3	*		all	y
+lib/tcllib${Tcllib.Vers}/profiler	${Release}/lib/tcllib${Tcllib.Vers}/profiler	*		all	y
+lib/tcllib${Tcllib.Vers}/struct		${Release}/lib/tcllib${Tcllib.Vers}/struct	*		all	y
+lib/tcllib${Tcllib.Vers}/textutil	${Release}/lib/tcllib${Tcllib.Vers}/textutil	*		all	y
+lib/tcllib${Tcllib.Vers}/uri		${Release}/lib/tcllib${Tcllib.Vers}/uri		*		all	y
+
+# -- Unix-specific Tcl library files --
+lib/tcl${Tcl.Vers}		${Release}/lib/tcl${Tcl.Vers}		ldAix			unix	y
+
+# -- Tk library --
+lib/tk${Tcl.Vers}/images	${Release}/lib/tk${Tcl.Vers}/images	README			all	y
+lib/tk${Tcl.Vers}/images	${Release}/lib/tk${Tcl.Vers}/images	*.gif			all	y
+lib/tk${Tcl.Vers}/images	${Release}/lib/tk${Tcl.Vers}/images	*.eps			all	y
+lib/tk${Tcl.Vers}/demos/images	${TkSrc}/library/demos/images	*.gif			all	y
+lib/tk${Tcl.Vers}/demos/images	${TkSrc}/library/demos/images	*.bmp			all	y
+lib/tk${Tcl.Vers}/demos/images	${TkSrc}/library/demos/images	*.ppm			all	y
+lib/tk${Tcl.Vers}/demos		${TkSrc}/library/demos		\[a-z\]*		all	y
+lib/tk${Tcl.Vers}/demos		${TkSrc}/library/demos		README			all	y
+lib/tk${Tcl.Vers}		${Release}/lib/tk${Tcl.Vers}		*.tcl			all	y
+lib/tk${Tcl.Vers}		${Release}/lib/tk${Tcl.Vers}		*.ps			all	y
+lib/tk${Tcl.Vers}		${Release}/lib/tk${Tcl.Vers}		tclIndex		all	y
+
+# -- TclPro public C template files --
+src/tclpro${Pro.Vers}		tclwrapper/src			proWrapTclMain.c	all/cd	y
+src/tclpro${Pro.Vers}		tclwrapper/src			proWrapTkMain.c		all/cd	y
+src/tclpro${Pro.Vers}		tclwrapper/src			proInit.c		all/cd	y
+src/tclpro${Pro.Vers}		proshells/common		sampleAppInit.c		all/cd	y
+src/tclpro${Pro.Vers}		proshells/common		README			all/cd	y
+
+src/config			config				tcl.m4			all/cd y
+src/config			config				install-sh		all/cd y
+src/config			config				mkinstalldirs		all/cd y
+
+# -- TclPro public .uses template files --
+lib/prowrapuses		tclpro/modules/wrapper/lib		*.uses	all	y
+lib/prowrapuses		tclpro/modules/wrapper/lib		prowrapUses.tcl	all	y
+lib/prowrapuses		tclpro/modules/wrapper/lib		README	all	y
+
+# -- Core header files --
+# We're including tclInt.h because the namespace API lives in there
+include			${Release}/include			tcl.h			all/cd	y
+include			${Release}/include			tclDecls.h		all/cd	y
+include			${TclSrc}/generic			tclInt.h		all/cd	y
+include			${TclSrc}/generic			tclIntDecls.h		all/cd	y
+include			${Release}/include			tk.h			all/cd	y
+include			${Release}/include			tkDecls.h		all/cd	y
+include			${TkSrc}/generic			tkInt.h			all/cd	y
+include			${TkSrc}/generic			tkIntDecls.h		all/cd	y
+include			${TkSrc}/generic			tkIntXlibDecls.h	all/cd	y
+include/x11		${TkSrc}/xlib/X11			*.h			win/cd	y
+
+# -- Debugger --
+win32-ix86/bin		${Release}/win32-ix86/bin		prodebug.exe		win	y
+win32-ix86/bin		${Release}/win32-ix86/bin		appLaunch.tcl		win	y
+win32-ix86/bin		${Release}/win32-ix86/bin		prodebug.tcl		win	y
+
+solaris-sparc/bin	${Release}/solaris-sparc/bin		prodebug.bin		sol	y
+solaris-sparc/bin	${Release}/solaris-sparc/bin		appLaunch.tcl		sol	y
+solaris-sparc/bin	${Release}/solaris-sparc/bin		prodebug.tcl		sol	y
+
+hpux-parisc/bin		${Release}/hpux-parisc/bin		prodebug.bin		hp
+hpux-parisc/bin		${Release}/hpux-parisc/bin		appLaunch.tcl		hp
+hpux-parisc/bin		${Release}/hpux-parisc/bin		prodebug.tcl		hp
+
+linux-ix86/bin		${Release}/linux-ix86/bin		prodebug.bin		lin
+linux-ix86/bin		${Release}/linux-ix86/bin		appLaunch.tcl		lin
+linux-ix86/bin		${Release}/linux-ix86/bin		prodebug.tcl		lin
+
+irix-mips/bin		${Release}/irix-mips/bin		prodebug.bin		sgi	y
+irix-mips/bin		${Release}/irix-mips/bin		appLaunch.tcl		sgi	y
+irix-mips/bin		${Release}/irix-mips/bin 		prodebug.tcl		sgi	y
+
+aix-risc/bin		${Release}/aix-risc/bin			prodebug.bin		aix
+aix-risc/bin		${Release}/aix-risc/bin			appLaunch.tcl		aix
+aix-risc/bin		${Release}/aix-risc/bin			prodebug.tcl		aix
+
+freebsd-ix86/bin	${Release}/freebsd-ix86/bin		prodebug.bin		bsd
+freebsd-ix86/bin	${Release}/freebsd-ix86/bin		appLaunch.tcl		bsd
+freebsd-ix86/bin	${Release}/freebsd-ix86/bin		prodebug.tcl		bsd
+
+# -- Compiler --
+include			${Release}/include			proTbcLoad.h			all/cd	y
+
+win32-ix86/bin		${Release}/win32-ix86/bin		procomp.exe			win	y
+win32-ix86/bin		${Release}/win32-ix86/bin		tbcload13.dll			win	y
+win32-ix86/lib		${Release}/win32-ix86/lib		tbcload13.lib			win/cd	y
+win32-ix86/lib		${Release}/win32-ix86/lib		tbcload13s.lib			win/cd	y
+win32-ix86/bin		${Debug}/win32-ix86/bin			tbcload13d.dll			win/cd	y
+win32-ix86/lib		${Debug}/win32-ix86/lib			tbcload13d.lib			win/cd	y
+win32-ix86/lib		${Debug}/win32-ix86/lib			tbcload13sd.lib			win/cd	y
+win32-ix86/lib/tbcload1.3	${Release}/win32-ix86/lib/tbcload1.3	pkgIndex.tcl		win	y
+
+solaris-sparc/bin	${Release}/solaris-sparc/bin		procomp.bin			sol	y
+solaris-sparc/lib	${Release}/solaris-sparc/lib		libtbcload1.3.so		sol	y
+solaris-sparc/lib	${Release}/solaris-sparc/lib		libtbcload1.3.a			sol/cd	y
+solaris-sparc/lib/tbcload1.3	${Release}/solaris-sparc/lib/tbcload1.3		pkgIndex.tcl	sol	y
+
+hpux-parisc/bin		${Release}/hpux-parisc/bin		procomp.bin			hp
+hpux-parisc/lib		${Release}/hpux-parisc/lib		libtbcload1.3.sl		hp
+hpux-parisc/lib		${Release}/hpux-parisc/lib		libtbcload1.3.a			hp/cd
+hpux-parisc/lib/tbcload1.3	${Release}/hpux-parisc/lib/tbcload1.3	pkgIndex.tcl		hp	y
+
+linux-ix86/bin		${Release}/linux-ix86/bin		procomp.bin			lin
+linux-ix86/lib		${Release}/linux-ix86/lib		libtbcload1.3.so		lin
+linux-ix86/lib		${Release}/linux-ix86/lib		libtbcload1.3.a			lin/cd
+linux-ix86/lib/tbcload1.3	${Release}/linux-ix86/lib/tbcload1.3	pkgIndex.tcl		lin	y
+
+irix-mips/bin		${Release}/irix-mips/bin		procomp.bin			sgi	y
+irix-mips/lib		${Release}/irix-mips/lib		libtbcload1.3.so		sgi	y
+irix-mips/lib		${Release}/irix-mips/lib		libtbcload1.3.a			sgi/cd	y
+irix-mips/lib/tbcload1.3	${Release}/irix-mips/lib/tbcload1.3	pkgIndex.tcl		sgi	y
+
+aix-risc/bin		${Release}/aix-risc/bin		procomp.bin				aix
+aix-risc/lib		${Release}/aix-risc/lib		libtbcload1.3.so			aix
+aix-risc/lib		${Release}/aix-risc/lib		libtbcload1.3.a				aix/cd
+aix-risc/lib/tbcload1.3	${Release}/aix-risc/lib/tbcload1.3		pkgIndex.tcl		aix	y
+
+freebsd-ix86/bin		${Release}/freebsd-ix86/bin		procomp.bin		bsd
+freebsd-ix86/lib		${Release}/freebsd-ix86/lib		libtbcload1.3.so	bsd
+freebsd-ix86/lib		${Release}/freebsd-ix86/lib		libtbcload1.3.a		bsd/cd
+freebsd-ix86/lib/tbcload1.3	${Release}/freebsd-ix86/lib/tbcload1.3	pkgIndex.tcl	bsd	y
+
+# -- Checker --
+win32-ix86/bin		${Release}/win32-ix86/bin		procheck.exe		win	y
+
+solaris-sparc/bin	${Release}/solaris-sparc/bin		procheck.bin		sol	y
+
+hpux-parisc/bin		${Release}/hpux-parisc/bin		procheck.bin		hp
+
+linux-ix86/bin		${Release}/linux-ix86/bin		procheck.bin		lin
+
+irix-mips/bin		${Release}/irix-mips/bin		procheck.bin		sgi	y
+
+aix-risc/bin		${Release}/aix-risc/bin			procheck.bin		aix
+
+freebsd-ix86/bin	${Release}/freebsd-ix86/bin		procheck.bin		bsd
+
+# -- Wrapper --
+include			${Release}/include			proWrap.h		all/cd	y
+
+win32-ix86/bin		${Release}/win32-ix86/bin		prowrap.exe		win	y
+win32-ix86/bin		${Release}/win32-ix86/bin		pwutil10.exe		win	y
+
+win32-ix86/lib		${Release}/win32-ix86/lib		wrapper14x.lib		win/cd	y
+win32-ix86/lib		${Release}/win32-ix86/lib		wrapper14s.lib		win/cd	y
+win32-ix86/lib		${Debug}/win32-ix86/lib			wrapper14xd.lib		win/cd
+win32-ix86/lib		${Debug}/win32-ix86/lib			wrapper14sd.lib		win/cd
+
+solaris-sparc/bin	${Release}/solaris-sparc/bin		prowrap.bin		sol	y
+solaris-sparc/bin	${Release}/solaris-sparc/bin		pwutil10		sol	y
+solaris-sparc/lib	${Release}/solaris-sparc/lib		libwrapper1.4.a		sol/cd	y
+
+hpux-parisc/bin		${Release}/hpux-parisc/bin		prowrap.bin		hp	y
+hpux-parisc/bin		${Release}/hpux-parisc/bin		pwutil10		hp	y
+hpux-parisc/lib		${Release}/hpux-parisc/lib		libwrapper1.4.a		hp/cd	y
+
+linux-ix86/bin		${Release}/linux-ix86/bin		prowrap.bin		lin	y
+linux-ix86/bin		${Release}/linux-ix86/bin		pwutil10		lin	y
+linux-ix86/lib		${Release}/linux-ix86/lib		libwrapper1.4.a		lin/cd	y
+
+irix-mips/bin		${Release}/irix-mips/bin		prowrap.bin		sgi	y
+irix-mips/bin		${Release}/irix-mips/bin		pwutil10		sgi	y
+irix-mips/lib		${Release}/irix-mips/lib		libwrapper1.4.a		sgi/cd	y
+
+aix-risc/bin		${Release}/aix-risc/bin			prowrap.bin		aix	y
+aix-risc/bin		${Release}/aix-risc/bin			pwutil10		aix	y
+aix-risc/lib		${Release}/aix-risc/lib			libwrapper1.4.a		aix/cd	y
+
+freebsd-ix86/bin	${Release}/freebsd-ix86/bin		prowrap.bin		bsd	y
+freebsd-ix86/bin	${Release}/freebsd-ix86/bin		pwutil10		bsd	y
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		libwrapper1.4.a		bsd/cd	y
+
+# -- Wrapper inputs --
+win32-ix86/lib		${Release}/win32-ix86/lib		wraptclsh${TclVers}.in		win	y
+win32-ix86/lib		${Release}/win32-ix86/lib		wraptclsh${TclVers}s.in		win	y
+win32-ix86/lib		${Release}/win32-ix86/lib		wrapwish${TclVers}.in		win	y
+win32-ix86/lib		${Release}/win32-ix86/lib		wrapwish${TclVers}s.in		win	y
+win32-ix86/lib		${Release}/win32-ix86/lib		wrapbigtclsh${TclVers}s.in	win	y
+win32-ix86/lib		${Release}/win32-ix86/lib		wrapbigwish${TclVers}s.in	win	y
+
+solaris-sparc/lib	${Release}/solaris-sparc/lib		wraptclsh${TclVers}.in		sol	y
+solaris-sparc/lib	${Release}/solaris-sparc/lib		wrapwish${TclVers}.in		sol	y
+solaris-sparc/lib	${Release}/solaris-sparc/lib		wraptclsh${TclVers}s.in		sol	y
+solaris-sparc/lib	${Release}/solaris-sparc/lib		wrapwish${TclVers}s.in		sol	y
+
+hpux-parisc/lib		${Release}/hpux-parisc/lib		wraptclsh${TclVers}.in		hp	y
+hpux-parisc/lib		${Release}/hpux-parisc/lib		wrapwish${TclVers}.in		hp	y
+hpux-parisc/lib		${Release}/hpux-parisc/lib		wraptclsh${TclVers}s.in		hp	y
+hpux-parisc/lib		${Release}/hpux-parisc/lib		wrapwish${TclVers}s.in		hp	y
+
+linux-ix86/lib		${Release}/linux-ix86/lib		wraptclsh${TclVers}.in		lin	y
+linux-ix86/lib		${Release}/linux-ix86/lib		wrapwish${TclVers}.in		lin	y
+linux-ix86/lib		${Release}/linux-ix86/lib		wraptclsh${TclVers}s.in		lin	y
+linux-ix86/lib		${Release}/linux-ix86/lib		wrapwish${TclVers}s.in		lin	y
+
+irix-mips/lib		${Release}/irix-mips/lib		wraptclsh${TclVers}.in		sgi	y
+irix-mips/lib		${Release}/irix-mips/lib		wrapwish${TclVers}.in		sgi	y
+irix-mips/lib		${Release}/irix-mips/lib		wraptclsh${TclVers}s.in		sgi	y
+irix-mips/lib		${Release}/irix-mips/lib		wrapwish${TclVers}s.in		sgi	y
+
+aix-risc/lib		${Release}/aix-risc/lib			wraptclsh${TclVers}.in		aix	y
+aix-risc/lib		${Release}/aix-risc/lib			wrapwish${TclVers}.in		aix	y
+aix-risc/lib		${Release}/aix-risc/lib			wraptclsh${TclVers}s.in		aix	y
+aix-risc/lib		${Release}/aix-risc/lib			wrapwish${TclVers}s.in		aix	y
+
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		wraptclsh${TclVers}.in		bsd	y
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		wrapwish${TclVers}.in		bsd	y
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		wraptclsh${TclVers}s.in		bsd	y
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		wrapwish${TclVers}s.in		bsd	y
+
+# These binaries shouldn't be included in the zip file because they
+# are going to be used as the installer binaries:
+solaris-sparc/lib	${Release}/solaris-sparc/lib		wrapbigtclsh${TclVers}s.in	sol	y
+solaris-sparc/lib	${Release}/solaris-sparc/lib		wrapbigwish${TclVers}s.in	sol	y
+hpux-parisc/lib	        ${Release}/hpux-parisc/lib		wrapbigtclsh${TclVers}s.in	hp	y
+hpux-parisc/lib	        ${Release}/hpux-parisc/lib		wrapbigwish${TclVers}s.in	hp	y
+linux-ix86/lib		${Release}/linux-ix86/lib		wrapbigtclsh${TclVers}s.in	lin	y
+linux-ix86/lib		${Release}/linux-ix86/lib		wrapbigwish${TclVers}s.in	lin	y
+irix-mips/lib		${Release}/irix-mips/lib		wrapbigtclsh${TclVers}s.in	sgi	y
+irix-mips/lib		${Release}/irix-mips/lib		wrapbigwish${TclVers}s.in	sgi	y
+aix-risc/lib		${Release}/aix-risc/lib			wrapbigtclsh${TclVers}s.in	aix	y
+aix-risc/lib		${Release}/aix-risc/lib			wrapbigwish${TclVers}s.in	aix	y
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		wrapbigtclsh${TclVers}s.in	bsd	y
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		wrapbigwish${TclVers}s.in	bsd	y
+
+
+# -- Documentation --
+
+#    -- All manual pages --
+doc/man			${Release}/man				man.macros			unix	y
+doc/man/mann		${Release}/man/mann				*.n			unix	y
+doc/man/man1		${Release}/man/man1				*.1			unix	y
+doc/man/man3		${Release}/man/man3				*.3			unix	y
+
+#    -- Tcl ${Tcl.Vers} Help files --
+doc/help		${Release}/doc				tcl${TclVers}.cnt			win	y
+doc/help		${Release}/doc				tcl${TclVers}.hlp			win	y
+
+#    -- TclPro documentation --
+# NOTE: The pdf version of these files are placed in ${Doc}
+
+doc			${Doc}					TclProUsersGuide.pdf	all	y
+doc			${Doc}					styleGuide.pdf		all	y
+doc			${Doc}					engManual.pdf		all	y
+doc/html		${Doc}/html_1.4				*.html			all	y
+doc/html/images		${Doc}/html_1.4/images			*.gif			all	y
+doc/html/images		${Doc}/html_1.4/images			*.jpg			all	y
+
+#    -- TclPro help pages --
+doc/help		/tools/1.3/win32-ix86/distrib		INETWH32.DLL		win	y
+doc/help		/tools/1.3/win32-ix86/distrib		SETBROWS.EXE		win	y
+
+#    -- TclPro demos --
+demos			${Demos}				README			all	y
+demos			${Demos}/extensions			expect.tcl		all	y
+demos			${Demos}/fac				fac.tcl			all	y
+demos			${Demos}/uplevel			uplevel.tcl		all	y
+demos			${Demos}/hiq				hiq.tcl			all	y
+demos			${Demos}/hiq				hiqGUI.tcl		all	y
+demos			${Demos}/hiq				hiqState.tcl		all	y
+demos			${Demos}/wrap				compileAndWrap.tcl	all	y
+demos/tutorials		${Demos}/tutorials			*.tcl			all	y
+demos/klondike		${Demos}/klondike			makefile.vc		win	y
+demos/klondike		${Demos}/klondike			configure		unix	y
+demos/klondike		${Demos}/klondike			Makefile.in		unix	y
+demos/klondike		${Demos}/klondike			klondike.in		all	y
+demos/klondike		${Demos}/klondike			README			all	y
+demos/klondike		${Demos}/klondike			README.klondike		all	y
+demos/klondike		${Demos}/klondike			install-sh		unix	y
+demos/klondike		${Demos}/klondike			klondike.man		all	y
+demos/klondike		${Demos}/klondike			klondike.lsm		all	y
+demos/klondike		${Demos}/klondike			klondike.spec		all	y
+demos/klondike		${Demos}/klondike			klondikeRules.tcl	all	y
+demos/klondike		${Demos}/klondike			klondikeMenus.tcl	all	y
+demos/klondike		${Demos}/klondike			klondikeScore.tcl	all	y
+demos/klondike		${Demos}/klondike			tclx_compat.tcl		all	y
+demos/klondike		${Demos}/klondike			table.tcl		all	y
+demos/klondike		${Demos}/klondike			release			all	y
+demos/klondike/CARDS	${Demos}/klondike/CARDS		*.xbm		all	y
+demos/wrap		${Demos}/wrap		*.tcl		all	y
+
+demos/MsDevApps		${Demos}/MsDevApps	MsDevApps.dsw		all	y
+demos/MsDevApps		${Demos}/MsDevApps	README			all	y
+demos/MsDevApps/App1	${Demos}/MsDevApps/App1	App1*		all	y
+demos/MsDevApps/App2	${Demos}/MsDevApps/App2	App2*		all	y
+
+demos/MsDevApps/App3	${Demos}/MsDevApps/App3	App3*		all	y
+demos/MsDevApps/App3	${Demos}/MsDevApps/App3	itclstack.cpp	all	y
+demos/MsDevApps/App3	${Demos}/MsDevApps/App3	itclstack.tcl	all	y
+demos/MsDevApps/App3	${Demos}/MsDevApps/App3	myMain.c	all	y
+demos/MsDevApps/App3	${Demos}/MsDevApps/App3	stack.hpp	all	y
+demos/MsDevApps/App3	${Demos}/MsDevApps/App3	startup.tcl	all	y
+
+demos/UnixApps		${Demos}/UnixApps	README			all	y
+demos/UnixApps/App1	${Demos}/UnixApps/App1	App1.tcl	all	y
+demos/UnixApps/App1	${Demos}/UnixApps/App1	Makefile	all	y
+
+demos/UnixApps/App2	${Demos}/UnixApps/App2	App2.c		all	y
+demos/UnixApps/App2	${Demos}/UnixApps/App2	Makefile	all	y
+
+demos/UnixApps/App3	${Demos}/UnixApps/App3	itclstack.cpp	all	y
+demos/UnixApps/App3	${Demos}/UnixApps/App3	itclstack.tcl	all	y
+demos/UnixApps/App3	${Demos}/UnixApps/App3	myMain.c	all	y
+demos/UnixApps/App3	${Demos}/UnixApps/App3	stack.hpp	all	y
+demos/UnixApps/App3	${Demos}/UnixApps/App3	startup.tcl	all	y
+demos/UnixApps/App3	${Demos}/UnixApps/App3	aclocal.m4	all	y
+demos/UnixApps/App3	${Demos}/UnixApps/App3	configure.in	all	y
+demos/UnixApps/App3	${Demos}/UnixApps/App3	configure	all	y
+demos/UnixApps/App3	${Demos}/UnixApps/App3	Makefile.in	all	y
+
+# -- [incr Tcl] Libraries --
+
+include			${Release}/include			itcl.h			all/cd	y
+include			${Release}/include			itclDecls.h		all/cd	y
+include			${Release}/include			itclInt.h		all/cd	y
+include			${Release}/include			itclIntDecls.h		all/cd	y
+include			${Release}/include			itk.h			all/cd	y
+include			${Release}/include			itkDecls.h		all/cd	y
+
+lib/itcl3.2		${Release}/lib/itcl3.2			itcl.tcl		all	y
+
+lib/itk3.2		${Release}/lib/itk3.2			*.itk			all	y
+lib/itk3.2		${Release}/lib/itk3.2			*.tcl			all	y
+lib/itk3.2		${Release}/lib/itk3.2			tclIndex		all	y
+
+lib/iwidgets${Iwidgets.Vers}	${Release}/lib/iwidgets${Iwidgets.Vers}		*		all	y
+lib/iwidgets${Iwidgets.Vers}/scripts	${Release}/lib/iwidgets${Iwidgets.Vers}/scripts	*		all	y
+lib/iwidgets2.2.0		${Release}/lib/iwidgets2.2.0		*		all	y
+lib/iwidgets2.2.0/scripts	${Release}/lib/iwidgets2.2.0/scripts	*		all	y
+
+
+# -- [incr Tcl] Demos --
+
+lib/iwidgets${Iwidgets.Vers}/demos	${Release}/lib/iwidgets${Iwidgets.Vers}/demos		*		all	y
+lib/iwidgets${Iwidgets.Vers}/demos/images	${Release}/lib/iwidgets${Iwidgets.Vers}/demos/images	*		all	y
+lib/iwidgets${Iwidgets.Vers}/demos/html	${Release}/lib/iwidgets${Iwidgets.Vers}/demos/html	*		all	y
+
+#lib/iwidgets2.2.0/win		${ItclSrc}/iwidgets2.2.0/win	catalog.bat	win	y
+lib/iwidgets2.2.0/demos		${Release}/lib/iwidgets2.2.0/demos		*		all	y
+lib/iwidgets2.2.0/demos/images	${Release}/lib/iwidgets2.2.0/demos/images	*		all	y
+lib/iwidgets2.2.0/demos/html	${Release}/lib/iwidgets2.2.0/demos/html	*		all	y
+
+
+# -- [incr Tcl] Documentation --
+
+# src dir is hard-wired at 3.0.0
+doc				${ItclSrc}/iwidgets3.0.0/doc		iwidgets.ps		all	y
+
+# -- Expect library files --
+include				${Release}/include			expect_tcl.h		unix/cd	y
+include				${Release}/include			expect_comm.h		unix/cd	y
+
+# -- Sample Expect scripts
+
+bin				${Release}/bin				autoexpect		unix	y
+bin				${Release}/bin				autopasswd		unix	y
+bin				${Release}/bin				cryptdir		unix	y
+bin				${Release}/bin				decryptdir		unix	y
+bin				${Release}/bin				dislocate		unix	y
+bin				${Release}/bin				ftp-rfc		unix	y
+bin				${Release}/bin				kibitz		unix	y
+bin				${Release}/bin				lpunlock		unix	y
+bin				${Release}/bin				mkpasswd		unix	y
+bin				${Release}/bin				passmass		unix	y
+bin				${Release}/bin				rftp		unix	y
+bin				${Release}/bin				rlogin-cwd		unix	y
+bin				${Release}/bin				timed-read		unix	y
+bin				${Release}/bin				timed-run		unix	y
+bin				${Release}/bin				tknewsbiff		unix	y
+bin				${Release}/bin				tkpasswd		unix	y
+bin				${Release}/bin				unbuffer		unix	y
+bin				${Release}/bin				weather		unix	y
+bin				${Release}/bin				xkibitz		unix	y
+bin				${Release}/bin				xpstat		unix	y
+# -- TclX library files --
+
+include				${Release}/include			tclExtend.h		all/cd	y
+
+lib/tclX${Tclx.Vers}		${Release}/lib/tclX${Tclx.Vers}		tclx.tcl		all	y
+lib/tclX${Tclx.Vers}		${Release}/lib/tclX${Tclx.Vers}		tcl.tlib		all	y
+lib/tclX${Tclx.Vers}		${Release}/lib/tclX${Tclx.Vers}		tcl.tndx		all	y
+lib/tclX${Tclx.Vers}		${Release}/lib/tclX${Tclx.Vers}		buildidx.tcl		all	y
+lib/tclX${Tclx.Vers}		${Release}/lib/tclX${Tclx.Vers}		autoload.tcl		all	y
+lib/tclX${Tclx.Vers}		${Release}/lib/tclX${Tclx.Vers}		tclXAppInit.c		all	y
+
+# -- TclX library help-system files --
+
+lib/tclX${Tclx.Vers}/help		${Release}/lib/tclX${Tclx.Vers}/help		*	all	y
+lib/tclX${Tclx.Vers}/help/tcl		${Release}/lib/tclX${Tclx.Vers}/help/tcl		*	all	y
+lib/tclX${Tclx.Vers}/help/tcl/intro	${Release}/lib/tclX${Tclx.Vers}/help/tcl/intro	*	all	y
+lib/tclX${Tclx.Vers}/help/tcl/strings	${Release}/lib/tclX${Tclx.Vers}/help/tcl/strings	*	all	y
+lib/tclX${Tclx.Vers}/help/tcl/variables	${Release}/lib/tclX${Tclx.Vers}/help/tcl/variables	* 	all	y
+lib/tclX${Tclx.Vers}/help/tcl/control	${Release}/lib/tclX${Tclx.Vers}/help/tcl/control	*	all	y
+lib/tclX${Tclx.Vers}/help/tcl/status	${Release}/lib/tclX${Tclx.Vers}/help/tcl/status	*	all	y
+lib/tclX${Tclx.Vers}/help/tcl/files	${Release}/lib/tclX${Tclx.Vers}/help/tcl/files	*	all	y
+lib/tclX${Tclx.Vers}/help/tcl/lists	${Release}/lib/tclX${Tclx.Vers}/help/tcl/lists	*	all	y
+lib/tclX${Tclx.Vers}/help/tcl/processes	${Release}/lib/tclX${Tclx.Vers}/help/tcl/processes	* 	all	y
+lib/tclX${Tclx.Vers}/help/tcl/math	${Release}/lib/tclX${Tclx.Vers}/help/tcl/math	*	all	y
+lib/tclX${Tclx.Vers}/help/tcl/sockets	${Release}/lib/tclX${Tclx.Vers}/help/tcl/sockets	*	all	y
+lib/tclX${Tclx.Vers}/help/tcl/libraries	${Release}/lib/tclX${Tclx.Vers}/help/tcl/libraries	* 	all	y
+lib/tclX${Tclx.Vers}/help/tcl/time	${Release}/lib/tclX${Tclx.Vers}/help/tcl/time	*	all	y
+lib/tclX${Tclx.Vers}/help/tcl/events	${Release}/lib/tclX${Tclx.Vers}/help/tcl/events	*	all	y
+lib/tclX${Tclx.Vers}/help/tcl/debug	${Release}/lib/tclX${Tclx.Vers}/help/tcl/debug	*	all	y
+lib/tclX${Tclx.Vers}/help/tcl/signals	${Release}/lib/tclX${Tclx.Vers}/help/tcl/signals	*	all	y
+lib/tclX${Tclx.Vers}/help/tcl/filescan	${Release}/lib/tclX${Tclx.Vers}/help/tcl/filescan	*	all	y
+lib/tclX${Tclx.Vers}/help/tcl/keyedlists ${Release}/lib/tclX${Tclx.Vers}/help/tcl/keyedlists * 	all	y
+lib/tclX${Tclx.Vers}/help/tcl/intl	${Release}/lib/tclX${Tclx.Vers}/help/tcl/intl	*	all 	y
+lib/tclX${Tclx.Vers}/help/tcl/tclshell	${Release}/lib/tclX${Tclx.Vers}/help/tcl/tclshell	*	all	y
+
+# -- TkX library files --
+
+lib/tkX${Tclx.Vers}			${Release}/lib/tkX${Tclx.Vers}		tkx.tcl		all	y
+lib/tkX${Tclx.Vers}			${Release}/lib/tkX${Tclx.Vers}		tkXAppInit.c	all	y
+
+# -- TkX library help-system files --
+
+lib/tkX${Tclx.Vers}/help		${Release}/lib/tkX${Tclx.Vers}/help		*	all	y
+lib/tkX${Tclx.Vers}/help/tk		${Release}/lib/tkX${Tclx.Vers}/help/tk		*	all	y
+lib/tkX${Tclx.Vers}/help/tk/control	${Release}/lib/tkX${Tclx.Vers}/help/tk/control	*	all	y
+lib/tkX${Tclx.Vers}/help/tk/images	${Release}/lib/tkX${Tclx.Vers}/help/tk/images	*	all	y
+lib/tkX${Tclx.Vers}/help/tk/widgets	${Release}/lib/tkX${Tclx.Vers}/help/tk/widgets	*	all	y
+
+# -- Tcl Httpd --
+
+lib/tclhttpd${Httpd.Vers}	${Release}/lib/tclhttpd${Httpd.Vers}		*		all	y
+bin				${Release}/bin					httpd.tcl	all	y
+bin				${Release}/bin					httpdthread.tcl	all	y
+bin				${Release}/bin					tclhttpd.rc	all	y
+tclhttpd			${Release}/tclhttpd				README*		all	y
+tclhttpd			${Release}/tclhttpd				tclhttpd.etc.init	all	y
+tclhttpd/htdocs			${Release}/tclhttpd/htdocs			*		all	y
+tclhttpd/htdocs			${Release}/tclhttpd/htdocs			.tml		all	y
+tclhttpd/htdocs/access		${Release}/tclhttpd/htdocs/access			*		all	y
+tclhttpd/htdocs/access		${Release}/tclhttpd/htdocs/access			.htaccess	all	y
+tclhttpd/htdocs/access/auth	${Release}/tclhttpd/htdocs/access/auth			*		all	y
+tclhttpd/htdocs/access/auth	${Release}/tclhttpd/htdocs/access/auth			.htaccess	all	y
+tclhttpd/htdocs/access/bydir	${Release}/tclhttpd/htdocs/access/bydir			*		all	y
+tclhttpd/htdocs/access/bydir	${Release}/tclhttpd/htdocs/access/bydir			.htaccess	all	y
+tclhttpd/htdocs/access/bytcl	${Release}/tclhttpd/htdocs/access/bytcl			*		all	y
+tclhttpd/htdocs/access/bytcl	${Release}/tclhttpd/htdocs/access/bytcl			.tclaccess	all	y
+tclhttpd/htdocs/access/noawe	${Release}/tclhttpd/htdocs/access/noawe			.htaccess	all	y
+tclhttpd/htdocs/access/null	${Release}/tclhttpd/htdocs/access/null			*		all	y
+tclhttpd/htdocs/access/null	${Release}/tclhttpd/htdocs/access/null			.tclaccess	all	y
+tclhttpd/htdocs/access/session	${Release}/tclhttpd/htdocs/access/session		*		all	y
+tclhttpd/htdocs/access/session	${Release}/tclhttpd/htdocs/access/session		.tclaccess	all	y
+tclhttpd/htdocs/book		${Release}/tclhttpd/htdocs/book				*		all	y
+tclhttpd/htdocs/cgi-bin		${Release}/tclhttpd/htdocs/cgi-bin			*		all	y
+tclhttpd/htdocs/forms		${Release}/tclhttpd/htdocs/forms			*		all	y
+tclhttpd/htdocs/forms		${Release}/tclhttpd/htdocs/forms			.tml		all	y
+tclhttpd/htdocs/guestbook	${Release}/tclhttpd/htdocs/guestbook			*		all	y
+tclhttpd/htdocs/images		${Release}/tclhttpd/htdocs/images			*		all	y
+tclhttpd/htdocs/include		${Release}/tclhttpd/htdocs/include			*		all	y
+tclhttpd/htdocs/libtml		${Release}/tclhttpd/htdocs/libtml			*		all	y
+tclhttpd/htdocs/manual		${Release}/tclhttpd/htdocs/manual			*		all	y
+tclhttpd/htdocs/map		${Release}/tclhttpd/htdocs/map				*		all	y
+tclhttpd/htdocs/snmp		${Release}/tclhttpd/htdocs/snmp				*		all	y
+tclhttpd/htdocs/snmp/browser	${Release}/tclhttpd/htdocs/snmp/browser			*		all	y
+tclhttpd/htdocs/snmp/test_mibTable	${Release}/tclhttpd/htdocs/snmp/test_mibTable	*		all	y
+tclhttpd/htdocs/stats		${Release}/tclhttpd/htdocs/stats			*		all	y
+tclhttpd/htdocs/stats		${Release}/tclhttpd/htdocs/stats			.tml		all	y
+tclhttpd/htdocs/templates	${Release}/tclhttpd/htdocs/templates			*		all	y
+tclhttpd/htdocs/templates	${Release}/tclhttpd/htdocs/templates			.tml		all	y
+
+eval set MemchanVers    21
+eval set Memchan.Vers   2.1
+eval set MemchanSrc     memchan2.1
+
+# -----------------------------------------------------------------
+# Memchan definitions
+
+win32-ix86/bin		${Release}/win32-ix86/bin	Memchan${MemchanVers}.dll		win	y
+win32-ix86/lib		${Release}/win32-ix86/lib	Memchan${MemchanVers}.lib		win/cd	y
+win32-ix86/lib		${Release}/win32-ix86/lib	Memchan${MemchanVers}s.lib		win/cd	y
+win32-ix86/bin		${Debug}/win32-ix86/bin		Memchan${MemchanVers}d.dll		win/cd	y
+win32-ix86/lib		${Debug}/win32-ix86/lib		Memchan${MemchanVers}d.lib		win/cd	y
+win32-ix86/lib		${Debug}/win32-ix86/lib		Memchan${MemchanVers}sd.lib		win/cd	y
+win32-ix86/lib/Memchan${Memchan.Vers}	${Release}/win32-ix86/lib/Memchan	pkgIndex.tcl		win	y
+
+solaris-sparc/lib	${Release}/solaris-sparc/lib	libMemchan${Memchan.Vers}.so		sol	y
+solaris-sparc/lib	${Release}/solaris-sparc/lib	libMemchan${Memchan.Vers}.a		sol/cd	y
+solaris-sparc/lib	${Release}/solaris-sparc/lib	libMemchanstub${Memchan.Vers}.a	sol/cd	y
+solaris-sparc/lib/Memchan${Memchan.Vers}	${Release}/solaris-sparc/lib/Memchan	pkgIndex.tcl		sol	y
+
+hpux-parisc/lib		${Release}/hpux-parisc/lib	libMemchan${Memchan.Vers}.sl		hp
+hpux-parisc/lib		${Release}/hpux-parisc/lib	libMemchan${Memchan.Vers}.a		hp/cd
+hpux-parisc/lib		${Release}/hpux-parisc/lib	libMemchanstub${Memchan.Vers}.a	hp/cd
+hpux-parisc/lib/Memchan${Memchan.Vers}	${Release}/hpux-parisc/lib/Memchan	pkgIndex.tcl		hp	y
+
+linux-ix86/lib		${Release}/linux-ix86/lib	libMemchan${Memchan.Vers}.so		lin	
+linux-ix86/lib		${Release}/linux-ix86/lib	libMemchan${Memchan.Vers}.a		lin/cd
+linux-ix86/lib		${Release}/linux-ix86/lib	libMemchanstub${Memchan.Vers}.a	lin/cd
+linux-ix86/lib/Memchan${Memchan.Vers}	${Release}/linux-ix86/lib/Memchan	pkgIndex.tcl		lin	y
+
+irix-mips/lib		${Release}/irix-mips/lib		libMemchan${Memchan.Vers}.so	sgi	y
+irix-mips/lib		${Release}/irix-mips/lib		libMemchan${Memchan.Vers}.a	sgi/cd	y
+irix-mips/lib		${Release}/irix-mips/lib		libMemchanstub${Memchan.Vers}.a	sgi/cd	y
+irix-mips/lib/Memchan${Memchan.Vers}	${Release}/irix-mips/lib/Memchan	pkgIndex.tcl	sgi	y
+
+aix-risc/lib		${Release}/aix-risc/lib		libMemchan${Memchan.Vers}.so		aix	y
+aix-risc/lib		${Release}/aix-risc/lib		libMemchan${Memchan.Vers}.a		aix/cd	y
+aix-risc/lib		${Release}/aix-risc/lib		libMemchanstub${Memchan.Vers}.a	aix/cd	y
+aix-risc/lib/Memchan${Memchan.Vers}	${Release}/aix-risc/lib/Memchan	pkgIndex.tcl	aix	y
+
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		libMemchan${Memchan.Vers}.so		bsd	y
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		libMemchan${Memchan.Vers}.a		bsd/cd	y
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		libMemchanstub${Memchan.Vers}.a	bsd/cd	y
+freebsd-ix86/lib/Memchan${Memchan.Vers}	${Release}/freebsd-ix86/lib/Memchan	pkgIndex.tcl	bsd	y
+
+# -- Memchan Libraries
+# Nothing yet.
+
+# -- Memchan documentation
+# Nothing yet.
+    
+
+eval set TrfVers    21
+eval set Trf.Vers   2.1
+eval set TrfSrc     trf2.1
+
+# -----------------------------------------------------------------
+# Trf definitions
+
+win32-ix86/bin		${Release}/win32-ix86/bin	Trf${TrfVers}.dll		win	y
+win32-ix86/lib		${Release}/win32-ix86/lib	Trf${TrfVers}.lib		win/cd	y
+win32-ix86/lib		${Release}/win32-ix86/lib	Trf${TrfVers}s.lib		win/cd	y
+win32-ix86/bin		${Debug}/win32-ix86/bin		Trf${TrfVers}d.dll		win/cd	y
+win32-ix86/lib		${Debug}/win32-ix86/lib		Trf${TrfVers}d.lib		win/cd	y
+win32-ix86/lib		${Debug}/win32-ix86/lib		Trf${TrfVers}sd.lib		win/cd	y
+win32-ix86/lib/Trf${Trf.Vers}	${Release}/win32-ix86/lib/Trf	pkgIndex.tcl		win	y
+
+solaris-sparc/lib	${Release}/solaris-sparc/lib	libTrf${Trf.Vers}.so		sol	y
+solaris-sparc/lib	${Release}/solaris-sparc/lib	libTrf${Trf.Vers}.a		sol/cd	y
+solaris-sparc/lib	${Release}/solaris-sparc/lib	libTrfstub${Trf.Vers}.a	sol/cd	y
+solaris-sparc/lib/Trf${Trf.Vers}	${Release}/solaris-sparc/lib/Trf	pkgIndex.tcl		sol	y
+
+hpux-parisc/lib		${Release}/hpux-parisc/lib	libTrf${Trf.Vers}.sl		hp
+hpux-parisc/lib		${Release}/hpux-parisc/lib	libTrf${Trf.Vers}.a		hp/cd
+hpux-parisc/lib		${Release}/hpux-parisc/lib	libTrfstub${Trf.Vers}.a	hp/cd
+hpux-parisc/lib/Trf${Trf.Vers}	${Release}/hpux-parisc/lib/Trf	pkgIndex.tcl		hp	y
+
+linux-ix86/lib		${Release}/linux-ix86/lib	libTrf${Trf.Vers}.so		lin	
+linux-ix86/lib		${Release}/linux-ix86/lib	libTrf${Trf.Vers}.a		lin/cd
+linux-ix86/lib		${Release}/linux-ix86/lib	libTrfstub${Trf.Vers}.a	lin/cd
+linux-ix86/lib/Trf${Trf.Vers}	${Release}/linux-ix86/lib/Trf	pkgIndex.tcl		lin	y
+
+irix-mips/lib		${Release}/irix-mips/lib		libTrf${Trf.Vers}.so	sgi	y
+irix-mips/lib		${Release}/irix-mips/lib		libTrf${Trf.Vers}.a	sgi/cd	y
+irix-mips/lib		${Release}/irix-mips/lib		libTrfstub${Trf.Vers}.a	sgi/cd	y
+irix-mips/lib/Trf${Trf.Vers}	${Release}/irix-mips/lib/Trf	pkgIndex.tcl	sgi	y
+
+aix-risc/lib		${Release}/aix-risc/lib		libTrf${Trf.Vers}.so		aix	y
+aix-risc/lib		${Release}/aix-risc/lib		libTrf${Trf.Vers}.a		aix/cd	y
+aix-risc/lib		${Release}/aix-risc/lib		libTrfstub${Trf.Vers}.a	aix/cd	y
+aix-risc/lib/Trf${Trf.Vers}	${Release}/aix-risc/lib/Trf	pkgIndex.tcl	aix	y
+
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		libTrf${Trf.Vers}.so		bsd	y
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		libTrf${Trf.Vers}.a		bsd/cd	y
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		libTrfstub${Trf.Vers}.a	bsd/cd	y
+freebsd-ix86/lib/Trf${Trf.Vers}	${Release}/freebsd-ix86/lib/Trf	pkgIndex.tcl	bsd	y
+
+# -- Trf Libraries
+# Nothing yet.
+
+# -- Trf documentation
+# Nothing yet.
+    
+
+eval set TrfcryptVers    20
+eval set Trfcrypt.Vers   2.0
+eval set TrfcryptSrc     trfcrypt2.0
+
+# -----------------------------------------------------------------
+# Trfcrypt definitions
+
+win32-ix86/bin		${Release}/win32-ix86/bin	Trfcrypt${TrfcryptVers}.dll		win	y
+win32-ix86/lib		${Release}/win32-ix86/lib	Trfcrypt${TrfcryptVers}.lib		win/cd	y
+win32-ix86/lib		${Release}/win32-ix86/lib	Trfcrypt${TrfcryptVers}s.lib		win/cd	y
+win32-ix86/bin		${Debug}/win32-ix86/bin		Trfcrypt${TrfcryptVers}d.dll		win/cd	y
+win32-ix86/lib		${Debug}/win32-ix86/lib		Trfcrypt${TrfcryptVers}d.lib		win/cd	y
+win32-ix86/lib		${Debug}/win32-ix86/lib		Trfcrypt${TrfcryptVers}sd.lib		win/cd	y
+win32-ix86/lib/Trfcrypt${Trfcrypt.Vers}	${Release}/win32-ix86/lib/Trfcrypt	pkgIndex.tcl		win	y
+
+solaris-sparc/lib	${Release}/solaris-sparc/lib	libTrfcrypt${Trfcrypt.Vers}.so		sol	y
+solaris-sparc/lib	${Release}/solaris-sparc/lib	libTrfcrypt${Trfcrypt.Vers}.a		sol/cd	y
+solaris-sparc/lib	${Release}/solaris-sparc/lib	libTrfcryptstub${Trfcrypt.Vers}.a	sol/cd	y
+solaris-sparc/lib/Trfcrypt${Trfcrypt.Vers}	${Release}/solaris-sparc/lib/Trfcrypt	pkgIndex.tcl		sol	y
+
+hpux-parisc/lib		${Release}/hpux-parisc/lib	libTrfcrypt${Trfcrypt.Vers}.sl		hp
+hpux-parisc/lib		${Release}/hpux-parisc/lib	libTrfcrypt${Trfcrypt.Vers}.a		hp/cd
+hpux-parisc/lib		${Release}/hpux-parisc/lib	libTrfcryptstub${Trfcrypt.Vers}.a	hp/cd
+hpux-parisc/lib/Trfcrypt${Trfcrypt.Vers}	${Release}/hpux-parisc/lib/Trfcrypt	pkgIndex.tcl		hp	y
+
+linux-ix86/lib		${Release}/linux-ix86/lib	libTrfcrypt${Trfcrypt.Vers}.so		lin	
+linux-ix86/lib		${Release}/linux-ix86/lib	libTrfcrypt${Trfcrypt.Vers}.a		lin/cd
+linux-ix86/lib		${Release}/linux-ix86/lib	libTrfcryptstub${Trfcrypt.Vers}.a	lin/cd
+linux-ix86/lib/Trfcrypt${Trfcrypt.Vers}	${Release}/linux-ix86/lib/Trfcrypt	pkgIndex.tcl		lin	y
+
+irix-mips/lib		${Release}/irix-mips/lib		libTrfcrypt${Trfcrypt.Vers}.so	sgi	y
+irix-mips/lib		${Release}/irix-mips/lib		libTrfcrypt${Trfcrypt.Vers}.a	sgi/cd	y
+irix-mips/lib		${Release}/irix-mips/lib		libTrfcryptstub${Trfcrypt.Vers}.a	sgi/cd	y
+irix-mips/lib/Trfcrypt${Trfcrypt.Vers}	${Release}/irix-mips/lib/Trfcrypt	pkgIndex.tcl	sgi	y
+
+aix-risc/lib		${Release}/aix-risc/lib		libTrfcrypt${Trfcrypt.Vers}.so		aix	y
+aix-risc/lib		${Release}/aix-risc/lib		libTrfcrypt${Trfcrypt.Vers}.a		aix/cd	y
+aix-risc/lib		${Release}/aix-risc/lib		libTrfcryptstub${Trfcrypt.Vers}.a	aix/cd	y
+aix-risc/lib/Trfcrypt${Trfcrypt.Vers}	${Release}/aix-risc/lib/Trfcrypt	pkgIndex.tcl	aix	y
+
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		libTrfcrypt${Trfcrypt.Vers}.so		bsd	y
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		libTrfcrypt${Trfcrypt.Vers}.a		bsd/cd	y
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		libTrfcryptstub${Trfcrypt.Vers}.a	bsd/cd	y
+freebsd-ix86/lib/Trfcrypt${Trfcrypt.Vers}	${Release}/freebsd-ix86/lib/Trfcrypt	pkgIndex.tcl	bsd	y
+
+# -- Trfcrypt Libraries
+# Nothing yet.
+
+# -- Trfcrypt documentation
+# Nothing yet.
+    
+
+eval set SetopsVers    10
+eval set Setops.Vers   1.0
+eval set SetopsSrc     setops1.0
+
+# -----------------------------------------------------------------
+# Setops definitions
+
+win32-ix86/bin		${Release}/win32-ix86/bin	Setops${SetopsVers}.dll		win	y
+win32-ix86/lib		${Release}/win32-ix86/lib	Setops${SetopsVers}.lib		win/cd	y
+win32-ix86/lib		${Release}/win32-ix86/lib	Setops${SetopsVers}s.lib		win/cd	y
+win32-ix86/bin		${Debug}/win32-ix86/bin		Setops${SetopsVers}d.dll		win/cd	y
+win32-ix86/lib		${Debug}/win32-ix86/lib		Setops${SetopsVers}d.lib		win/cd	y
+win32-ix86/lib		${Debug}/win32-ix86/lib		Setops${SetopsVers}sd.lib		win/cd	y
+win32-ix86/lib/Setops${Setops.Vers}	${Release}/win32-ix86/lib/Setops	pkgIndex.tcl		win	y
+
+solaris-sparc/lib	${Release}/solaris-sparc/lib	libSetops${Setops.Vers}.so		sol	y
+solaris-sparc/lib	${Release}/solaris-sparc/lib	libSetops${Setops.Vers}.a		sol/cd	y
+solaris-sparc/lib	${Release}/solaris-sparc/lib	libSetopsstub${Setops.Vers}.a	sol/cd	y
+solaris-sparc/lib/Setops${Setops.Vers}	${Release}/solaris-sparc/lib/Setops	pkgIndex.tcl		sol	y
+
+hpux-parisc/lib		${Release}/hpux-parisc/lib	libSetops${Setops.Vers}.sl		hp
+hpux-parisc/lib		${Release}/hpux-parisc/lib	libSetops${Setops.Vers}.a		hp/cd
+hpux-parisc/lib		${Release}/hpux-parisc/lib	libSetopsstub${Setops.Vers}.a	hp/cd
+hpux-parisc/lib/Setops${Setops.Vers}	${Release}/hpux-parisc/lib/Setops	pkgIndex.tcl		hp	y
+
+linux-ix86/lib		${Release}/linux-ix86/lib	libSetops${Setops.Vers}.so		lin	
+linux-ix86/lib		${Release}/linux-ix86/lib	libSetops${Setops.Vers}.a		lin/cd
+linux-ix86/lib		${Release}/linux-ix86/lib	libSetopsstub${Setops.Vers}.a	lin/cd
+linux-ix86/lib/Setops${Setops.Vers}	${Release}/linux-ix86/lib/Setops	pkgIndex.tcl		lin	y
+
+irix-mips/lib		${Release}/irix-mips/lib		libSetops${Setops.Vers}.so	sgi	y
+irix-mips/lib		${Release}/irix-mips/lib		libSetops${Setops.Vers}.a	sgi/cd	y
+irix-mips/lib		${Release}/irix-mips/lib		libSetopsstub${Setops.Vers}.a	sgi/cd	y
+irix-mips/lib/Setops${Setops.Vers}	${Release}/irix-mips/lib/Setops	pkgIndex.tcl	sgi	y
+
+aix-risc/lib		${Release}/aix-risc/lib		libSetops${Setops.Vers}.so		aix	y
+aix-risc/lib		${Release}/aix-risc/lib		libSetops${Setops.Vers}.a		aix/cd	y
+aix-risc/lib		${Release}/aix-risc/lib		libSetopsstub${Setops.Vers}.a	aix/cd	y
+aix-risc/lib/Setops${Setops.Vers}	${Release}/aix-risc/lib/Setops	pkgIndex.tcl	aix	y
+
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		libSetops${Setops.Vers}.so		bsd	y
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		libSetops${Setops.Vers}.a		bsd/cd	y
+freebsd-ix86/lib	${Release}/freebsd-ix86/lib		libSetopsstub${Setops.Vers}.a	bsd/cd	y
+freebsd-ix86/lib/Setops${Setops.Vers}	${Release}/freebsd-ix86/lib/Setops	pkgIndex.tcl	bsd	y
+
+# -- Setops Libraries
+# Nothing yet.
+
+# -- Setops documentation
+# Nothing yet.
+    
+eval set ExpandVers    20
+eval set Expand.Vers   2.0
+eval set ExpandSrc     expand2.0
+
+# -----------------------------------------------------------------
+# Expand definitions
+
+win32-ix86/bin		bin	${Release}/bin/expand${ExpandVers}		win	y
+solaris-sparc/bin	bin	${Release}/bin/expand${Expand.Vers}		sol	y
+hpux-parisc/bin		bin	${Release}/bin/expand${Expand.Vers}		hp	y
+linux-ix86/bin		bin	${Release}/bin/expand${Expand.Vers}		lin	y
+irix-mips/bin		bin	${Release}/bin/expand${Expand.Vers}		sgi	y
+aix-risc/bin		bin	${Release}/bin/expand${Expand.Vers}		aix	y
+freebsd-ix86/bin	bin	${Release}/bin/expand${Expand.Vers}		bsd	y
+
+# -- Expand Libraries
+# Nothing yet.
+
+# -- Expand documentation
+# Nothing yet.
+    

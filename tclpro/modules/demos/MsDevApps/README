@@ -1,0 +1,17 @@
+These are a few examples that use the Microsoft VC++ project files
+to organize some simple applications:
+
+App1
+
+A single Tcl file that is compiled and wrapped.
+
+App2
+
+A simple C program that embeds a Tcl interpreter.
+
+App3
+
+A C/C++ mixed application that extends [incr Tcl] by providing a Stack
+template implementation in C++ for use at the script level.  It creates
+a custom static shell with this extention, and then tests/compiles/wraps
+up a script that uses it.

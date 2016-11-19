@@ -1,0 +1,31 @@
+#!/bin/sh
+
+# Retrieve setops distribution and modify it for use by the TclPro
+# build framework. Assume WD is parent of 'tclpro' directory.
+
+if [ -f setops1.0p2.tar.gz ]
+then
+    mv setops1.0p2.tar.gz setops1.0p2.tar.gz.old
+    rm -rf setops1.0.old
+    mv setops1.0 setops1.0.old
+fi
+
+wget http://www.purl.org/NET/akupries/soft/setops/download/setops1.0p2.tar.gz
+if test $? -ne 0
+then
+    echo "wget failed"
+    exit 1
+fi
+#cp               ~aku/web/sites/oche/soft/setops/download/setops1.0p2.tar.gz .
+
+tar xfz setops1.0p2.tar.gz
+mv setops1.0p2 setops1.0
+
+cd setops1.0
+chmod -R u+w *
+
+ln -s ../config config
+
+echo "builtin(include,config/tcl.m4)" > aclocal.m4
+rm configure
+autoconf

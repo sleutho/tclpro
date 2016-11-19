@@ -1,0 +1,173 @@
+'\"
+'\" Copyright (c) 1998-2000 by Ajuba Solutions
+'\" All rights reserved.
+'\"
+'\" RCS: @(#) $Id: procomp.1,v 1.2 2000/08/08 02:06:33 welch Exp $
+'\" 
+.so man.macros
+.TH procomp 1 "" TclPro "TclPro Applications"
+.BS
+'\" Note:  do not modify the .SH NAME line immediately below!
+.SH NAME
+procomp \- TclPro Compiler
+.SH SYNOPSIS
+\fBprocomp\fR ?\fIoptions\fR? \fIfile1\fR ?\fIfile2 ...\fR?
+.SH "OPTIONS"
+.PP
+.IP "\fB\-help\fR" 15
+Displays usage information, then exits without doing anything.
+.IP "\fB\-nologo\fR" 15
+Hides the copyright and version information. 
+.IP "\fB\-force\fR" 15
+Force overwrite; if the output file exists, delete
+it before the run, to ensure that the compilation does not
+fail because of permission errors. Because TclPro Compiler creates
+the output file with the same permissions as the input file,
+a \fB.tbc\fR file generated from a readonly \fB.tcl\fR file will also be
+readonly; a second compilation will fail unless the \fB-force\fR flag
+is given.
+.IP "\fB\-out \fIname\fR" 15
+Specifies that the output path is \fIname\fR.  If only one file is being
+compiled, \fIname\fR may specify the complete output file name.  Otherwise
+\fIname\fR must be the name of an existing directory to which all compiled
+files will be written.
+.IP "\fB\-prefix \fItype\fR" 15
+Specifies the type of prefix string that should be prepended to the
+output files.  The \fItype\fR value can be one of the following:
+.RS
+.TP
+\fBnone\fR
+Do not add a prefix string.
+.TP
+\fBauto\fR
+Extract the prefix from the input file: everything
+from the start of the file to the first non-comment
+or empty line is prepended to the output file.
+.TP
+\fBtag\fR 
+Extract the prefix from the input file: everything from the
+start of the file to the first occurrence of a comment line starting
+with the text \fBTclPro::Compiler::Include\fR is prepended to the
+output file.
+.PP
+Any other value for \fItype\fR is assumed to be a path to a
+file whose contents are prepended to the output file.
+The default for this option is \fBauto\fR.
+.RE
+.IP "\fB\-quiet\fR" 15
+Suppresses warnings about non-existent files.
+.IP "\fB\-verbose\fR" 15
+Verbose mode: messages are generated to log the progress of
+the compilation.
+.BE
+.SH DESCRIPTION
+.PP
+The command \fBprocomp\fR is used to start TclPro Compiler.
+For each input file, TclPro Compiler creates an output file containing
+an equivalent script stored as bytecodes for the Tcl bytecode
+interpreter in Tcl 8.0.3 or later.
+.PP
+By default, the resulting bytecode files will be created in the same
+directory as the input files, but will be given a different extension
+(\fB.tbc\fR).  The \fB\-out\fR flag can be used to specify an
+alternate directory where the output files will be created.  If only
+one file is being compiled, the \fB-out\fR flag can also be used to
+specify the complete name of the output file, including the extension.
+.SH "COMPILED FILES"
+.PP
+TclPro Compiler creates an internal representation of a compiled script
+using the Tcl bytecode compiler that is built into the Tcl core,
+performs some additional computations, and then emits a representation
+of the compiled script to the output file. The
+output file itself is a simple Tcl script that loads the bytecode
+runtime package (the \fBtbcload\fR package), and then instructs the
+runtime to load the internal state and execute the script.  Since the
+compiled bytecodes are a valid Tcl script, you can use them anywhere
+you could use the input script, such as the \fBsource\fR and
+\fBeval\fR commands.  You can also invoke compiled scripts directly as
+shell commands, just as you could the input script, as long as you
+have created a proper header (see below).
+.PP
+One of the additional computations that TclPro Compiler performs is to
+collect all procedure bodies that were defined in the script, and
+create a compiled representation for them as well as the script (the
+Tcl interpreter compiles procedure bodies lazily, whereas TclPro
+Compiler forces a compilation early). Thus, scripts that contain
+mostly procedure definitions are compiled into efficient
+representations.
+.PP
+Because the compiled file is itself a Tcl script, there may be
+situations where you will want to add some specialized setup code at
+the start of the script. For example, in order to invoke a Tcl script
+directly from a Unix shell, the first lines of the script should look
+like the following (where \fBtclsh\fR may be replaced with the name of
+a different interpreter, such as \fBwish\fR):
+.PP
+.CS
+#!/bin/sh
+# the next line restarts using tclsh \e
+exec tclsh "$0" "$@"
+.CE
+.PP
+By default, the compiler will
+not generate such a construct. However, you can place such a header
+in the Tcl source file (or in some other file) and instruct TclPro
+Compiler to copy it to the output file using the \fB\-prefix\fR switch.
+.SH "LIMITATIONS"
+Currently the compiler will compile all code and code in any
+control structure or procedure at the top level of a script.  However,
+code, including procedures, inside of some commands (most notably
+\fBnamespace eval\fR) will not be compiled.
+.PP
+The \fB.tbc\fR file can only be loaded in the \fBprotclsh\fR and
+\fBprowish\fR interpreters or a standard Tcl 8.0.3 (or later) that has
+the \fBtbcload\fR package available.  The \fBtbcload\fR package may be
+distributed by TclPro users to their customers as needed.
+.PP
+Some constructs that are legal with regular Tcl scripts are not supported
+with compiled scripts. For example, the \fBinfo body\fR command cannot
+return the body of a compiled procedure, because that information is not
+available; it will return instead a body that was automatically generated by
+the \fBtbcload\fR package and that has no relation to the actual body of the
+procedure. This new body contains a call to \fBerror\fR; thus, if we define
+two procedures \fBA\fR and \fBB\fR like this:
+.PP
+.CS
+proc A {args} { return "hello world $args" }
+proc B {args} [info body A]
+.CE
+.PP
+a call to \fBB TEST\fR from an uncompiled Tcl script will return the
+string \fB"hello world TEST"\fR, as expected. A call from a compiled
+script will cause an error to be generated instead.
+.SH "EXAMPLES"
+.PP
+The simplest command line to compile a Tcl script is shown below:
+.PP
+.CS
+procomp filename.tcl
+.CE
+.PP
+Which will create a file \fBfilename.tbc\fR containing the bytecodes.
+To compile all \fB.tcl\fR files in \fB/dir1\fR, type:
+.PP
+.CS
+procomp /dir1/*.tcl
+.CE
+.PP
+To place the output files in a different directory, use the
+\fB\-out\fR flag to specify where they should be created:
+.PP
+.CS
+procomp \-out /dir2 /dir1/*.tcl
+.CE
+.PP
+To have TclPro Compiler extract a header from each \fB.tcl\fR file compiled
+by looking for the \fBTclPro::Compiler::Include\fR tag,
+and place it at the start of the corresponding \fB.tbc\fR file:
+.PP
+.CS
+procomp \-out /dir2 \-prefix tag /dir1/*.tcl
+.CE
+.SH KEYWORDS
+compiler bytecodes

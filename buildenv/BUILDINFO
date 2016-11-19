@@ -1,0 +1,6 @@
+# -*- tcl -*-
+version		1.0
+configure.loc	{} .
+configure.with  {} ""
+testsuite	tests
+

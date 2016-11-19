@@ -1,0 +1,14 @@
+[lpage::head Administration "Revoke Active Licenses"]
+<p>
+This page lists the active users of TclPro products.
+In some circumstances you may wish to revoke a license from
+an active user to allow use by other users.  For example,
+a user may have gone on vacation while leaving TclPro Debugger
+running in a locked office.
+<p>
+[lserver::revokeHandler]
+<p>
+[lserver::keyrevoke]
+
+[lpage::footer]
+

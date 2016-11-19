@@ -1,0 +1,154 @@
+# cdparts.txt
+#
+#     Parts list file for TclPro 1.1 CDROM/Web images
+#
+# Copyright (c) 1998-1999 by Scriptics Corporation.
+# All rights reserved.
+#
+# RCS: @(#) $Id: cdparts.in,v 1.14 2001/03/06 21:23:33 andreas_kupries Exp $
+
+# Variable definitions - use Tcl set syntax all on one line.
+# You'll be able to reference these variables in the parts list later,
+# but know that each line is subject to a "subst" - this isn't quite Tcl code
+
+eval set ProVers	151
+eval set Pro.Vers	1.5
+eval set Pro.Vers.Ptch	1.5.1
+eval set TclVers	83
+eval set Tcl.Vers	8.3
+eval set TclxVers	83
+eval set Tclx.Vers	8.3
+eval set ItclVers	32
+eval set Itcl.Vers	3.2
+eval set Expect.Vers	5.32.2
+
+eval set Debug		$prefix/../Debug
+eval set Release	$prefix
+eval set Installer	tclpro/modules/install/src
+eval set Icons		tclpro/modules/icons
+eval set Doc		/ws/doc/TclPro/pro1.4
+#eval set Demos		tclpro/modules/demos
+
+# The following flags are currently defined:
+#	win	- Include in Windows web image
+#	unix	- Include in any Unix web image
+#	hp	- Include in HP web image
+#	sol	- Include in Solaris web image
+#	sgi	- Include in IRIX web image
+#	aix	- Include in AIX web image
+#	bsd	- Include in FreeBSD web image
+#	cdrom	- Include in cdrom image, translates name to upper-case
+#	exe	- This file should have executable persmissions in the image
+#	wrap	- This file should be wrapped for use by the installer
+
+# The following source locations are defined:
+#	STAGE	- args contains a path to a file in the staging area
+#	TOOLS	- args contains a path to a file in the tools directory
+#	PARTS	- args contains a keyword that indicates a set of files from parts.txt
+
+# Name		Flags			# Loc	Args
+# ==============================================================================
+
+#  -- Windows files --
+
+tclpro${ProVers}.exe	win		# STAGE ${Installer}/proweb.exe
+setup.exe	cdrom			# STAGE ${Installer}/procd.exe
+autorun.inf	cdrom			# STAGE ${Installer}/AUTORUN.INF
+tclpro.ico	cdrom			# STAGE ${Icons}/protclsh.ico
+
+
+#  -- Unix files --
+
+license.txt	cdrom unix		# STAGE ${Installer}/license.txt
+setup.sh	cdrom unix exe		# STAGE ${Installer}/setup.sh
+unix/setup.tcl	cdrom unix		# STAGE ${Installer}/setup.tcl
+
+#  -- README and INSTALL files --
+
+install.txt	win			# STAGE ${Doc}/INSTALL-WEB.TXT
+INSTALL		unix			# STAGE ${Doc}/INSTALL-WEB
+readme.txt	cdrom			# STAGE ${Doc}/README.TXT
+README		cdrom unix		# STAGE ${Doc}/README
+INSTALL		cdrom 			# STAGE ${Doc}/INSTALL-CDROM
+INSTALL.TXT	cdrom 			# STAGE ${Doc}/INSTALL-CDROM.TXT
+
+# Packaged wish/tclsh binaries for Solaris, HP, SGI, and Linux
+unix/ptsol		cdrom sol exe wrap	# STAGE	${Release}/solaris-sparc/lib/wrapbigtclsh${TclVers}s.in
+unix/pwsol		cdrom sol exe wrap	# STAGE	${Release}/solaris-sparc/lib/wrapbigwish${TclVers}s.in
+unix/ptsgi		cdrom sgi exe wrap	# STAGE	${Release}/irix-mips/lib/wrapbigtclsh${TclVers}s.in
+unix/pwsgi		cdrom sgi exe wrap	# STAGE	${Release}/irix-mips/lib/wrapbigwish${TclVers}s.in
+unix/pthp		cdrom hp exe wrap	# STAGE	${Release}/hpux-parisc/lib/wrapbigtclsh${TclVers}s.in
+unix/pwhp		cdrom hp exe wrap	# STAGE	${Release}/hpux-parisc/lib/wrapbigwish${TclVers}s.in
+unix/ptlin		cdrom lin exe wrap	# STAGE	${Release}/linux-ix86/lib/wrapbigtclsh${TclVers}s.in
+unix/pwlin		cdrom lin exe wrap	# STAGE	${Release}/linux-ix86/lib/wrapbigwish${TclVers}s.in
+unix/ptaix		cdrom aix exe wrap	# STAGE	${Release}/aix-risc/lib/wrapbigtclsh${TclVers}s.in
+unix/pwbsd		cdrom bsd exe wrap	# STAGE	${Release}/freebsd-ix86/lib/wrapbigwish${TclVers}s.in
+unix/ptbsd		cdrom bsd exe wrap	# STAGE	${Release}/freebsd-ix86/lib/wrapbigtclsh${TclVers}s.in
+unix/pwaix		cdrom aix exe wrap	# STAGE	${Release}/aix-risc/lib/wrapbigwish${TclVers}s.in
+
+# Unzip executables for Solaris, HP, SGI, and Linux
+# SKIP THESE if your platform has an unzip by default.
+# Otherwise, you need to have a copy in a local /tools area.
+
+unix/uzpslsp		cdrom sol exe		# TOOLS solaris-sparc/distrib/unzip
+unix/uzpirmi		cdrom sgi exe		# TOOLS irix-mips/distrib/unzip
+unix/uzphppa		cdrom hp exe		# TOOLS hpux-parisc/distrib/unzip
+unix/uzpln86		cdrom lin exe		# TOOLS linux-ix86/distrib/unzip
+
+# -- Zip files --
+# The following zip files are generated from parts.txt based on the platform
+# tag for each file:
+
+unix/tclpro.1	cdrom unix		# PARTS all
+unix/tclpro.2	cdrom unix		# PARTS unix
+unix/tclpro.3	cdrom sol		# PARTS sol
+unix/tclpro.4	cdrom hp		# PARTS hp
+unix/tclpro.8   cdrom lin		# PARTS lin
+unix/tclpro.9   cdrom sgi		# PARTS sgi
+unix/tclpro.20   cdrom aix		# PARTS aix
+unix/tclpro.21   cdrom bsd		# PARTS bsd
+
+unix/tclpro.12	cdrom c-all		# PARTS all/cd
+unix/tclpro.14	cdrom c-sol 		# PARTS sol/cd
+unix/tclpro.15	cdrom c-hp		# PARTS hp/cd
+unix/tclpro.16  cdrom c-lin		# PARTS lin/cd
+unix/tclpro.17  cdrom c-sgi		# PARTS sgi/cd
+unix/tclpro.18  cdrom c-aix		# PARTS aix/cd
+unix/tclpro.19  cdrom c-bsd		# PARTS bsd/cd
+
+# At this time there are no generic unix files that only get installed from CD.
+unix/tclpro.13	cdrom c-unix		# PARTS unix/cd
+
+tclprodev${ProVers}.zip	win		# PARTS all/cd win/cd
+
+# The following zip files are generated by zipping up everything in
+# the specified directory under DIST/<version::srcVers(src)>.
+unix/tclpro.5	cdrom			# SRC tcl
+unix/tclpro.6	cdrom			# SRC tk
+unix/tclpro.7	cdrom			# SRC itcl
+unix/tclpro.10	cdrom			# SRC tclx
+unix/tclpro.11	cdrom			# SRC expect
+
+# -- Acrobat installers --
+# SKIP these if you don't have them for your platform.
+# We should just point everyone at the Adobe cite anyway.
+ar302.exe		cdrom		# TOOLS win32-ix86/distrib/ar302.exe
+acrobat/arsol302.tz	cdrom		# TOOLS solaris-sparc/distrib/ar302sol_tar.Z
+acrobat/arhp302.tz	cdrom		# TOOLS hpux-parisc/distrib/ar302hp_tar.Z
+acrobat/arlin302.tz	cdrom		# TOOLS linux-ix86/distrib/ar302lin_tar.Z
+acrobat/arirx302.tz	cdrom		# TOOLS irix-mips/distrib/ar302irx_tar.Z
+
+
+eval set MemchanVers    21
+eval set Memchan.Vers   2.1
+eval set TrfVers    21
+eval set Trf.Vers   2.1
+eval set TrfcryptVers    20
+eval set Trfcrypt.Vers   2.0
+
+eval set SetopsVers    10
+eval set Setops.Vers   1.0
+    
+eval set ExpandVers    20
+eval set Expand.Vers   2.0
+    

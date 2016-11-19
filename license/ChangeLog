@@ -1,0 +1,82 @@
+2000-8-24    <welch@ajubasolutions.com>
+
+	* lclient.tcl:
+	Had to add update calls in RequestAsync so that the POST data
+	from the http::geturl would get out to the server before
+	command-line tools exited.  This caused failures to release
+	licenses that caused 10-minute timeouts of the license.
+
+2000-8-04    <welch@ajubasolutions.com>
+
+	* Makefile.in:
+	Removed dependency on .tbc files in Debug builds.
+	* licenseWin.tcl:
+	Had to nuke the URL bindings from the licence alert dialog because
+	TclPro debugger isn't initialized enough to support that
+	link when it is displayed.
+
+2000-8-01    <welch@ajubasolutions.com>
+
+	* lserverInstall.tcl:
+	Fixed reference to tclhttpd.etc.init 
+
+2000-7-31    <welch@ajubasolutions.com>
+
+	* Changed Scriptics to Ajuba Solutions
+	* Created aclocal.m4
+
+2000-7-28    <welch@ajubasolutions.com>
+
+	* Hand crafted pkgIndex.tcl to deal with .tbc files.
+
+2000-7-18    <welch@ajubasolutions.com>
+
+	* Fixed licenseWin.tcl and dependencies on the system module.
+
+2000-6-22    <welch@ajubasolutions.com>
+
+	* General cleanup for a license module for TclPro 1.4
+
+1999-6-2    <wart@toutatis.scriptics.com>
+	* lictty.tcl:  The tty interface to prolicense no longer caches
+	the server site info.  [Bug: 1286]
+	Fixed typo (runnung -> running)
+
+1999-5-7    <wart@toutatis>
+
+	* Modified start of licdemo so that it looks in ../util for the
+	lic package.  Now it can be started from any directory with:
+		$ wish /ws/path/to/licdemo
+
+	* Did the above to genkeygui.tcl as well:
+		$ wish /ws/path/to/genkeygui.tcl
+
+	* startup.tcl:  Added call to lic::promoteLicense for promoting older
+	TclPro licenses.
+
+1998-12-18    <welch@sage>
+
+	* licdata.tcl: Moved low level packInt, unpack, and releated procs
+	from licparse.tcl and licgen.tcl into this data handling module.
+	Added new packString and unpackString functions used by license
+	manager.
+
+	* licparse.tcl:  Move licdata:getMsg into here where it makes more
+	sense.
+	NOTE API CHANGE: licdata::getMsg changed to lic::getMsg
+
+	* lmgrclient.tcl: new support for license manager.  Still not used
+
+	* lmgr/*: initial license manager implementation
+
+
+1998-1-6    <welch@sage>
+
+	* Working snapshot.  Note that licdata.tcl and licparse.tcl have moved
+	down into the lmgr subdirectory.  The server has these features:
+		Self installing with -install option
+		probe, checkout, refresh, release HTTP operations
+		Configuration file with port, uid, gid, license
+		Checkpoint file with active state, including overdraft limits
+		/license.tml to add licenses
+		/debug.tml to test things and change parameters

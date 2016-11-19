@@ -1,0 +1,43 @@
+[lpage::head Administration "Manage Licenses"]
+[lserver::initview /setup.tml]
+<p>
+This page lets you add, upgrade, and remove licenses.
+<p>
+<font color=red>[ncgi::value msg]</font>
+
+<h3>Current Licenses</h3>
+
+[lserver::keysummary]
+
+<h3>Add a New License Key</h3>
+To add a new license key, simply paste its value into
+the form below and press the "Add Key" button.
+
+<form action=/srvr/addlicense method=post>
+<p>
+<input type=hidden name=appname value="TclPro">
+Key: <input type=text name=key size=30>
+<input type=submit value="Add Key">
+</form>
+
+<h3>Upgrade a License Key</h3>
+<p>
+To upgrade your key to the next version, press the
+"Upgrade Key" button next to the key you want to upgrade.
+This contacts Ajuba Solutions and verifies your eligibililty for
+the upgrade.  If eligible, a new license key is returned
+and added to your system automatically.
+
+<h3>Remove an Old License Key</h3>
+<p>
+To remove keys for old or unused versions, press the
+"Delete Key" button next to the key you want to delete.
+This brings up a confirmation page
+that gives you a chance to reconsider this action.
+
+
+
+<h3><a href=http://www.ajubasolutions.com/buy/>Purchase a New License Key</a></h3>
+Visit Ajuba Solutions' web site to purchase additional licenses.
+
+[lpage::footer]

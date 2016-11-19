@@ -1,0 +1,258 @@
+
+-------------------------------------------------------------------
+ Information managed by ModuleWorkspace and ModuleKnowledge
+
+ 1 Workspace path		- ModuleWorkspace
+ 2 Database directory		-		   ModuleKnowledge
+ 3 Module list			- ModuleWorkspace, ModuleKnowledge
+ 4 SrcSubdir			- ModuleWorkspace, ModuleKnowledge
+ 5 Dependencies			- ModuleWorkspace, ModuleKnowledge
+ 6 Submodules			- ModuleWorkspace, ModuleKnowledge
+ 7 Virtual modules		- ModuleWorkspace, ModuleKnowledge
+ 8 Configuration Flags		- ModuleWorkspace, ModuleKnowledge
+ 9 Testsuite directories	- ModuleWorkspace, ModuleKnowledge
+10 Version information		- ModuleWorkspace, ModuleKnowledge
+11 Platform availability	- ModuleWorkspace, ModuleKnowledge
+12 Toplevel directory           - MW: implicit,    MK: explicit
+
+-------------------------------------------------------------------
+
+Interface between the module scanner and the modules themselves
+
+4-11.	BUILDINFO file in the toplevel directory contains all
+	of the information listed above.
+
+4.	Toplevel directory for TEA-based configure.in, subdirectories
+	'tea' for same. Subdirectories unix and win for general and
+	windows builds. First path of any with a 'configure.in'. Not
+	considered if a BUILDINFO file is available. In any case all
+	paths are validated (existing, readable, containing a
+	configure.in).
+
+5.	DEPENDENCIES file in the toplevel directory containing just
+	the dependency information (backward compatibility with the
+	existing setup). This file is not considered if a BUILDINFO
+	file is found.
+
+6.	Only through BUILDINFO.
+7.	Only through BUILDINFO.
+8.	Only through BUILDINFO.
+
+9.	'tests' directories in all directories from the toplevel
+	directory on down. Not considered if a BUILDINFO file is
+	available. In any case all paths are validated (existing,
+	readable).
+
+10.	Only through BUILDINFO.
+11.	Only through BUILDINFO.
+
+-------------------------------------------------------------------
+
+Format of DEPENDENCIES
+
+1.	One entry per line, containing the name of the module
+	the declarator depends on.
+2.	Empty lines are ignored (= lines containing only whitespace)
+3.	Comment lines are ignored. Comment lines begin with optional
+	whitespace followed by hash mark (#).
+4.	Comments at the end of a line are ignored too. Comments begin
+	with optional whitespace followed by hash mark (#).
+
+-------------------------------------------------------------------
+
+Format of BUILDINFO
+
+1.	A tcl script consisting of the following commands
+	(Execute in safe interpreter !)
+
+2.	Available commands are
+
+	configure.loc
+	configure.with
+	depends.on
+	subModule
+	derivative
+	testsuite
+	version
+	platform
+
+3.	Command descriptions
+
+3.a.	configure.loc (key path)...
+
+	Declares per platform key a path to the configure.in for that
+	platform. An empty key denotes the common configure.in of the
+	module. Paths have to exist, must be readable and contain the
+	configure.in file. All path are given relative to the toplevel
+	directory of the module.
+
+3.b.	configure.with (key option_def)...
+
+	Declares per key a set of options for the
+	configure.in. Allowed keys are the names of the known
+	platforms, the names of the build flavors and combinations of
+	these (flavor,platform).
+
+	Derivative modules are also allowed to use the key *clear*
+	(without an option specification) to declare that they hjave
+	no interest in inheriting the information of their base module
+	as well. This is most useful as the first configuration
+	command (using it later will clear its own information as well).
+
+3.c.	depends.on module...
+
+	Declares that the current module depends on the named modules.
+
+3.d.	subModule name path
+
+	Declares that the specified 'path' contains a module embedded
+	into the current module. This module is given the specified
+	'name'. It is completely independent of the current module and
+	is processed as such. I.e. the system will look for its own
+	BUILDINFO file, etc. Note that the path is specified relative
+	to the toplevel directory of the current module and must noot
+	be empty. IOW it is not allowed to place a submodule into the
+	same directory as the module itself. Use derived modules for
+	this, see below.
+
+3.e.	derived name description
+
+	Defines a module with the 'name' as derived from the current
+	module, thus having a different configuration, as laid in the
+	description script. The description script can use some of the
+	commands described here, namely:
+
+	-	configure.loc
+	-	depends.on
+	-	configure.with
+	-	testsuite
+
+	In the beginning the derived module inherits the full
+	configuration of the base module (as specified before the
+	derived module).
+
+
+3.f.	testsuite path...
+
+	Declares the paths to the directories containing the testsuite
+	of the module. The paths are given relative to the toplevel
+	directory of the module.
+
+3.g.	version	version-string
+
+	Declares the version of the module currently looked at. The
+	following forms are allowed
+
+	-	[0-9]+[.][0-9]+
+	-	[0-9]+[.][0-9]+[abp.][0-9]+
+	-	[0-9]+[.][0-9]+[.][0-9]+
+
+3.h.	platform platform-name...
+
+	Declares that the module is restricted to compilation and
+	usage on the specified platforms. Use
+
+		platform {}
+
+	to declare that there are no such restrictions.
+
+-------------------------------------------------------------------
+
+Configure options, interface between them and the moduleHints system.
+
+Background: The options in BUILDINFO / moduleKnowledge must not
+contain built-time information, yet be able to reference different
+parts of the system, like the build directories, sources, etc.
+
+Here we define the placeholders substituted by moduleHints (which is
+the built-time database) with the real thing.
+
+Keywords
+	Inside options, a keyword foo is written as %foo% (I wanted
+	something which makes them different from placeholders for
+	configure (@foo@)).
+
+	[General information]
+
+	build_dir	-	Path to the toplevel builddirectory.
+	build_id	-	Id of the current build.
+	workspace	-	Path to the workspace.
+	arch		-	Base architecture currently built
+				(Builttime values: unix, win, mac)
+	platform	-	Exact platform currently built
+	prefix		-	Installation prefix for platform-independent files.
+	exec_prefix	-	Installation prefix for platform-dependent files.
+
+	[Module specific information]
+
+	top:<module>	-	Shortcut for	@workspace@/<modulepath>
+	bld:<module>	-	Shortcut for	@build_dir@/<modulepath>
+
+				Have to say <modulepath> instead of
+				<module> to cover submodules as well.
+
+	version:<module>	-\  Version information and its parts
+	vmajor:<module>		- >
+	vminor:<module>		- >
+	vpatchlvl:<module>	-/
+
+
+-------------------------------------------------------------------
+
+Examples of BUILDINFO files
+
+trf
+	version		2.1
+	configure.loc	{} .
+	configure.with	{} "--with-tcl=%bld:tcl%/%arch% --enable-shared"
+	depends.on	memchan tcl
+	testsuite	tests
+	platform	{}
+
+tclpro
+	version		1.5
+	configure.loc	{} .
+	configure.with	{} "--with-protools=%top:tclPro%"
+	depends.on	... all modules ...
+	subModule	procheck	modules/checker
+	subModule	prodebug	modules/debugger
+	subModule	prowrap		modules/wrapper
+	subModule	procomp		modules/compiler
+	testsuite	tests
+	platform	{}
+
+tcl
+	version		8.3.2
+	configure.loc	{} .
+	configure.with	{} "--with-protools=%top:tclPro%"
+	depends.on	tcl_static
+	testsuite	tests
+	platform	{}
+
+	derived tcl_static {
+		configure.with *clear*
+		configure.with {} --disable-shared
+	}
+
+-------------------------------------------------------------------
+
+Using an additional command [module] it is possible to wrap the
+information of/about a single module into a script and use all these
+as the external representation for the static knowledge base used as
+fallback when data from the workspace is missing.
+
+EXAMPLE
+
+module tcl {
+	version		8.3.2
+	configure.loc	{} .
+	configure.with	"--with-protools=%top:tclPro%"
+	depends.on	tcl_static
+	testsuite	tests
+	platform	{}
+
+	derived tcl_static {
+		configure.with *clear*
+		configure.with {} --disable-shared
+	}
+}

@@ -1,0 +1,18 @@
+2001-03-07  Karl Lehenbauer <karl@procplace.com>
+	* Modified pro_wrap.sh.in & wrap.sh.in to remove the expectation
+	  that uname is in /bin -- it isn't on FreeBSD at least, and
+	  config.guess doesn't force it either.
+
+2000-07-18  Brent Welch  <welch@ajubasolutions.com>
+
+	* Cloned wrap.sh into pro_wrap.sh so we can have different
+	wrap.sh scripts for Ajuba and TclPro.
+
+2000-07-10  Brent Welch  <welch@ajubasolutions.com>
+
+	* Make the installation of wrap.sh unix-specific so a windows
+	build doesn't install a cr-lf version of the file.
+
+2000-05-26  Mike Thomas  <wart@ajubasolutions.com>
+
+	* Added files for the test suite that didn't used to exist.

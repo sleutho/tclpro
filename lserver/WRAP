@@ -1,0 +1,21 @@
+cvs=/home/welch/cvs/pro1.4
+prowrap -uses bigtclsh-lite \
+	-startup src/startup.tcl \
+	-out prolserver \
+	-verbose \
+	src/audit.tcl \
+	src/decode.tcl \
+	src/demo.tcl \
+	src/startup.tcl \
+	src/lserver.tcl \
+	src/page.tcl \
+	src/pkgIndex.tcl \
+	htdocs/* \
+	templates/* \
+	-relativeto $cvs/tclpro/modules \
+	$cvs/tclpro/modules/projectInfo/projectInfo.tcl \
+	$cvs/tclpro/modules/projectInfo/pkgIndex.tcl \
+	-relativeto $cvs \
+	$cvs/license/*.tcl \
+	-relativeto $cvs \
+	$cvs/tclhttpd/lib/*.tcl

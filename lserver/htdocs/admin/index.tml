@@ -1,0 +1,25 @@
+[lpage::head Administration "Administration"]
+[lserver::initview /setup.tml]
+<p>
+<h3><a href=license.tml>Manage Licenses</a></h3>
+Use this page to add new license keys,
+upgrade license keys to new versions of TclPro,
+and delete old license keys.
+
+<h3><a href=revoke.tml>Revoke Licenses</a></h3>
+Use this page to find out what licenses are in use and
+revoke licenses from users if necessary.
+
+<h3><a href=email.tml>Email Settings</a></h3>
+The license server can generate email notifications when various
+events occur. You can define which users get email in response
+to which kind of events.
+
+<h3><a href=dateformat.tml>Date Format</a></h3>
+Use this page to select the date format used in reports.
+
+<h3><a href=password.tml>Set Passwords</a></h3>
+Use this page to set administrative passwords.
+
+[lpage::footer]
+

@@ -1,0 +1,71 @@
+This directory contains the source distribution for the TclPro wrapper
+library and objects.
+
+The library can be built against the core Tcl distribution, release 8.2 or
+higher; you don't need access to TclPro sources or binaries.
+
+There is also a configurable Makefile that builds both the library and a
+sample wrapper base application, which will be described below.
+
+---- How to build and install the distribution.
+
+1. Configure the distribution, by running the 'configure' script. You can
+configure in place, or create a subdirectory of the source distribution and
+configure from there; the latter approach lets you build multiple platforms
+or configurations from the same sources.
+
+The configure scripts needs to find a directory where Tcl was built.
+You can specify the Tcl build directory with the --with-tcl option, whose
+argument is the path to the Tcl build directory. If you don't specify a
+--with-tcl option, 'configure' looks for Tcl in a sibling of the source
+directory.
+
+There are two additional options you can pass to 'configure': --enable-gcc
+and --enable-symbols. The former instructs the Makefile to use GCC instead of
+the native compiler, and the latter turns on debugging information. Note that,
+currently, only GCC is supported on Solaris and HP-UX platforms.
+
+And, of course, all the standard 'configure' options apply, as well.
+
+2. Build the distribution, by running 'make' in the configured directory.
+This will build the static library for the wrapper interfaces. Note that
+the Makefile also expects that Tcl was installed; it links against the
+installed binaries, not the ones in the build directory.
+
+3. Install the binaries, by running the 'make install' target. This copies
+the wrapper library to the 'lib' directory of the Tcl installed area.
+
+---- The sample application
+
+The Makefile also contains targets to generate a sample base application for
+the wrapper; this is a statically-linked tclsh which calls Pro_WrapTclMain
+instead of Tcl_Main. You can say 'make samples' and it will be built.
+
+Once this is built, you can use it as input for TclPro Wrapper. Note that you
+can wrap base applications from any platform on any platform that TclPro
+supports, even if the base application was built on a platform that TclPro
+does not support.
+
+---- The contents of the distribution
+
+The following files are present in this distribution:
+
+README		    This file.
+configure	    Configure script
+configure.in	    The template for 'configure', for use by 'autoconf'.
+Makefile.in	    The template for the Makefile that 'configure' generates.
+
+proWrap.h	    Public header, exports the public wrapper interfaces.
+
+proWrap.c	    The implementation of the Pro_Wrap interfaces.
+tclMemChan.c	    The implementation of a memory-based Tcl channel.
+
+unzip		    This directory contains the subset of the InfoZip
+		    distribution that is included in the wrapper library.
+		    It is a slightly modified version of unzip version 5.31.
+
+sampleinit.c	    Main program for the sample base application.
+
+proWrapTclMain.c    These two files can be used as a starting point for
+proWrapTkMain.c	    creating your own version of Tcl_Main that initializes
+		    the wrapper interfaces.

@@ -1,0 +1,115 @@
+[lpage::head Documentation "License Server Introduction"]
+<p>
+Ajuba Solutions License Server 
+manages shared network licenses for the TclPro products
+in use at your site.  A shared network
+license can replace several named user licence
+keys,
+provide easy TclPro access to a larger number of developers,
+and eliminate the need for users to manage and install their own 
+license keys.
+Ajuba Solutions License Server also maintains records about the usage
+of TclPro products for your reference.
+<p>
+If you have purchased shared network licenses, you will have received a
+license key for your desired number of licenses. To use TclPro with a
+shared network license, a developer needs to be able to access 
+Ajuba Solutions License Server
+via the Internet, and access a copy of TclPro from either a shared file
+server or from his own machine.
+
+<h3>Shared Network License Policy</h3>
+<p>
+Ajuba Solutions License Server
+is configured for some number of <i>concurrent users</i>.
+A user is determined by their user account.  The same user
+account on different hosts still counts as one user.
+A single user can be using more than one TclPro application
+at the same time, and this still counts as one user.
+<p>
+<h4>License Overdraft</h4>
+Ajuba Solutions has included a generous overdraft policy that
+will let you continue to use TclPro if you have an emergency situation,
+or quickly need additional licenses before you have had time to
+purchase them.
+
+If a user would exceed your license limit,
+the system goes into an <i>Overdraft State</i>,
+which lasts for the rest of that day.
+This causes a warning to be printed by TclPro tools
+and, optionally, email notification to the site administrator.
+The warnings only occur for users that cause the limit to
+be exceeded.
+<p>
+Ajuba Solutions License Server allows a limited number of overdraft
+days to occur.  Once this limit is exceeded, the concurrent
+user limit is strictly enforced.  Users that would exceed the
+limit are not allowed to use their TclPro applications.
+The daily and weekly reports indicate how many licenses are
+used and how many overdraft licenses are issued.
+<p>
+Please
+contact Ajuba Solutions to purchase additional licenses if overdraft occurs
+to avoid loss of use by your developers.
+
+<h3>Initial Setup</h3>
+
+The first time you visit the server's web interface you are
+taken to a setup page that prompts for initial configuration
+information:
+
+<h4>Your Company Name</h4>
+The company name is appears on the web pages of the server,
+in the reports it generates, and it is returned to TclPro
+tools when they check out a license.
+
+<h4>Administrative Name and Password</h4>
+Access to the administrative pages of the server are
+password protected.  This uses the Basic Authentication
+scheme supported by all browsers.  On the setup page you
+choose the name and password for the first administrator
+account.  You can define other name/password pairs later
+using the <a href='/admin/password.tml'>/admin/password.tml</a> page.
+
+<h4>Email Contact Address</h4>
+Ajuba Solutions License Server will send email to the site administrator
+when any of several different events occur.  On the setup
+page you choose the email address that will receive this mail.
+You can add more email addresses and tune what events trigger
+email later using the
+<a href='/admin/preferences.tml'>/admin/preferences.tml</a> web page.
+
+<h4>Email Contact With Ajuba Solutions</h4>
+Th License Server can also send email to Ajuba Solutions
+when certain events occur.  You can enable or disable this
+on the Setup page and on the 
+<a href='/admin/preferences.tml'>/admin/preferences.tml</a> web page.
+The purpose of contacting Ajuba Solutions is to alert us of any
+potential problems.  For example, excessive "License Denied" events
+suggests you may need more licenses, and excessive "Server Boot"
+events suggests unreliable hardware or software.
+
+<h3>Managing Licenses</h3>
+
+The shared network licenses are distributed as encoded keys.
+There is a form on the <a href=/admin/license.tml>Managing Licenses</a>
+web page that lets you install license keys.
+This page also displays the currently installed keys.
+<p>
+License keys are specific to a TclPro release (e.g., 1.2).
+When new releases appear, Update Service customers can upgrade
+their keys automatically.  There is an "Upgrade Key" button
+on Managing Licences page that begins the upgrade process.
+
+<h3>Reporting</h3>
+
+The server provides reports about usage of TclPro tools.
+There is a summary view, a daily view and a weekly view.  The views list
+the TclPro applications and the number of times they have been
+used each day (or week), and the maximum number of concurrent
+users over that period. The reports also list system events
+such as Overdraft conditions and License Denied.  Either of these
+events indicate that your site may not be configured with
+enough shared network licenses.
+
+[lpage::footer]

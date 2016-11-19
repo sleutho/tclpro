@@ -1,0 +1,25 @@
+2001-01-30  Brent Welch <brent.welch@interwoven.com>
+
+	* projectInfo.tcl: bumped up version strings for 1.5.0
+
+2000-08-23  Brent Welch <welch@ajubasolutions.com>
+
+	* projectInfo.tcl: Fixed names of expect source directory.
+
+2000-08-14  David Gravereaux <davygrvy@ajubasolutions.com>
+
+	* projectInfo.tcl: bumped up productID to 2054 and version
+	strings for 1.4.1
+
+2000-8-01  Brent Welch <welch@ajubasolutions.com>
+
+	* projectInfo.tcl:
+	Changed TclX source directory from tclx8.2 to tclx8.3
+
+2000-7-12  Brent Welch <welch@ajubasolutions.com>
+
+	* projectInfo.tcl - Tweaked source file directory names
+
+2000-6-22  Brent Welch <welch@ajubasolutions.com>
+
+	* projectInfo.tcl - added TclPro license hooks

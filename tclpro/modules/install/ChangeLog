@@ -1,0 +1,157 @@
+2001-01-30  Brent Welch  <welch@ajubasolutions.com>
+
+	* install/src/makeDist.tcl: Added catch to use of "touch"
+	* install/src/messages.tcl: Changed embedded URLs to dev.scriptics.com
+	* install/src/tclProSplash.bmp: Updated to 1.5
+	* install/src/tclProSplash.gif: Updated to 1.5
+	* install/src/text.tcl: Eliminated warning about lawyers, etc.
+
+2001-01-30  Brent Welch  <welch@ajubasolutions.com>
+
+	* src/gui.tcl:
+	Removed the license dialog.
+
+2001-01-08  Brent Welch  <welch@ajubasolutions.com>
+
+	* src/parts.in:
+	Added ${prefix} reference to Release definition
+	* src/makeDist.tcl:
+	This takes a prefix argument so it can work with
+	more general build configurations.
+
+2000-08-26  Brent Welch  <welch@ajubasolutions.com>
+
+	* src/install.tcl:
+	* src/genImage.tcl:
+	Correct implementation of TCL_LIBRARY patching.
+	* src/gui.tcl:
+	Added $errorInfo to INSTALL.LOG after errors occur.
+	* src/parts.in:
+	Added missing man.macros file
+	Added TclHttpd README, tclhttpd.etc.init, man page.
+
+2000-08-25  Brent Welch  <welch@ajubasolutions.com>
+
+	* src/install.tcl:  Patching was not handling TCL_LIBRARY and
+	we had lurking references to the build area.
+
+2000-08-24  Brent Welch  <welch@ajubasolutions.com>
+
+	* src/genWinImage.tcl:  Passing in $projectInfo::patchLevel into
+	the Wise build of the installers.
+	* src/pro.wse.in:  Added PATCH variable for the above, and use
+	that in dialogs to reflect exact patchlevel of the install.
+
+2000-08-23  Brent Welch  <welch@ajubasolutions.com>
+
+	* src/makeDist.tcl:  Fixed installation of expect sources.
+	* src/parts.in:  Fixed reference to iwidgets.ps
+	Restored limit extension for solaris, which seems to have been lost in a merge.
+	* src/setup.sh:  Changed umask from 000, which resulted in
+	world-writable directories, to 022.
+
+2000-08-22  Brent Welch  <welch@ajubasolutions.com>
+
+	* src/parts.in:
+	* src/pro.wse.in:
+	Changed Iwidgets to 3.0.1 and Tcllib to 0.6.1
+	* src/tclProSplash.bmp:
+	* src/tclProSplash.gif: Undid the splash screen change.
+
+2000-08-14  David Gravereaux  <davygrvy@ajubasolutions.com>
+
+	* src/cdparts.in:
+	* src/parts.in:
+	* src/tclProSplash.bmp:
+	* src/tclProSplash.gif: Updated version numbers from 1.4 to 1.4.1
+
+	* src/cdparts.in:
+	* src/parts.in: changed expect version strings to be 5.32.2 just like
+	the sources we're using.
+
+2000-8-07  Brent Welch <welch@ajubasolutions.com>
+
+	* parts.in:
+	Fixed App2/App2.c reference
+	* cdparts.in:
+	Got all the INSTALL and README permuations right
+	Fixed name of tclprodev<vers>.zip
+	* getImage.tcl, install.tcl: set things up to patch the tclConfig.sh
+	files.
+	
+2000-8-06  Brent Welch <welch@ajubasolutions.com>
+
+	* parts.in:
+	Ensure that all README files are "README" in the parts list.  These
+	get converted to README.TXT and cr-lf'ed when added to the
+	Windows installers.
+	* install.tcl:
+	Fixed hard-coded 8.2 in the patching code
+	* text.tcl:
+	Added debugging to prompt for user/group in server install.
+
+2000-8-03  Brent Welch <welch@ajubasolutions.com>
+
+	* parts.in:
+	Added HTML docs.
+	Added config/tcl.m4 and friends to src directory.
+	Cleaned up src/tclpro1.4 wrapper stuff.
+	* cdparts.in:
+	Added INSTALL-TXT and README for the CDROM.
+	* pro.wse.in:
+	Expunged references to www.scriptics.com
+
+2000-8-02  Brent Welch <welch@ajubasolutions.com>
+
+	* parts.in:
+	Added more demos - David Gravereaux App1, App2, App3 and
+	the compileAndWrap.tcl demo.
+
+2000-8-01  Brent Welch <welch@ajubasolutions.com>
+
+	* parts.in:
+	Added generic expect scripts to bin
+	Added tclInt.h and friends by grabbing from the TclSrc area.
+	* messages.tcl:
+	Changed Scriptics to Ajuba Solutions
+
+2000-7-31  Brent Welch <welch@ajubasolutions.com>
+
+	* parts.in:
+	Nuked the tutorial, which is part of the users guide.
+	Delete the TclPro help files, which are not being generated.
+
+2000-7-28  Brent Welch <welch@ajubasolutions.com>
+
+	* parts.in - added expect pkgIndex.tcl
+	* tclProSplash.bmp - slight tweak to make room for buttons
+	* pro.wse.in - had to nuke the "Cancel" button from the
+	first screen because there isn't room enough.
+
+2000-7-26  Brent Welch <welch@ajubasolutions.com>
+
+	* genImage.tcl - Changed patching to look for the
+	build prefix so we don't have to compile specially.
+	* gui.tcl, install.tcl, messages.tcl, text.tcl -
+	Set uniform fonts via "option add" so the
+	GUI looks good on all platforms.  Moving away from \t based
+	formatting to using grid.
+	* parts.in - changes to "protclsh" et. al. Added stubs library
+	* tclProSplash - updated to Ajuba and 1.4
+
+2000-7-25  Brent Welch <welch@ajubasolutions.com>
+
+	* parts.in - Added pkgIndex.tcl for tbcload.
+	* pro.wse.in - Fixed references to Tcl/Tk 8.2
+
+2000-7-22  Brent Welch <welch@ajubasolutions.com>
+
+	* Working snapshot
+
+2000-7-19  Brent Welch <welch@ajubasolutions.com>
+
+	* Continued refinements to scripts and part list.
+
+2000-7-12  Brent Welch <welch@ajubasolutions.com>
+
+	* initial snapshot for TclPro 1.4

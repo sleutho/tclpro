@@ -1,0 +1,26 @@
+AC_INIT(msvcrt.dll)
+
+AC_PROG_INSTALL
+
+# From acsite.m4
+
+SC_SET_PLATFORM
+
+SC_PATH_TOOLS
+
+# From tcl.m4
+
+SC_PROG_TCLSH
+
+SC_ENABLE_SYMBOLS
+
+# wrap.sh is a template used to create /bin/sh wrappers around
+# the TclPro executables.  We do not need these on Windows,
+# and we sometimes use different templates for different
+# product lines.
+
+AC_ARG_WITH(wrap-sh, [ --with-wrap-sh=wrap.sh         Template for wrap.sh], WRAP_SH=${withval}, WRAP_SH="wrap.sh")
+AC_SUBST(WRAP_SH)
+
+AC_OUTPUT([Makefile],
+	chmod +x ${srcdir}/install-sh ${srcdir}/mkinstalldirs)

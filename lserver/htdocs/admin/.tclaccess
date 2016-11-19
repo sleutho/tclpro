@@ -1,0 +1,2 @@
+set realm "License Server Admin"
+set callback lserver::checkPassword

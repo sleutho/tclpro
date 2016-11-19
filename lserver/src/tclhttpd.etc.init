@@ -1,0 +1,40 @@
+SHELL
+#
+# prolserver - Start/Stop the Ajuba Solutions License Server
+#
+
+#
+PATH=/usr/bin:/bin
+
+# The following parameters are set by running the license server
+# with the -install command line argument:
+#
+# homeDir	The location of the program and config files
+# name		The name of the program in homeDir
+
+CONFIG
+
+case $1 in 
+'start_msg')
+	echo "Ajuba Solutions License Server"
+	;;
+'stop_msg')
+	echo "Ajuba Solutions License Server"
+	;;
+'start')
+	if [ -f $homeDir/$name ]; then
+		$homeDir/$name -homeDir $homeDir &
+	fi	
+	;;
+'stop')
+	pid=`cat $homeDir/$name.pid`
+	if test "$pid"
+	then
+		echo "Stopping $name"
+		kill $pid
+	fi
+	;;
+*)
+	echo "usage: $0 {start|stop}"
+	;;
+esac

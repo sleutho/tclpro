@@ -1,0 +1,24 @@
+2001-01-15  Brent Welch <welch@ajubasolutions.com>
+
+	* Added rename-shells.freebsd-ix86 target for Karl Lehenbauer
+
+2000-12-27  Brent Welch <welch@ajubasolutions.com>
+
+	* Added rename-shells.aix-risc target for Alexander Schoepe
+
+2000-8-06  Brent Welch <welch@ajubasolutions.com>
+
+	* Bug fix for:
+	Change wrapper scripts to "protclsh83" instead of "tclsh83"
+	This bug isn't crucial because these wrapper scripts are recreated
+	by the installer-builder process.
+
+2000-7-28  Brent Welch <welch@ajubasolutions.com>
+
+	* Change wrapper scripts to "protclsh83" instead of "tclsh83"
+
+2000-7-18  Brent Welch <welch@ajubasolutions.com>
+
+	* Fixed use of pro_wrap.sh for tcl and wish wrapper.
+
+

@@ -1,0 +1,85 @@
+2001-06-04  David Gravereaux <davygrvy@pobox.com>
+	* module_hints.tcl: Fix from Ruppert <ru@swb.siemens.de>
+	who says:
+	"Too many open files" from buildenv/module_hints.tcl. This script file
+	apparently opens many dependency files (possibly recursively?) without ever 
+	closing one, which leads to this error. Adding the missing close-statement 
+	solved this.
+
+2001-03-15  Karl Lehenbauer <karl@procplace.com>
+	* buildModule.tcl: Added package snapshotting.  buildModule.tcl
+	  now tries to run the built tclsh to sniff out what packages
+	  it knows about.
+
+2001-03-15  Karl Lehenbauer <karl@procplace.com>
+
+	* buildModule.tcl: Added makeFlags variable that can be set to
+	  pass some flags on the make command line.
+
+	  Added snapshotting of the output tree, where a list of every
+	  file in the output directory is recorded in a SNAPSHOT file
+	  every time a module is successfully installed.  The file name,
+	  module name and modification time of the file is recorded.
+	  This file can be postprocessed to determine which module
+	  installed which files.
+
+	  Removed "Pondering configure script..." log message and
+	  shortened the one about a configure script being newer
+	  than the configure.in.
+
+2001-03-08  Karl Lehenbauer <karl@procplace.com>
+
+	* module_hints.tcl: Modified getCygpath to work with new Cygwin 1.1+
+	  drive specification style.  Previously, for example, getCygpath on
+	  "E:/frammistan/foo.tcl" or "E:\\frammistan\\foo.tcl" became
+	  "//e/frammistan/foo.tcl".  
+	  Now it becomes "/cygdrive/e/frammistan/foo.tcl"
+
+	  Added new proc "getWinpath".  It turns a Cygnus path into a
+	  Tcl path.  For example, /cygdrive/e/frammistan/foo.tcl
+	  becomes "E:/frammistan/foo.tcl".
+
+	  If not on Windows, it returns exactly what it is passed, the
+	  same as getCygpath.
+
+2000-05-05  Mike Thomas  <wart@scriptics.com>
+
+	* module_hints.tcl:  Added 2 optional arguments to the dependency
+	  calculating routines.  The first is callback that is invoked for
+	  every module found, the second is a dotted-path describing the
+          module's parent(s).  These are helpful in generating a tree diagram
+	  of the module dependencies.
+	* gui/gui.tcl:  Added a menu entry for showing all of a module's
+	  dependencies.  Added another menu entry for adding all of a module's
+          dependencies to the list of modules to be built.  Added a third
+          menu entry for removing all modules from the list to be built.
+	  Added a fourth menu entry for sorting the modules by dependency.
+	  List of all project modules now contains dependencies.  You can
+	  drag the dependencies into the tree fo modules to build.
+	  List of modules to be built is now sorted whenever it changes.
+	  This ensures that the modules will be build in the correct order,
+	  regardless of which order they appear in the tree.
+
+2000-05-01  Mike Thomas  <wart@scriptics.com>
+
+	* gui/gui.tcl:  Converted the module selection mechanism to two
+	  tree widgets.  Users can drag the desired modules from one tree
+	  to the other.  Module actions are now presented as checkbuttons
+	  so that multiple actions can be triggered at once (hose, build, etc.)
+
+2000-04-19  Mike Thomas  <wart@scriptics.com>
+
+	* gui/gui.tcl:  Added a pop-up menu if the user right-clicks on the
+	  log window.  This menu allows one to clear or save the log.
+	  Also added an "Update Source" action button on the main gui.
+
+2000-04-18  Mike Thomas  <wart@scriptics.com>
+
+	* Added support for saving/loading projects in gui
+	* module_hints.tcl:  Fixed minor stack trace if we tried to delete
+	  the ModuleData namespace before it was created.
+
+2000-04-17  Mike Thomas  <wart@scriptics.com>
+
+	* Initial checkin of ChangeLog.
+	* gui now has a very minimal set of functionality to be usable.

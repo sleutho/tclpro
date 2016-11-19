@@ -1,0 +1,12 @@
+========================================================================
+ADDING A NEW MODULE
+========================================================================
+
+Add a line in configure.in for SC_PATH($moduleName)
+Add the configure switches, makefile targets, and depedencies in
+    tools/module_data.tcl.in
+Add an entry for the module in the SC_XMLSERVER_MODULELIST macro in xmlserver.m4
+Add the module to the list of titanic modules in the CVSROOT modules file
+Update the list of modules to check out during the nightly build
+Re-run autoconf to generate the new configure script (checked in)
+

@@ -1,0 +1,8 @@
+Here is the daily usage report for $info(date).
+
+$info(html)
+
+This message was sent automatically from
+Ajuba Solutions License Server.  To remove yourself
+from its mailing list, please visit
+http://$Httpd(name):$Httpd(port)/admin/preferences.tml

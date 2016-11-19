@@ -1,0 +1,84 @@
+# Makefile generated from Makefile.in for sample App3
+
+# These flags are inherited from the tclConfig.sh file
+# Note that TCL_BIN_DIR is where tclConfig.sh was found
+
+TCL_PREFIX =	@TCL_PREFIX@
+TCL_EXEC_PREFIX =	@TCL_EXEC_PREFIX@
+TCL_BIN_DIR =	@TCL_BIN_DIR@
+TCL_SRC_DIR =	@TCL_SRC_DIR@
+TCL_LIB_FILE =	@TCL_LIB_FILE@
+TCL_LIBS =	@TCL_LIBS@
+TCL_DEFS =	@TCL_DEFS@
+TCL_DBGX =	@TCL_DBGX@
+TCL_SHLIB_LD_LIBS =	@TCL_SHLIB_LD_LIBS@
+TCL_EXTRA_CFLAGS =	@TCL_EXTRA_CFLAGS@
+TCL_LD_FLAGS =	@TCL_LD_FLAGS@
+TCL_LIB_FILE =	@TCL_LIB_FILE@
+TCL_STUB_LIB_FILE =	@TCL_STUB_LIB_FILE@
+TCL_LIB_SPEC =	@TCL_LIB_SPEC@
+TCL_BUILD_LIB_SPEC =	@TCL_BUILD_LIB_SPEC@
+TCL_STUB_LIB_SPEC =	@TCL_STUB_LIB_SPEC@
+TCL_BUILD_STUB_LIB_SPEC =	@TCL_BUILD_STUB_LIB_SPEC@
+
+# Variables defined via SC_CONFIG_CFLAGS
+SHLIB_SUFFIX =	@SHLIB_SUFFIX@
+
+# Now create our own basic variables, adding
+# in stuff from the Tcl configure process
+
+CC =	@CC@
+DEFS =	@DEFS@ @TCL_DEFS@
+
+# Here we force a static build.
+# Should be heroic and honor the --enable-shared configure flag.
+
+CFLAGS = -DSTATIC_BUILD @TCL_EXTRA_CFLAGS@
+
+tclProToolsDir	= @TCL_EXEC_PREFIX@/bin
+procomp		=   $(tclProToolsDir)/procomp
+prowrap		=   $(tclProToolsDir)/prowrap
+procheck   	=    $(tclProToolsDir)/procheck
+
+tclProLibDir	=   @TCL_EXEC_PREFIX@/lib
+tclstaticlib	=   $(tclProLibDir)/libtcl8.3.a
+itclstaticlib	=   $(tclProLibDir)/libitcl3.2.a
+tbcstaticlib	=   $(tclProLibDir)/libtbcload1.3.a
+wrapstaticlib	=   $(tclProLibDir)/libwrapper1.4.a
+
+LIBS =	$(wrapstaticlib) $(tbcstaticlib) $(itclstaticlib) $(tclstaticlib) $(TCL_LIBS)
+
+TBCs = \
+	itclstack.tbc \
+	startup.tbc
+
+OBJs = \
+	itclstack.o \
+	myMain.o
+
+
+App3 : App3U $(TBCs)
+	$(prowrap) -nologo -out $@ \
+	-uses itclsh \
+	-executable App3U \
+	-startup startup.tbc \
+	$(TBCs)
+
+App3U : $(OBJs)
+	$(CC) -o $@ $(OBJs) $(LIBS)
+
+.cpp.o:
+	$(CC) -c -I$(TCL_PREFIX)/include $(CFLAGS) $< 
+
+.c.o:
+	$(CC) -c -I$(TCL_PREFIX)/include $(CFLAGS) $<
+
+.tcl.tbc :
+	$(procheck) $<
+	$(procomp) $<
+
+
+# need this to enable our new inference rules
+.SUFFIXES:
+.SUFFIXES: .c .cpp .tcl .o .tbc
+

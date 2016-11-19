@@ -1,0 +1,1485 @@
+Document Type: WSE
+item: Global
+  Version=6.01
+  Title=TclPro Installation
+  Flags=00000100
+  Languages=65 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+  Japanese Font Name=MS Gothic
+  Japanese Font Size=10
+  Progress Bar DLL=%_WISE_%\Progress\WIZ%_EXE_OS_TYPE_%.DLL
+  Start Gradient=0 0 255
+  End Gradient=0 0 0
+  Windows Flags=00000100000010010010110000001100
+  Log Pathname=%MAINDIR%\INSTALL.LOG
+  Message Font=MS Sans Serif
+  Font Size=8
+  Disk Filename=SETUP
+  Patch Flags=0000000000000001
+  Patch Threshold=85
+  Patch Memory=4000
+  FTP Cluster Size=20
+  Per-User Version ID=1
+  Dialogs Version=6
+  Variable Name1=_SYS_
+  Variable Default1=C:\WINNT\System32
+  Variable Flags1=00001000
+  Variable Name2=_WISE_
+  Variable Default2=$__WISE__
+  Variable Flags2=00001000
+  Variable Name3=_ALIASNAME_
+  Variable Flags3=00001000
+  Variable Name4=_ALIASPATH_
+  Variable Flags4=00001000
+  Variable Name5=_ALIASTYPE_
+  Variable Flags5=00001000
+  Variable Name6=_WEBONLY_
+  Variable Description6=Only include Web download files
+  Variable Default6=Yes
+  Variable Values6=Yes
+  Variable Values6=No
+  Variable Flags6=00000010
+  Variable Name7=_VERSTR_
+  Variable Description7=TclPro Version String
+  Variable Default7=<<<UNDEFINED>>>
+  Variable Name8=_VERS_
+  Variable Description8=TclPro Preferences Version
+  Variable Default8=<<<UNDEFINED>>>
+  Variable Name9=_PATCH_
+  Variable Description9=TclPro Patch Level
+  Variable Default9=<<<UNDEFINED>>>
+end
+item: Get Temporary Filename
+  Variable=LICENSEFILE
+end
+item: Install File
+  Source=new-license.txt.nolnbrk
+  Destination=%TEMP%\%LICENSEFILE%
+  Flags=0000000000100010
+end
+item: Open/Close INSTALL.LOG
+  Flags=00000001
+end
+item: Check if File/Dir Exists
+  Pathname=%SYS%
+  Flags=10000100
+end
+item: Set Variable
+  Variable=SYS
+  Value=%WIN%
+end
+item: End Block
+end
+item: Set Variable
+  Variable=VERSTR
+  Value=%_VERSTR_%
+end
+item: Set Variable
+  Variable=VER
+  Value=%_VERS_%
+end
+item: Set Variable
+  Variable=PATCH
+  Value=%_PATCH_%
+end
+item: Set Variable
+  Variable=APPTITLE
+  Value=TclPro %PATCH%
+  Flags=10000000
+end
+item: Set Variable
+  Variable=GROUP
+  Value=TclPro %VERSTR%
+  Flags=10000000
+end
+item: Set Variable
+  Variable=DISABLED
+  Value=!
+end
+item: Set Variable
+  Variable=MAINDIR
+  Value=TclPro%VERSTR%
+  Flags=10000000
+end
+item: Check Configuration
+  Flags=10111011
+end
+item: Get Registry Key Value
+  Variable=COMMON
+  Key=SOFTWARE\Microsoft\Windows\CurrentVersion
+  Default=C:\Program Files\Common Files
+  Value Name=CommonFilesDir
+  Flags=00000100
+end
+item: Get Registry Key Value
+  Variable=PROGRAM_FILES
+  Key=SOFTWARE\Microsoft\Windows\CurrentVersion
+  Default=C:\Program Files
+  Value Name=ProgramFilesDir
+  Flags=00000100
+end
+item: Set Variable
+  Variable=MAINDIR
+  Value=%PROGRAM_FILES%\%MAINDIR%
+  Flags=00001100
+end
+item: Set Variable
+  Variable=EXPLORER
+  Value=1
+end
+item: Else Statement
+end
+item: Set Variable
+  Variable=MAINDIR
+  Value=C:\%MAINDIR%
+  Flags=00001100
+end
+item: End Block
+end
+item: Set Variable
+  Variable=BACKUP
+  Value=%MAINDIR%\BACKUP
+  Flags=10000000
+end
+item: Set Variable
+  Variable=DOBACKUP
+  Value=B
+  Flags=10000000
+end
+item: Set Variable
+  Variable=COMPONENTS
+  Value=AB
+  Flags=10000000
+end
+item: Set Variable
+  Variable=WEBONLY
+  Value=%_WEBONLY_%
+  Flags=10000000
+end
+item: Set Variable
+  Variable=BRANDING
+  Value=0
+end
+item: If/While Statement
+  Variable=BRANDING
+  Value=1
+end
+item: Read INI Value
+  Variable=NAME
+  Pathname=%INST%\CUSTDATA.INI
+  Section=Registration
+  Item=Name
+end
+item: Read INI Value
+  Variable=COMPANY
+  Pathname=%INST%\CUSTDATA.INI
+  Section=Registration
+  Item=Company
+end
+item: If/While Statement
+  Variable=NAME
+end
+item: Set Variable
+  Variable=DOBRAND
+  Value=1
+end
+item: End Block
+end
+item: End Block
+end
+item: Remark
+  Text==== Check to see if this distrubution contains the Acrobat installer. ===
+end
+item: Set Variable
+  Variable=INSTALLACRO
+end
+item: Set Variable
+  Variable=INSTALLTCLPRO
+  Value=A
+end
+item: Check if File/Dir Exists
+  Pathname=%INST%\AR302.EXE
+  Flags=01000100
+end
+item: Remark
+  Text==== Check to see if a recent version of Acrobat is installed. ===
+end
+item: Get Registry Key Value
+  Variable=ACROVER
+  Key=AcroExch.Document\AcrobatVersion
+  Default=0.0
+end
+item: If/While Statement
+  Variable=ACROVER
+  Value=3.0
+  Flags=00001000
+end
+item: Set Variable
+  Variable=INSTALLACRO
+  Value=A
+end
+item: End Block
+end
+item: End Block
+end
+item: Wizard Block
+  Direction Variable=DIRECTION
+  Display Variable=DISPLAY
+  X Position=0
+  Y Position=0
+  Filler Color=16777215
+  Flags=00000011
+end
+item: Custom Dialog Set
+  Name=Splash
+  Display Variable=DISPLAY
+  item: Dialog
+    Title=%APPTITLE% Installation
+    Title French=Bienvenue
+    Title German=Willkommen
+    Title Portuguese=Bem-vindo 
+    Title Spanish=Bienvenido
+    Title Italian=Benvenuto
+    Title Danish=Velkommen
+    Title Dutch=Welkom
+    Title Norwegian=Velkommen
+    Title Swedish=Välkommen
+    Width=238
+    Height=223
+    Font Name=Helv
+    Font Size=8
+    item: Push Button
+      Rectangle=184 183 226 197
+      Variable=DIRECTION
+      Value=N
+      Create Flags=01010000000000010000000000000001
+      Text=&Next >
+    end
+    item: Static
+      Rectangle=0 0 232 205
+      Action=2
+      Enabled Color=00000000000000001111111111111111
+      Create Flags=01010000000000000000000000001011
+      Pathname=tclProSplash.bmp
+    end
+  end
+end
+item: End Block
+end
+item: Wizard Block
+  Direction Variable=DIRECTION
+  Display Variable=DISPLAY
+  Bitmap Pathname=%_WISE_%\DIALOGS\TEMPLATE\Wizard.bmp
+  X Position=9
+  Y Position=10
+  Filler Color=8421440
+  Dialog=Welcome
+  Dialog=Display ReadMe
+  Dialog=Select Destination Directory
+  Dialog=Select Components
+  Dialog=Select Program Manager Group
+  Variable=
+  Variable=
+  Variable=
+  Variable=WEBONLY
+  Variable=EXPLORER
+  Value=
+  Value=
+  Value=
+  Value=Yes
+  Value=1
+  Compare=1
+  Compare=1
+  Compare=1
+  Compare=4
+  Compare=0
+  Flags=00000011
+end
+item: Check if File/Dir Exists
+  Pathname=%INST%\AR302.EXE
+  Flags=01000100
+end
+item: Custom Dialog Set
+  Name=Install Fork
+  Display Variable=DISPLAY
+  Flags=00000001
+  item: Dialog
+    Title=Select Applications to Install
+    Title French=Sélectionner les éléments
+    Title German=Komponenten auswählen
+    Title Portuguese=Seleccionar Componentes
+    Title Spanish=Seleccione los Componentes
+    Title Italian=Seleziona Componenti
+    Title Danish=Vælg komponenter
+    Title Dutch=Selecteer onderdelen
+    Title Norwegian=Velg komponenter
+    Title Swedish=Välj komponenter
+    Width=280
+    Height=224
+    Font Name=Helv
+    Font Size=8
+    item: Push Button
+      Rectangle=172 185 214 199
+      Variable=DIRECTION
+      Value=N
+      Create Flags=01010000000000010000000000000001
+      Text=&Next >
+      Text French=&Suivant>
+      Text German=&Weiter>
+      Text Portuguese=&Próximo>
+      Text Spanish=&Siguiente >
+      Text Italian=&Avanti >
+      Text Danish=&Næste>
+      Text Dutch=&Volgende>
+      Text Norwegian=&Neste>
+      Text Swedish=&Nästa >
+    end
+    item: Push Button
+      Rectangle=222 185 264 199
+      Action=3
+      Create Flags=01010000000000010000000000000000
+      Text=Cancel
+      Text French=Annuler
+      Text German=Abbrechen
+      Text Portuguese=Cancelar
+      Text Spanish=Cancelar
+      Text Italian=Annulla
+      Text Danish=Annuller
+      Text Dutch=Annuleren
+      Text Norwegian=Avbryt
+      Text Swedish=Avbryt
+    end
+    item: Static
+      Rectangle=9 177 263 178
+      Action=3
+      Create Flags=01010000000000000000000000000111
+    end
+    item: Static
+      Rectangle=90 8 260 41
+      Create Flags=01010000000000000000000000000000
+      Text=Please choose the application(s) that you wish to install.  In order to view the %APPTITLE% User's Guide, you will need to have Adobe Acrobat Reader 3.02 (or greater) installed.
+      Text French=Dans la liste d'options suivante, veuillez sélectionner les cases des options que vous désirez installer. Le champ d'espace disque indique les conditions requises pour les options choisies
+      Text German=Wählen Sie in der Optionenliste unten die Kontrollkästchen für diejenigen Optionen, die Sie installieren möchten. Die Speicherfelder zeigen die benötigte Speicherkapazität für die gewählten Optionen an.
+      Text Portuguese=Na lista de opções abaixo, seleccione as caixas de verificação para as opções que gostaria de ter instalado. Os campos de espaço de disco reflectem os requerimentos das opções que seleccionou.
+      Text Spanish=En la lista de opciones que se ofrece a continuación, seleccione las casillas de comprobación para las opciones que desea instalar. Los campos del espacio en el disco reflejan los requerimientos de las opciones que ha seleccionado.
+      Text Italian=Nell’elenco delle opzioni sotto, marca le caselle di controllo delle opzioni che vuoi installare. I campi dello spazio sul disco riflettono i requisiti delle opzioni selezionate.
+      Text Danish=Marker afkrydsningsfelterne for de komponenter, der skal installeres, på listen herunder. Diskpladsfelterne angiver pladskravene for de valgte komponenter.
+      Text Dutch=Kruis in de onderstaande lijst het vakje aan naast de opties die u wilt installeren. Achter elke optie staat de benodigde schijfruimte vermeld.
+      Text Norwegian=I listen over alternativer nedenfor, klikk i kontrollrutene for de alternativene du ønsker å installere. Diskplassfeltene gjenspeiler kravene for de alternativene du har valgt.
+      Text Swedish=Kryssa för i rutorna nedan vilka alternativ du vill få installerade. I diskutrymmesfälten anges utrymmesbehoven för de alternativ du väljer.
+    end
+    item: Checkbox
+      Rectangle=91 98 200 113
+      Variable=INSTALLACRO
+      Enabled Color=00000000000000001111111111111111
+      Create Flags=01010000000000010000000000000011
+      Text=Adobe Acrobat Reader 3.02
+      Text=
+    end
+    item: Checkbox
+      Rectangle=91 80 187 94
+      Variable=INSTALLTCLPRO
+      Enabled Color=00000000000000001111111111111111
+      Create Flags=01010000000000010000000000000011
+      Text=%APPTITLE%
+      Text=
+    end
+  end
+end
+item: End Block
+end
+item: If/While Statement
+  Variable=INSTALLTCLPRO
+  Value=A
+end
+item: Custom Dialog Set
+  Name=Welcome
+  Display Variable=DISPLAY
+  item: Dialog
+    Title=Welcome
+    Title French=Bienvenue
+    Title German=Willkommen
+    Title Portuguese=Bem-vindo 
+    Title Spanish=Bienvenido
+    Title Italian=Benvenuto
+    Title Danish=Velkommen
+    Title Dutch=Welkom
+    Title Norwegian=Velkommen
+    Title Swedish=Välkommen
+    Width=280
+    Height=224
+    Font Name=Helv
+    Font Size=8
+    item: Push Button
+      Rectangle=172 185 214 199
+      Variable=DIRECTION
+      Value=N
+      Create Flags=01010000000000010000000000000001
+      Text=&Next >
+    end
+    item: Push Button
+      Rectangle=222 185 264 199
+      Action=3
+      Create Flags=01010000000000010000000000000000
+      Text=Cancel
+    end
+    item: Static
+      Rectangle=9 177 263 178
+      Action=3
+      Create Flags=01010000000000000000000000000111
+    end
+    item: Static
+      Rectangle=83 8 121 33
+      Action=2
+      Enabled Color=00000000000000001111111111111111
+      Create Flags=01010000000000000000000000001011
+      Pathname=%_WISE_%\dialogs\template\install.grf
+      Pathname French=%_WISE_%\dialogs\template\install.grf
+      Pathname German=%_WISE_%\dialogs\template\install.grf
+      Pathname Portuguese=%_WISE_%\dialogs\template\install.grf
+      Pathname Spanish=%_WISE_%\dialogs\template\install.grf
+      Pathname Italian=%_WISE_%\dialogs\template\install.grf
+      Pathname Danish=%_WISE_%\dialogs\template\install.grf
+      Pathname Dutch=%_WISE_%\dialogs\template\install.grf
+      Pathname Norwegian=%_WISE_%\dialogs\template\install.grf
+      Pathname Swedish=%_WISE_%\dialogs\template\install.grf
+    end
+    item: Static
+      Rectangle=121 10 258 44
+      Enabled Color=00000000000000001111111111111111
+      Create Flags=01010000000000000000000000000000
+      Text=Welcome to %APPTITLE% Setup program. This program will install %APPTITLE% on your computer.
+    end
+    item: Static
+      Rectangle=90 45 260 175
+      Enabled Color=00000000000000001111111111111111
+      Create Flags=01010000000000000000000000000000
+      Text=It is strongly recommended that you exit all Windows programs before running this Setup Program.
+      Text=
+      Text=Click Cancel to quit Setup and close any programs you have running.  Click Next to continue with the Setup program .
+      Text=
+      Text=WARNING: This program is protected by copyright law and international treaties.
+      Text=
+      Text=Unauthorized reproduction or distribution of this program, or any portion of it, may result in severe civil and criminal penalties, and will be prosecuted to the maximum extent possible under law.
+    end
+  end
+end
+item: Custom Dialog Set
+  Name=Display ReadMe
+  Display Variable=DISPLAY
+  item: Dialog
+    Title=%APPTITLE% License
+    Title French=Fichier Lisez-moi
+    Title German=Liesmich-Datei
+    Title Portuguese=Ficheiro Leia-me
+    Title Spanish=Archivo Léeme
+    Title Italian=File Leggimi
+    Title Danish=Vigtigt fil
+    Title Dutch=Leesmij-bestand
+    Title Norwegian=Informasjonsfil
+    Title Swedish=Läs mig-fil
+    Width=280
+    Height=224
+    Font Name=Helv
+    Font Size=8
+    item: Push Button
+      Rectangle=172 185 214 199
+      Variable=DIRECTION
+      Value=N
+      Create Flags=01010000000000010000000000000000
+      Text=I &Accept >
+    end
+    item: Push Button
+      Rectangle=222 185 264 199
+      Action=3
+      Create Flags=01010000000000010000000000000001
+      Text=Quit
+    end
+    item: Static
+      Rectangle=9 177 263 178
+      Action=3
+      Create Flags=01010000000000000000000000000111
+    end
+    item: Editbox
+      Rectangle=85 10 254 89
+      Value=%TEMP%\%LICENSEFILE%
+      Help Context=16711681
+      Create Flags=01010000101000000000100000000100
+    end
+    item: Push Button
+      Rectangle=130 185 172 199
+      Variable=DIRECTION
+      Value=B
+      Create Flags=01010000000000010000000000000000
+      Flags=0000000000000001
+      Text=< &Back
+    end
+    item: Static
+      Rectangle=84 93 262 174
+      Enabled Color=00000000000000001111111111111111
+      Create Flags=01010000000000000000000000000000
+      Text=BY CLICKING ON THE "I ACCEPT" BUTTON OR INSTALLING THE SOFTWARE YOU ARE CONSENTING TO BE BOUND BY THE TERMS OF THIS AGREEMENT (THIS "AGREEMENT").  IF YOU DO NOT AGREE TO ALL OF THE TERMS, CLICK THE "QUIT" BUTTON AND DO NOT INSTALL THE SOFTWARE.  If you have purchased the software, you should promptly return the software and you will receive a refund of your money.  After installing the software, you can view a copy of this Agreement from the file "license.txt" in the directory where you installed the software.
+    end
+  end
+end
+item: Custom Dialog Set
+  Name=Select Destination Directory
+  Display Variable=DISPLAY
+  item: Dialog
+    Title=Choose Destination Location
+    Title French=Choisissez la localisation de destination
+    Title German=Zielpfad wählen
+    Title Portuguese=Escolher Local de Destino
+    Title Spanish=Elegir una localización de destino
+    Title Italian=Scegli Posizione di Destinazione
+    Title Danish=Vælg destinationsmappe
+    Title Dutch=Kies doellocatie
+    Title Norwegian=Velg målplassering
+    Title Swedish=Välj ställe för installationen
+    Width=280
+    Height=224
+    Font Name=Helv
+    Font Size=8
+    item: Push Button
+      Rectangle=172 185 214 199
+      Variable=DIRECTION
+      Value=N
+      Create Flags=01010000000000010000000000000001
+      Text=&Next >
+    end
+    item: Push Button
+      Rectangle=130 185 172 199
+      Variable=DIRECTION
+      Value=B
+      Create Flags=01010000000000010000000000000000
+      Flags=0000000000000001
+      Text=< &Back
+    end
+    item: Push Button
+      Rectangle=222 185 264 199
+      Action=3
+      Create Flags=01010000000000010000000000000000
+      Text=Cancel
+    end
+    item: Static
+      Rectangle=9 177 263 178
+      Action=3
+      Create Flags=01010000000000000000000000000111
+    end
+    item: Static
+      Rectangle=90 10 260 122
+      Create Flags=01010000000000000000000000000000
+      Text=Setup will install %APPTITLE% in the following folder.
+      Text=
+      Text=To install into a different folder, click Browse, and select another folder. 
+      Text=
+      Text=You can choose not to install %APPTITLE% by clicking Cancel to exit Setup.
+    end
+    item: Static
+      Rectangle=90 134 260 162
+      Action=1
+      Create Flags=01010000000000000000000000000111
+      Text=Destination Folder
+    end
+    item: Push Button
+      Rectangle=213 143 255 157
+      Variable=MAINDIR_SAVE
+      Value=%MAINDIR%
+      Destination Dialog=1
+      Action=2
+      Create Flags=01010000000000010000000000000000
+      Text=B&rowse...
+    end
+    item: Static
+      Rectangle=95 146 211 157
+      Destination Dialog=2
+      Create Flags=01010000000000000000000000000000
+      Text=%MAINDIR%
+    end
+  end
+  item: Dialog
+    Title=Select Destination Directory
+    Title French=Choisissez le répertoire de destination
+    Title German=Zielverzeichnis wählen
+    Title Portuguese=Seleccionar Directório de Destino
+    Title Spanish=Seleccione el Directorio de Destino
+    Title Italian=Seleziona Directory di destinazione
+    Title Danish=Vælg Destinationsbibliotek
+    Title Dutch=Kies doeldirectory
+    Title Norwegian=Velg målkatalog
+    Title Swedish=Välj destinationskalatog
+    Width=221
+    Height=173
+    Font Name=Helv
+    Font Size=8
+    item: Listbox
+      Rectangle=5 2 160 149
+      Variable=MAINDIR
+      Create Flags=01010000100000010000000101000000
+      Flags=0000110000100010
+      Text=%MAINDIR%
+    end
+    item: Push Button
+      Rectangle=167 6 212 21
+      Create Flags=01010000000000010000000000000001
+      Text=OK
+    end
+    item: Push Button
+      Rectangle=167 25 212 40
+      Variable=MAINDIR
+      Value=%MAINDIR_SAVE%
+      Create Flags=01010000000000010000000000000000
+      Flags=0000000000000001
+      Text=Cancel
+    end
+  end
+end
+item: Custom Dialog Set
+  Name=Select Components
+  Display Variable=DISPLAY
+  Flags=00000001
+  item: Dialog
+    Title=Select Components 
+    Title French=Sélectionner les éléments
+    Title German=Komponenten auswählen
+    Title Portuguese=Seleccionar Componentes
+    Title Spanish=Seleccione los Componentes
+    Title Italian=Seleziona Componenti
+    Title Danish=Vælg komponenter
+    Title Dutch=Selecteer onderdelen
+    Title Norwegian=Velg komponenter
+    Title Swedish=Välj komponenter
+    Width=280
+    Height=224
+    Font Name=Helv
+    Font Size=8
+    item: Push Button
+      Rectangle=172 185 214 199
+      Variable=DIRECTION
+      Value=N
+      Create Flags=01010000000000010000000000000001
+      Text=&Next >
+      Text French=&Suivant>
+      Text German=&Weiter>
+      Text Portuguese=&Próximo>
+      Text Spanish=&Siguiente >
+      Text Italian=&Avanti >
+      Text Danish=&Næste>
+      Text Dutch=&Volgende>
+      Text Norwegian=&Neste>
+      Text Swedish=&Nästa >
+    end
+    item: Push Button
+      Rectangle=130 185 172 199
+      Variable=DIRECTION
+      Value=B
+      Create Flags=01010000000000010000000000000000
+      Text=< &Back
+      Text French=<&Retour
+      Text German=<&Zurück
+      Text Portuguese=<&Retornar
+      Text Spanish=<&Retroceder
+      Text Italian=< &Indietro
+      Text Danish=<&Tilbage
+      Text Dutch=<&Terug
+      Text Norwegian=<&Tilbake
+      Text Swedish=< &Tillbaka
+    end
+    item: Push Button
+      Rectangle=222 185 264 199
+      Action=3
+      Create Flags=01010000000000010000000000000000
+      Text=Cancel
+      Text French=Annuler
+      Text German=Abbrechen
+      Text Portuguese=Cancelar
+      Text Spanish=Cancelar
+      Text Italian=Annulla
+      Text Danish=Annuller
+      Text Dutch=Annuleren
+      Text Norwegian=Avbryt
+      Text Swedish=Avbryt
+    end
+    item: Static
+      Rectangle=9 177 263 178
+      Action=3
+      Create Flags=01010000000000000000000000000111
+    end
+    item: Static
+      Rectangle=205 156 253 166
+      Variable=COMPONENTS
+      Value=MAINDIR
+      Create Flags=01010000000000000000000000000010
+    end
+    item: Static
+      Rectangle=205 148 253 157
+      Variable=COMPONENTS
+      Create Flags=01010000000000000000000000000010
+    end
+    item: Static
+      Rectangle=95 147 184 158
+      Create Flags=01010000000000000000000000000000
+      Text=Disk Space Required:
+      Text French=Espace disque requis
+      Text German=Benötigter Festplattenspeicher:
+      Text Portuguese=Espaço de disco necessário:
+      Text Spanish=Espacio de Disco Requerido:
+      Text Italian=Spazio su disco richiesto:
+      Text Danish=Nødvendig diskplads:
+      Text Dutch=Vereiste hoeveelheid schijfruimte
+      Text Norwegian=Diskplass nødvendig:
+      Text Swedish=Erforderligt diskutrymme
+    end
+    item: Static
+      Rectangle=95 157 190 167
+      Create Flags=01010000000000000000000000000000
+      Text=Disk Space Remaining:
+      Text French=Espace disque disponible
+      Text German=Verbleibender Festplattenspeicher:
+      Text Portuguese=Espaço de disco restante:
+      Text Spanish=Espacio de Disco Remanente:
+      Text Italian=Spazio su disco rimanente:
+      Text Danish=Ledig diskplads:
+      Text Dutch=Resterende schijfruimte
+      Text Norwegian=Ledig diskplass:
+      Text Swedish=Återstående diskutrymme
+    end
+    item: Static
+      Rectangle=90 138 264 168
+      Action=1
+      Create Flags=01010000000000000000000000000111
+    end
+    item: Static
+      Rectangle=90 8 260 41
+      Create Flags=01010000000000000000000000000000
+      Text=In the options list below, select the checkboxes for the TclPro components that you would like to have installed.  The disk space fields reflect the requirements of the components you have selected.
+      Text French=Dans la liste d'options suivante, veuillez sélectionner les cases des options que vous désirez installer. Le champ d'espace disque indique les conditions requises pour les options choisies
+      Text German=Wählen Sie in der Optionenliste unten die Kontrollkästchen für diejenigen Optionen, die Sie installieren möchten. Die Speicherfelder zeigen die benötigte Speicherkapazität für die gewählten Optionen an.
+      Text Portuguese=Na lista de opções abaixo, seleccione as caixas de verificação para as opções que gostaria de ter instalado. Os campos de espaço de disco reflectem os requerimentos das opções que seleccionou.
+      Text Spanish=En la lista de opciones que se ofrece a continuación, seleccione las casillas de comprobación para las opciones que desea instalar. Los campos del espacio en el disco reflejan los requerimientos de las opciones que ha seleccionado.
+      Text Italian=Nell’elenco delle opzioni sotto, marca le caselle di controllo delle opzioni che vuoi installare. I campi dello spazio sul disco riflettono i requisiti delle opzioni selezionate.
+      Text Danish=Marker afkrydsningsfelterne for de komponenter, der skal installeres, på listen herunder. Diskpladsfelterne angiver pladskravene for de valgte komponenter.
+      Text Dutch=Kruis in de onderstaande lijst het vakje aan naast de opties die u wilt installeren. Achter elke optie staat de benodigde schijfruimte vermeld.
+      Text Norwegian=I listen over alternativer nedenfor, klikk i kontrollrutene for de alternativene du ønsker å installere. Diskplassfeltene gjenspeiler kravene for de alternativene du har valgt.
+      Text Swedish=Kryssa för i rutorna nedan vilka alternativ du vill få installerade. I diskutrymmesfälten anges utrymmesbehoven för de alternativ du väljer.
+    end
+    item: Listbox
+      Rectangle=90 42 263 133
+      Variable=COMPONENTS
+      Create Flags=01010000101000010000000101010001
+      Flags=0000010001000111
+      Text=TclPro Tools & Tcl/Tk ${Tcl.Vers}
+      Text=C Development Libraries & Header Files
+      Text=Tcl Sources
+      Text=Tk Sources
+      Text=[incr Tcl] Sources
+      Text=TclX Sources
+      Text=
+      Text French=TclPro Tools & Tcl/Tk ${Tcl.Vers}
+      Text French=C Development Libraries & Header Files
+      Text French=Tcl Source
+      Text French=Tk Source
+      Text French=[incr Tcl] Source
+      Text French=TclX Source
+      Text French=
+      Text German=TclPro Tools & Tcl/Tk ${Tcl.Vers}
+      Text German=C Development Libraries & Header Files
+      Text German=Tcl Source
+      Text German=Tk Source
+      Text German=[incr Tcl] Source
+      Text German=TclX Source
+      Text German=
+      Text Portuguese=%1%
+      Text Portuguese=
+      Text Spanish=TclPro Tools & Tcl/Tk ${Tcl.Vers}
+      Text Spanish=C Development Libraries & Header Files
+      Text Spanish=Tcl Source
+      Text Spanish=Tk Source
+      Text Spanish=[incr Tcl] Source
+      Text Spanish=TclX Source
+      Text Spanish=
+      Text Italian=TclPro Tools & Tcl/Tk ${Tcl.Vers}
+      Text Italian=C Development Libraries & Header Files
+      Text Italian=Tcl Source
+      Text Italian=Tk Source
+      Text Italian=[incr Tcl] Source
+      Text Italian=TclX Source
+      Text Italian=
+      Text Danish=%1%
+      Text Danish=
+      Text Dutch=%1%
+      Text Dutch=
+      Text Norwegian=%1%
+      Text Norwegian=
+      Text Swedish=%1%
+      Text Swedish=
+    end
+  end
+end
+item: Custom Dialog Set
+  Name=Select Program Manager Group
+  Display Variable=DISPLAY
+  item: Dialog
+    Title=Select Program Manager Group
+    Title French=Sélectionnez le Groupe du Gestionnaire de Programmes
+    Title German=Programm-Managergruppe wählen
+    Title Portuguese=Seleccionar o Grupo Gestor de Programas
+    Title Spanish=Seleccione el Grupo del Administrador del Programa
+    Title Italian=Seleziona il gruppo Program Manager
+    Title Danish=Vælg Programstyringsgruppen
+    Title Dutch=Kies Programmabeheergroep.
+    Title Norwegian=Velg Programbehandlingsgruppen
+    Title Swedish=Välj grupp i Programhanteraren
+    Width=280
+    Height=224
+    Font Name=Helv
+    Font Size=8
+    item: Push Button
+      Rectangle=172 185 214 199
+      Variable=DIRECTION
+      Value=N
+      Create Flags=01010000000000010000000000000001
+      Text=&Next >
+    end
+    item: Push Button
+      Rectangle=130 185 172 199
+      Variable=DIRECTION
+      Value=B
+      Create Flags=01010000000000010000000000000000
+      Flags=0000000000000001
+      Text=< &Back
+    end
+    item: Push Button
+      Rectangle=222 185 264 199
+      Action=3
+      Create Flags=01010000000000010000000000000000
+      Text=Cancel
+    end
+    item: Static
+      Rectangle=9 177 263 178
+      Action=3
+      Create Flags=01010000000000000000000000000111
+    end
+    item: Static
+      Rectangle=90 10 260 38
+      Create Flags=01010000000000000000000000000000
+      Text=Enter the name of the Program Manager group to add %APPTITLE% icons to:
+    end
+    item: Combobox
+      Rectangle=90 42 260 172
+      Variable=GROUP
+      Create Flags=01010000001000010000001100000001
+      Flags=0000000000000001
+      Text=%GROUP%
+      Text=
+    end
+  end
+end
+item: Custom Dialog Set
+  Name=Start Installation
+  Display Variable=DISPLAY
+  item: Dialog
+    Title=Start Installation
+    Title French=Commencer l'installation
+    Title German=Installation beginnen
+    Title Portuguese=Iniciar Instalação
+    Title Spanish=Comenzar la Instalación
+    Title Italian=Avvia Installazione
+    Title Danish=Start installationen
+    Title Dutch=Start de installatie
+    Title Norwegian=Start installeringen
+    Title Swedish=Starta installationen
+    Width=280
+    Height=224
+    Font Name=Helv
+    Font Size=8
+    item: Push Button
+      Rectangle=172 185 214 199
+      Variable=DIRECTION
+      Value=N
+      Create Flags=01010000000000010000000000000001
+      Text=&Next >
+    end
+    item: Push Button
+      Rectangle=130 185 172 199
+      Variable=DIRECTION
+      Value=B
+      Create Flags=01010000000000010000000000000000
+      Text=< &Back
+    end
+    item: Push Button
+      Rectangle=222 185 264 199
+      Action=3
+      Create Flags=01010000000000010000000000000000
+      Text=Cancel
+    end
+    item: Static
+      Rectangle=9 177 263 178
+      Action=3
+      Create Flags=01010000000000000000000000000111
+    end
+    item: Static
+      Rectangle=90 10 260 70
+      Create Flags=01010000000000000000000000000000
+      Text=You are now ready to install %APPTITLE%.
+      Text=
+      Text=Press the Next button to begin the installation or the Back button to reenter the installation information.
+    end
+  end
+end
+item: End Block
+end
+item: End Block
+end
+item: If/While Statement
+  Variable=INSTALLTCLPRO
+  Value=A
+end
+item: If/While Statement
+  Variable=DISPLAY
+  Value=Select Destination Directory
+end
+item: Set Variable
+  Variable=BACKUP
+  Value=%MAINDIR%\BACKUP
+end
+item: End Block
+end
+item: If/While Statement
+  Variable=DOBACKUP
+  Value=A
+end
+item: Set Variable
+  Variable=BACKUPDIR
+  Value=%BACKUP%
+end
+item: End Block
+end
+item: If/While Statement
+  Variable=BRANDING
+  Value=1
+end
+item: If/While Statement
+  Variable=DOBRAND
+  Value=1
+end
+item: Edit INI File
+  Pathname=%INST%\CUSTDATA.INI
+  Settings=[Registration]
+  Settings=NAME=%NAME%
+  Settings=COMPANY=%COMPANY%
+  Settings=
+end
+item: End Block
+end
+item: End Block
+end
+item: Open/Close INSTALL.LOG
+end
+item: Check Disk Space
+  Component=COMPONENTS
+end
+item: Include Script
+  Pathname=%_WISE_%\INCLUDE\uninstal.wse
+end
+item: Include Script
+  Pathname=webfiles.wse
+end
+item: Compiler Variable If
+  Variable=_WEBONLY_
+  Value=No
+end
+item: Include Script
+  Pathname=cdfiles.wse
+end
+item: Compiler Variable End
+end
+item: Set Variable
+  Variable=COMMON
+  Value=%COMMON%
+  Flags=00010100
+end
+item: Set Variable
+  Variable=MAINDIR
+  Value=%MAINDIR%
+  Flags=00010100
+end
+item: Check Configuration
+  Flags=10111011
+end
+item: Get Registry Key Value
+  Variable=STARTUPDIR
+  Key=Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders
+  Default=%WIN%\Start Menu\Programs\StartUp
+  Value Name=StartUp
+  Flags=00000010
+end
+item: Get Registry Key Value
+  Variable=DESKTOPDIR
+  Key=Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders
+  Default=%WIN%\Desktop
+  Value Name=Desktop
+  Flags=00000010
+end
+item: Get Registry Key Value
+  Variable=STARTMENUDIR
+  Key=Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders
+  Default=%WIN%\Start Menu
+  Value Name=Start Menu
+  Flags=00000010
+end
+item: Get Registry Key Value
+  Variable=GROUPDIR
+  Key=Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders
+  Default=%WIN%\Start Menu\Programs
+  Value Name=Programs
+  Flags=00000010
+end
+item: Get Registry Key Value
+  Variable=CSTARTUPDIR
+  Key=Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders
+  Default=%STARTUPDIR%
+  Value Name=Common Startup
+  Flags=00000100
+end
+item: Get Registry Key Value
+  Variable=CDESKTOPDIR
+  Key=Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders
+  Default=%DESKTOPDIR%
+  Value Name=Common Desktop
+  Flags=00000100
+end
+item: Get Registry Key Value
+  Variable=CSTARTMENUDIR
+  Key=Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders
+  Default=%STARTMENUDIR%
+  Value Name=Common Start Menu
+  Flags=00000100
+end
+item: Get Registry Key Value
+  Variable=CGROUPDIR
+  Key=Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders
+  Default=%GROUPDIR%
+  Value Name=Common Programs
+  Flags=00000100
+end
+item: Set Variable
+  Variable=CGROUP_SAVE
+  Value=%GROUP%
+end
+item: Set Variable
+  Variable=GROUP
+  Value=%GROUPDIR%\%GROUP%
+end
+item: Create Shortcut
+  Source=%MAINDIR%\win32-ix86\bin\prodebug.exe
+  Destination=%GROUP%\TclPro Debugger.lnk
+  Icon Number=0
+  Key Type=1536
+  Flags=00000001
+end
+item: Create Shortcut
+  Source=%MAINDIR%\readme.txt
+  Destination=%GROUP%\ReadMe.lnk
+  Icon Number=0
+  Key Type=1536
+  Flags=00000001
+end
+item: Create Shortcut
+  Source=%MAINDIR%\doc\TclProUsersGuide.pdf
+  Destination=%GROUP%\TclPro User's Guide.lnk
+  Icon Number=0
+  Key Type=1536
+  Flags=00000001
+end
+item: Create Shortcut
+  Source=%MAINDIR%\doc\help\Tcl${TclVers}.hlp
+  Destination=%GROUP%\Tcl Help.lnk
+  Icon Number=0
+  Key Type=1536
+  Flags=00000001
+end
+item: Create Shortcut
+  Source=%MAINDIR%\win32-ix86\bin\prolicense.exe
+  Destination=%GROUP%\TclPro License Manager.lnk
+  Icon Number=0
+  Key Type=1536
+  Flags=00000001
+end
+item: Create Shortcut
+  Source=%MAINDIR%\win32-ix86\bin\prowish${TclVers}.exe
+  Destination=%GROUP%\Wish.lnk
+  Icon Number=0
+  Key Type=1536
+  Flags=00000001
+end
+item: Create Shortcut
+  Source=%MAINDIR%\win32-ix86\bin\protclsh${TclVers}.exe
+  Destination=%GROUP%\Tclsh.lnk
+  Icon Number=0
+  Key Type=1536
+  Flags=00000001
+end
+item: Create Shortcut
+  Source=%MAINDIR%\win32-ix86\bin\prowish${TclVers}.exe
+  Destination=%GROUP%\Incr Widgets Catalog.lnk
+  Command Options=%MAINDIR%\lib\iwidgets${Iwidgets.Vers}\demos\catalog
+  Icon Number=0
+  Key Type=1536
+  Flags=00000001
+end
+item: Create Shortcut
+  Source=%MAINDIR%\win32-ix86\bin\prowish${TclVers}.exe
+  Destination=%GROUP%\Widget Tour.lnk
+  Command Options=%MAINDIR%\lib\tk${Tcl.Vers}\demos\widget
+  Icon Number=0
+  Key Type=1536
+  Flags=00000001
+end
+item: Else Statement
+end
+item: Add ProgMan Icon
+  Group=%GROUP%
+  Icon Name=TclPro Debugger
+  Command Line=%MAINDIR%\win32-ix86\bin\prodebug.exe
+  Flags=01000000
+end
+item: End Block
+end
+item: Remark
+  Text==== Add Scriptics Registry Keys ===
+end
+item: Edit Registry
+  Total Keys=2
+  item: Key
+    Key=Software\Scriptics\TclPro\%VER%
+    New Value=%MAINDIR%
+    New Value=
+    Root=2
+  end
+  item: Key
+    Key=Software\Scriptics\TclPro\%VER%
+    New Value=%MAINDIR%\lib
+    New Value=%MAINDIR%\win32-ix86\bin
+    New Value=
+    Value Name=PkgPath
+    Root=2
+    Data Type=2
+  end
+end
+item: Remark
+  Text==== Remove the user preferences and license info on uninstalls ===
+end
+item: Add Text to INSTALL.LOG
+  Text=RegDB TREE: Software\Scriptics\TclPro\%VER%
+end
+item: Add Text to INSTALL.LOG
+  Text=RegDB Root: 1
+end
+item: Self-Register OCXs/DLLs
+  Description=Updating System Configuration, Please Wait...
+end
+item: If/While Statement
+  Variable=COMPONENTS
+  Value=A
+  Flags=00000010
+end
+item: Remark
+  Text==== Upgrade the registry preferences from prior versions ===
+end
+item: Install File
+  Source=upgprefs.tcl
+  Destination=%TEMP%\upgprefs.tcl
+  Flags=0000000010100010
+end
+item: Execute Program
+  Pathname=%MAINDIR%\win32-ix86\bin\tclsh${TclVers}.exe
+  Command Line=%TEMP%\upgprefs.tcl
+  Flags=00000110
+end
+item: Delete File
+  Pathname=%TEMP%\upgprefs.tcl
+end
+item: Remark
+  Text==== Add .tcl filename association ===
+end
+item: Edit Registry
+  Total Keys=11
+  item: Key
+    Key=.tcl
+    New Value=prowish${TclVers}.Document
+  end
+  item: Key
+    Key=prowish${TclVers}.Document
+    New Value=TclPro Script
+  end
+  item: Key
+    Key=prowish${TclVers}.Document\shell\open\command
+    New Value="%MAINDIR%\win32-ix86\bin\prowish${TclVers}.exe" "%%1"
+    New Value=
+  end
+  item: Key
+    Key=.tbc
+    New Value=tbcfile
+  end
+  item: Key
+    Key=tbcfile
+    New Value=Compiled TclPro Script
+  end
+  item: Key
+    Key=tbcfile\DefaultIcon
+    New Value=%MAINDIR%\win32-ix86\lib\comptcl.ico,0
+  end
+  item: Key
+    Key=tbcfile\shell\open\command
+    New Value="%MAINDIR%\win32-ix86\bin\prowish${TclVers}.exe" "%%1"
+    New Value=
+  end
+  item: Key
+    Key=.tpj
+    New Value=tpjfile
+  end
+  item: Key
+    Key=tpjfile
+    New Value=TclPro Debugger Project
+  end
+  item: Key
+    Key=tpjfile\DefaultIcon
+    New Value=%MAINDIR%\win32-ix86\lib\project.ico,0
+  end
+  item: Key
+    Key=tpjfile\shell\open\command
+    New Value="%MAINDIR%\win32-ix86\bin\prodebug.exe" "%%1"
+    New Value=
+  end
+end
+item: Add Directory to Path
+  Directory=%MAINDIR%\win32-ix86\bin
+end
+item: Wizard Block
+  Direction Variable=DIRECTION
+  Display Variable=DISPLAY
+  Bitmap Pathname=%_WISE_%\DIALOGS\TEMPLATE\WIZARD.BMP
+  X Position=9
+  Y Position=10
+  Filler Color=8421440
+  Flags=00000011
+end
+item: Custom Dialog Set
+  Name=Install License
+  Display Variable=DISPLAY
+  item: Dialog
+    Title=Install TclPro License
+    Title French=Fichiers de Sauvegarde Remplacés
+    Title German=Sicherungskopie von ersetzten Dateien erstellen
+    Title Portuguese=Ficheiros substituídos de segurança
+    Title Spanish=Copias de seguridad de los archivos reemplazados
+    Title Italian=Backup file sostituiti
+    Title Danish=Sikkerhedskopiering af erstattede filer
+    Title Dutch=Vervangen bestanden kopiëren
+    Title Norwegian=Sikkerhetskopiere erstattede filer
+    Title Swedish=Säkerhetskopiera utbytta filer
+    Width=280
+    Height=224
+    Font Name=Helv
+    Font Size=8
+    item: Push Button
+      Rectangle=172 185 214 199
+      Variable=DIRECTION
+      Value=N
+      Action=1
+      Create Flags=01010000000000010000000000000001
+      Text=&Next >
+    end
+    item: Push Button
+      Rectangle=222 185 264 199
+      Action=3
+      Create Flags=01010000000000010000000000000000
+      Text=Cancel
+    end
+    item: Static
+      Rectangle=9 177 263 178
+      Action=3
+      Create Flags=01010000000000000000000000000111
+    end
+    item: Static
+      Rectangle=90 10 260 122
+      Create Flags=01010000000000000000000000000000
+      Text=TclPro  has been successfully installed.
+      Text=
+      Text=You can now install the license key for TclPro. If you do not have a license key, you can go to http://www.ajubasolutions.com/buy to purchase one, or to http://www.ajubasolutions.com/eval for a free 15-day evaluation key.
+      Text=
+      Text= If you do not install the license key now, you will need to run TclPro License Manager (prolicense) before you will be able to use TclPro.
+      Text=
+      Text=Would you like to install a license key at this time?
+    end
+    item: Radio Button
+      Rectangle=155 129 182 155
+      Variable=LICENSE
+      Create Flags=01010000000000010000000000001001
+      Text=&Yes
+      Text=N&o
+      Text=
+    end
+    item: Push Button
+      Control Name=BACK
+      Rectangle=130 185 172 199
+      Variable=DIRECTION
+      Value=B
+      Create Flags=01010000000000010000000000000000
+      Text=< &Back
+    end
+    item: Set Control Attribute
+      Control Name=BACK
+      Operation=1
+    end
+  end
+  item: Dialog
+    Title=Select Destination Directory
+    Title French=Choisissez le répertoire de destination
+    Title German=Zielverzeichnis wählen
+    Title Portuguese=Seleccionar Directório de Destino
+    Title Spanish=Seleccione el Directorio de Destino
+    Title Italian=Seleziona Directory di destinazione
+    Title Danish=Vælg Destinationsbibliotek
+    Title Dutch=Kies Doeldirectory
+    Title Norwegian=Velg målkatalog
+    Title Swedish=Välj destinationskalatog
+    Width=221
+    Height=173
+    Font Name=Helv
+    Font Size=8
+    item: Listbox
+      Rectangle=5 2 160 149
+      Variable=BACKUP
+      Create Flags=01010000100000010000000101000000
+      Flags=0000110000100010
+      Text=%BACKUP%
+      Text=
+    end
+    item: Push Button
+      Rectangle=167 6 212 21
+      Create Flags=01010000000000010000000000000001
+      Text=OK
+    end
+    item: Push Button
+      Rectangle=167 25 212 40
+      Variable=BACKUP
+      Value=%BACKUP_SAVE%
+      Create Flags=01010000000000010000000000000000
+      Flags=0000000000000001
+      Text=Cancel
+    end
+  end
+end
+item: If/While Statement
+  Variable=LICENSE
+  Value=A
+end
+item: Execute Program
+  Pathname=%MAINDIR%\win32-ix86\bin\prolicense.exe
+  Command Line=-nolicense
+  Flags=00000001
+end
+item: End Block
+end
+item: End Block
+end
+item: End Block
+end
+item: Wizard Block
+  Direction Variable=DIRECTION
+  Display Variable=DISPLAY
+  Bitmap Pathname=%_WISE_%\DIALOGS\TEMPLATE\WIZARD.BMP
+  X Position=9
+  Y Position=10
+  Filler Color=8421440
+  Flags=00000011
+end
+item: Custom Dialog Set
+  Name=Finished
+  Display Variable=DISPLAY
+  item: Dialog
+    Title=Installation Complete
+    Title French=Installation en cours
+    Title German=Installation abgeschlossen
+    Title Portuguese=Instalação Completa 
+    Title Spanish=Se ha completado la Instalación
+    Title Italian=Installazione completata
+    Title Danish=Installation gennemført
+    Title Dutch=Installatie afgerond
+    Title Norwegian=Installasjonen er fullført
+    Title Swedish=Installationen klar
+    Width=280
+    Height=224
+    Font Name=Helv
+    Font Size=8
+    item: Push Button
+      Rectangle=170 185 212 199
+      Variable=DIRECTION
+      Value=N
+      Create Flags=01010000000000010000000000000001
+      Text=&Finish >
+    end
+    item: Push Button
+      Control Name=CANCEL
+      Rectangle=222 185 264 199
+      Action=3
+      Create Flags=01010000000000010000000000000000
+      Text=Cancel
+    end
+    item: Static
+      Rectangle=9 177 263 178
+      Action=3
+      Create Flags=01010000000000000000000000000111
+    end
+    item: Static
+      Rectangle=90 10 260 63
+      Enabled Color=00000000000000001111111111111111
+      Create Flags=01010000000000000000000000000000
+      Text=%APPTITLE% has been successfully installed.
+      Text=
+      Text=
+      Text=Press the Finish button to exit this installation.
+      Text=
+    end
+    item: Push Button
+      Control Name=BACK
+      Rectangle=128 185 170 199
+      Variable=DIRECTION
+      Value=B
+      Create Flags=01010000000000010000000000000000
+      Text=< &Back
+    end
+    item: Set Control Attribute
+      Control Name=BACK
+      Operation=1
+    end
+    item: Set Control Attribute
+      Control Name=CANCEL
+      Operation=1
+    end
+  end
+end
+item: End Block
+end
+item: Execute Program
+  Pathname=%GROUP%
+end
+item: End Block
+end
+item: If/While Statement
+  Variable=INSTALLACRO
+  Value=A
+end
+item: Execute Program
+  Pathname=%INST%\AR302.EXE
+  Flags=00000011
+end
+item: End Block
+end
+item: New Event
+  Name=Cancel
+end
+item: Include Script
+  Pathname=%_WISE_%\INCLUDE\rollback.wse
+end

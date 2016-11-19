@@ -1,0 +1,58 @@
+2000-08-28 Brent Welch <welch@ajubasolutions.com>
+
+	* htdocs/reports/index.tml:
+	Removed bogus link to preference page.
+	* Makefile.in:
+	Added admin/.tclaccess to wrap build so password checking is enforced.
+
+2000-08-25 Brent Welch <welch@ajubasolutions.com>
+
+	* src/startup.tcl:  The server thought it was always in
+	"reset mode" because of a change in cmdline::getopt semantics.
+	Fixed this so company name and admin account is retained
+	across restarts of the server.
+
+2000-08-24  Brent Welch <welch@ajubasolutions.com>
+
+	* src/lserver.tcl:
+	Fixed lserver::keysummary report to include the product version number.
+	* src/startup.tcl:
+	Fixed -httpLogDir command line handler.
+
+2000-08-22  Brent Welch <welch@ajubasolutions.com>
+
+	* htdocs/images/pwrdLogo150.gif
+	* htdocs/images/Red.gif
+	* htdocs/images/Blue.gif
+	Added images used by the status page.
+
+2000-08-07  Brent Welch <welch@ajubasolutions.com>
+
+	* doc/prolserver.1:
+	Added the man page
+
+2000-08-06  Brent Welch <welch@ajubasolutions.com>
+
+	* src/lserver.tcl:
+	* src/tclhttpd.etc.init:
+	Caught a couple more references to Scriptics.
+
+2000-08-04  Brent Welch <welch@ajubasolutions.com>
+
+	* src/startup.tcl:
+	Fixed package requires to work with TclHttpd 3.1.0
+
+2000-08-03  Brent Welch <welch@ajubasolutions.com>
+
+	* Makefile.in:
+	Added CYGPATH for windows builds, but zip on windows doesn't like
+	to find the "htdocs/.tml" file, for some reason.
+
+2000-08-01  Brent Welch <welch@ajubasolutions.com>
+
+	* src/tclhttpd.etc.init:
+	Changed Scriptics to Ajuba
+
+2000-07-30  Brent Welch <welch@ajubasolutions.com>
+
+	* Preliminary snapshot for TclPro 1.4

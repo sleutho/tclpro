@@ -1,0 +1,18 @@
+# -*- tcl -*-
+version		5.31
+configure.loc	{} .
+configure.with	\
+	{} "--enable-shared \
+	    --with-tcl=[file join %bld:tcl% %arch%]"
+
+derived unzip_dyn {
+    configure.with	\
+	    {} "--disable-shared \
+	        --with-tcl=[file join %bld:tcl% %arch%]"
+}
+
+derived unzip_static {
+    configure.with	\
+	    {} "--disable-shared \
+	        --with-tcl=[file join %bld:tcl_static% %arch%]"
+}

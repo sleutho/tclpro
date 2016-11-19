@@ -1,0 +1,198 @@
+'\"
+'\" Copyright (c) 1998-2000 by Ajuba Solutions
+'\" All rights reserved.
+'\" 
+'\" RCS: @(#) $Id: procheck.1,v 1.2 2000/08/08 02:06:29 welch Exp $
+'\" 
+.so man.macros
+.TH procheck 1 "" TclPro "TclPro Applications"
+.BS
+'\" Note:  do not modify the .SH NAME line immediately below!
+.SH NAME
+procheck \- TclPro Checker
+
+.SH SYNOPSIS
+\fBprocheck\fR ?\fIoptions\fR? ?\fIfilePattern ...\fR?
+
+.SH OPTIONS
+.PP
+.IP "\fB\-help\fR" 15
+Displays usage information, then exit without doing anything.
+.IP "\fB\-nologo\fR" 15
+Hides the copyright and version information. 
+.IP "\fB\-quiet\fR" 15
+Outputs the basic error information contained on one line, as opposed
+to the three line output that includes the code body and the error
+indicator.
+.IP "\fB\-verbose\fR" 15
+Displays version information and summary information when the checker exits.
+.IP "\fB\-suppress \fImessageID\fR" 15
+Suppress one or more messageIDs from being printed.  The
+\fImessageID\fR argument can be a single messageID or a quoted string
+of messageIDs separated by spaces.
+.IP "\fB\-use \fIcheckerPackage?version?\fR" 15
+Specifies the packages and versions to use for checking the script.
+If the \fIcheckerPackage\fR argument is append with \fIversion\fR,
+then that version of the system is used to check the scripts,
+otherwise the default version is used.  The
+\fIcheckerPackage?version?\fR argument can be a single package or a
+quoted list separated by spaces.  If the same checker package is
+specified on the command line more than once, the last version
+specified is used.  See the section \fBCHECKER PACKAGES\fR for more
+information. 
+.IP "\fB\-W1\fR" 15
+Display parsing errors and syntax errors.
+.IP "\fB\-W2\fR" 15
+Display parsing errors, syntax errors, and usage warnings.
+.IP "\fB\-W3\fR" 15
+Display parsing errors, syntax errors, usage warnings, portability
+warnings, upgrade warnings and performance warnings.
+.IP "\fB\-Wall\fR" 15
+Same as the \fB\-W3\fR option for this version, but is guaranteed to
+always print all of the messages in future releases.  This is the
+default.
+.BE
+
+.SH DESCRIPTION
+.PP
+
+The command \fBprocheck\fR is used to run TclPro Checker on files that
+match the \fIfilePattern\fR command line arguments.  If no file
+pattern is specified, TclPro Checker will use stdin as input.  TclPro
+Checker is designed to help find syntax errors and other common usage
+errors in Tcl scripts quickly, without having to run the program.
+TclPro Checker will also warn about potential incompatibilities to
+help upgrade applications to the latest releases of Tcl, Tk and [incr
+Tcl].  The list of valid package names and versions are:
+
+.RS
+.TP
+\fBtcl\fR
+7.3, 7.4, 7.5, 7.6, 8.0, 8.1 and 8.2 (default)
+.TP
+\fBtk\fR
+3.6, 4.0, 4.1, 4.2, 8.0, 8.1 and 8.2 (default)
+.TP
+\fBincrTcl\fR
+1.5, 2.0, 2.1, 2.2, 3.0 and 3.1 (default)
+.TP
+\fBexpect\fR
+5.28, 5.29, 5.30 and 5.31 (default)
+.TP
+\fBtclX\fR
+8.0, 8.1 and 8.2 (default)
+.RE
+.PP
+Every message printed has a messageID associated with it.  The messageID
+is the word in parenthesis just after the file and line number
+information.  The messageID can be used with the \fB\-suppress\fR 
+option to prevent that type of message from being printed.  For
+example, the following warning message is reported for any Tcl command
+that is not available on all platforms.  The messageID is
+\fBnonPortCmd\fR, and can be suppressed by specifying \fB-suppress\fR
+\fBnonPortCmd\fR on the command line.
+.PP
+.CS
+foo.tcl:53 (nonPortCmd) use of non-portable command
+registry values $key
+^
+.CE
+.PP
+TclPro Checker prints the following categories of errors and warnings:
+.RS
+.TP
+\fBparsing errors\fR
+Commands that can not be parsed by the Tcl parser generate an error.
+The reason for the parsing error and the location of the offending
+character are reported.  TclPro Checker will attempt to skip ahead
+and continue to check additional commands after the parsing error.
+.TP
+\fBsyntax errors\fR
+Any commands that will fail because of wrong number of arguments,
+invalid types, invalid options, etc. are reported.  Only commands
+defined in Tcl, Tk or [incr Tcl] are checked for syntax errors.
+.TP
+\fBplatform portability warnings\fR
+TclPro Checker generates warnings when a command is used that may be
+non-portable between various platforms.
+.TP
+\fBsuggestions for upgrading\fR
+Upgrade warnings indicate any feature that will change in a later version.
+.TP
+\fBperformance warnings\fR
+A warning is generated when a performance optimization opportunity
+is detected.
+.TP
+\fBusage warnings\fR
+A warning is generated when a command appears to have an error, but is
+perfectly legal syntax.  For example "\fBincr $counter\fR" will generate
+a warning because the \fBincr\fR command expects a variable name, not a
+value.  This command is probably an error, although it is possible
+the variable \fBcounter\fR may contain a variable name.
+.RE
+.SH CHECKER PACKAGES
+.PP
+If the \fB\-use\fR switch is not specified default versions Tcl, Tk,
+[incr Tcl], Expect and TclX (listed above) are automatically loaded to
+check the Tcl scripts.  If the \fB\-use\fR switch is specified, then
+Tcl is the only package implicitly loaded, and other packages must be
+specified on the command line.  The following example will check the
+script against Tcl, Tk and all of the supported extensions ([incrTcl],
+Expect and TclX.)
+.PP
+.CS
+procheck foo.tcl
+.CE
+.PP
+The next example will only check the script against the latest version
+of Tcl and Tk.
+.PP
+.CS
+procheck -use tk foo.tcl
+.CE
+.PP
+TclPro Checker attempts to load compatible versions of Tcl, Tk and
+the supported extensions.  If no versions are specified, the default
+version is assumend.  When a version is requested for a package, the
+remaining packages will be loaded with compatable versions.  If
+incompatable versions are specified, an error is generated and
+procheck exits.  For example, the following command will load Tcl7.5
+and Tk4.1 based on the request for [incr Tcl] version 2.1.
+.PP
+.CS
+procheck -use tk -use incrTcl2.1 foo.tcl
+.CE
+.PP
+However the next example will generate an error and exit because the
+versions for Tcl and Tk are incompatable.
+.PP
+.CS
+procheck -use tk3.6 -use tcl8.0 foo.tcl
+.CE
+
+.SH EXAMPLE
+.PP
+The following example shows how to check Tcl 7.5 and Tk 3.6, showing
+parsing errors, syntax errors, upgrade warnings and performance
+warnings.  Usage and portability warnings will not be reported.
+
+.PP
+.CS
+procheck \-use tcl7.5 \-use tk3.6 \-W2 \-s nonPortable foo.tcl
+
+TclPro Checker -- Copyright Scriptics, Corp. 1998
+foo.tcl
+foo.tcl:162 (nonLiteralExpr) expression is not a literal value
+expr [string length $literal]-1
+     ^
+foo.tcl:180 (parse) parse error: missing close-brace
+proc checkWord {tokens index} {
+                              ^
+foo.tcl:281 (numArgs) wrong # args
+for {set i 0} {$i <
+^
+
+.CE
+
+.SH KEYWORDS
+messageID

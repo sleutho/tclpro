@@ -1,0 +1,15 @@
+# Build configuration
+
+platform.is	linux-ix86
+workspace.at	~/activestate/tclpro-work
+prefix		~/activestate/tclpro-ak/out
+build.in	~/activestate/tclpro-ak/build
+
+#knowledge.at	- use default
+#execPrefix	- use default
+#build.in	/
+
+# Additional configuration variables
+
+# TclPro modules request this one for access to an existing toolset.
+buildvariable tclpro_installation /usr/local/lib/TclPro1.5

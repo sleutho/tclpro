@@ -1,0 +1,204 @@
+# Makefile.in --
+#
+#	This file is a Makefile for the prowrap executable.
+#
+#	This is layered on top of the tclwrapper module that
+#	builds a Tcl shell that can wrap up various extensions.
+#	The Tcl scripts and .uses files in this module define
+#	what can be wrapped for a particular product.
+#
+# Copyright (c) 2000 Ajuba Solutions
+#
+# See the file "license.terms" for information on usage and redistribution
+# of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+#
+# RCS: @(#) $Id: Makefile.in,v 1.8 2001/01/31 01:26:17 welch Exp $
+
+WRAP=prowrap$(BIN_EXEEXT)
+WRAPPER_SCRIPT = @WRAPPER_SCRIPT@
+
+# The "unwrapped wrapper" is built by the tclwrapper module.
+
+#WRAP_U = $(exec_prefix)/bin/prowrap14U$(EXEEXT)
+WRAP_U = @WRAP_U@
+
+#========================================================================
+# Enumerate the names of the source files included in this package.
+# This will be used when a dist target is added to the Makefile.
+#========================================================================
+
+tclwrapper_SOURCES = prowrap.tcl startup.tcl
+SOURCES = $(tclwrapper_SOURCES)
+
+# The --enable-symbols configure flag selects between
+# the TCL and TBC macro variants below.
+#WRAP_FILES = @WRAP_FILES@
+#STARTUP_FILE = @STARTUP_FILE@
+
+# But, now we hard-wire the TCL variants to make it
+# easier to build without an existing procomp
+WRAP_FILES = $(WRAP_TCL_FILES)
+STARTUP_FILE = $(STARTUP_TCL)
+
+WRAP_TCL_FILES = \
+	startup.tcl \
+	prowrap.tcl
+
+WRAP_TBC_FILES = \
+	startup.tbc \
+	prowrap.tbc
+
+STARTUP_TBC = startup.tbc
+STARTUP_TCL = startup.tcl
+
+WRAP_SH = @WRAP_SH@
+USES_PATH = $(prefix)/etc/common
+
+
+USES_FILES= prowrapUses.tcl tclsh.uses wish.uses iwish.uses itclsh.uses \
+	tclsh-dynamic.uses wish-dynamic.uses bigtclsh.uses bigwish.uses  \
+	bigtclsh-lite.uses bigwish-lite.uses
+
+#========================================================================
+# Nothing of the variables below this line need to be changed.
+#========================================================================
+
+SHELL = @SHELL@
+EXEEXT	= @EXEEXT@
+BIN_EXEEXT = @BIN_EXEEXT@
+
+TCLSH_PROG = @TCLSH_PROG@
+
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+libdir = @libdir@
+mandir = @prefix@/man/man1
+
+top_builddir = .
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+
+PACKAGE = @PACKAGE@
+VERSION = @VERSION@
+TCLSH = @TCLSH@
+PROCOMP = @PROCOMP@ -nologo
+AUTOCONF = autoconf
+CYGPATH=@CYGPATH@
+mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+
+
+#========================================================================
+# TEA TARGETS.  Please note that the "libraries:" target refers to platform
+# independent files, and the "binaries:" target inclues executable programs and
+# platform-dependent libraries.  Modify these targets so that they install
+# the various pieces of your package.  The make and install rules
+# for the BINARIES that you specified above have already been done.
+#========================================================================
+
+BINARIES = $(WRAP) $(WRAPPER_SCRIPT)
+
+all: binaries libraries
+
+binaries: $(BINARIES)
+
+libraries:
+
+doc:
+
+install: install-binaries install-doc
+
+test:
+	TCL_LIBRARY=$(TCL_LIBRARY_DIR) \
+	LD_LIBRARY_PATH=$(BUILD_DIR):$(TCL_BIN_DIR):$(LD_LIBRARY_PATH) \
+	PATH="$(BUILD_DIR)":"$(TCL_BIN_DIR)":"$(PATH)" \
+	$(TCLSH_PROG) `@CYGPATH@ $(srcdir)/tests/all.tcl` \
+		-exedir `@CYGPATH@ $(bindir)` $(TCLTESTARGS)
+
+depend:
+
+prowrap.tbc: $(srcdir)/src/prowrap.tcl
+	$(PROCOMP) -out prowrap.tbc `$(CYGPATH) $(srcdir)/src/prowrap.tcl`
+
+startup.tbc : $(srcdir)/src/startup.tcl
+	$(PROCOMP) -out startup.tbc `$(CYGPATH) $(srcdir)/src/startup.tcl`
+
+startup.tcl : $(srcdir)/src/startup.tcl
+	cp $(srcdir)/src/startup.tcl startup.tcl
+
+prowrap.tcl : $(srcdir)/src/prowrap.tcl
+	cp $(srcdir)/src/prowrap.tcl prowrap.tcl
+
+# this needs to have a uses that references the new 8.3 file.
+$(WRAP): $(WRAP_FILES) install-uses
+	@echo "Wrapping up in `pwd`"
+	WRAP_SRCS_NATIVE=`for i in $(WRAP_FILES); do \
+	    $(CYGPATH) $$i; \
+	done`; \
+	XPREFIX_NATIVE=`$(CYGPATH) $(prefix)`; \
+	echo "XPREFIX_NATIVE=$$XPREFIX_NATIVE" ; \
+	echo "WRAP_SRCS_NATIVE=$$WRAP_SRCS_NATIVE" ; \
+	$(WRAP_U) `$(CYGPATH) ${srcdir}/src/startup.tcl` -nologo \
+		 -executable `$(CYGPATH) $(WRAP_U)` \
+		-uses boot83 \
+	  	-startup $(STARTUP_FILE) \
+		-out $(WRAP) \
+		$$WRAP_SRCS_NATIVE \
+		-relativeto $$XPREFIX_NATIVE \
+		$$XPREFIX_NATIVE/wrapper/lib/* \
+		$$XPREFIX_NATIVE/lib/tcllib*/* \
+		$$XPREFIX_NATIVE/lib/tcllib*/*/* \
+		$$XPREFIX_NATIVE/lib/projectInfo*/*
+
+$(WRAPPER_SCRIPT):
+	sed -e 's#@PRODUCTHOME@#$(exec_prefix)#' -e 's#@STEM@#prowrap#' < $(WRAP_SH) > ./$(WRAPPER_SCRIPT)
+	chmod +x ./$(WRAPPER_SCRIPT)
+
+install-uses: 
+	@echo "Installing uses files into $(prefix)/wrapper/lib"
+	$(mkinstalldirs) $(prefix)/wrapper/lib
+	@for i in $(USES_FILES); do \
+	    echo "Installing $$i" ; \
+	    cp $(srcdir)/lib/$$i $(prefix)/wrapper/lib ; \
+	done
+
+install-binaries: installdirs $(BINARIES)
+	@for i in $(BINARIES); do \
+		echo Installing $$i in $(bindir); \
+		$(INSTALL_PROGRAM) $$i $(bindir); \
+	done
+
+install-doc: installdirs
+	$(INSTALL_DATA) $(srcdir)/doc/prowrap.1 $(mandir)
+
+installdirs:
+	$(mkinstalldirs) $(pkglibdir)
+	$(mkinstalldirs) $(mandir)
+
+clean:  
+	-test -z "$(BINARIES)" || rm -f $(BINARIES)
+	-rm -f *.o core *.core
+	-rm -f *.$(OBJEXT)
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
+
+distclean: clean
+	-rm -f *.tab.c
+	-rm -f Makefile $(CONFIG_CLEAN_FILES)
+	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+	-rm -f config.status
+
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
+	cd $(top_builddir) \
+	  && CONFIG_FILES=$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+.PHONY: all binaries clean depend distclean doc install installdirs \
+libraries test
+
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:

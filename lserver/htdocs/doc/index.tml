@@ -1,0 +1,12 @@
+[lpage::head Documentation "License Server Documentation"]
+
+
+<h3><a href=general.tml>Introduction</a></h3>
+This page provides general information about 
+Ajuba Solutions License Server.
+
+<h3><a href=install.tml>Installation Notes</a></h3>
+This page has information about the installation
+and files used by Ajuba Solutions License Server.
+
+[lpage::footer]

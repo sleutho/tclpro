@@ -1,0 +1,181 @@
+# Makefile.in --
+#
+#	This file is a Makefile for the DBG executable.
+#
+# Copyright (c) 1999 Scriptics Corporation.
+#
+# See the file "license.terms" for information on usage and redistribution
+# of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+#
+# RCS: @(#) $Id: Makefile.in,v 1.11 2001/01/31 01:26:17 welch Exp $
+
+
+# The --enable-symbols configure flag selects between
+# the TCL and TBC macro variants below.
+#FILES = @FILES@
+#STARTUP_FILE = @STARTUP_FILE@
+
+# But, now we hard-wire the TCL variants to make it
+# easier to build without an existing procomp
+FILES = $(TCL_FILES)
+STARTUP_FILE = $(STARTUP_TCL)
+
+TCL_FILES = \
+	startup.tcl
+
+TBC_FILES = \
+	startup.tbc
+
+STARTUP_TBC = startup.tbc
+STARTUP_TCL = startup.tcl
+
+IMAGES = \
+	$(srcdir)/src/images/about.gif \
+	$(srcdir)/src/images/debugUnixIcon.gif \
+	$(srcdir)/src/images/logo.gif
+
+WRAP_SH = @WRAP_SH@
+USES_PATH = $(prefix)/etc/common
+
+DBG = prodebug$(BIN_EXEEXT)
+WRAPPER_SCRIPT = @WRAPPER_SCRIPT@
+
+# Static Tcl/Tk shell that embeds the parser
+
+PRODEBUG_U = @PRODEBUG_U@
+
+#========================================================================
+# Nothing of the variables below this line need to be changed.
+#========================================================================
+
+SHELL = @SHELL@
+EXEEXT	= @EXEEXT@
+BIN_EXEEXT = @BIN_EXEEXT@
+
+TCLSH_PROG = @TCLSH_PROG@
+
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+libdir = @libdir@
+mandir = @prefix@/man/man1
+
+top_builddir = .
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+
+PACKAGE = @PACKAGE@
+VERSION = @VERSION@
+TCLSH = @TCLSH@
+PROWRAP = @PROWRAP@
+PROCOMP = @PROCOMP@ -nologo
+AUTOCONF = autoconf
+CYGPATH=@CYGPATH@
+mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+
+
+#========================================================================
+# TEA TARGETS.  Please note that the "libraries:" target refers to platform
+# independent files, and the "binaries:" target inclues executable programs and
+# platform-dependent libraries.  Modify these targets so that they install
+# the various pieces of your package.  The make and install rules
+# for the BINARIES that you specified above have already been done.
+#========================================================================
+
+BINARIES = $(DBG) $(WRAPPER_SCRIPT)
+
+all: binaries libraries
+
+binaries: $(BINARIES)
+
+libraries:
+
+doc:
+
+install: install-binaries install-doc
+
+test:
+	TCL_LIBRARY=$(TCL_LIBRARY_DIR) \
+	LD_LIBRARY_PATH=$(BUILD_DIR):$(TCL_BIN_DIR):$(LD_LIBRARY_PATH) \
+	PATH="$(BUILD_DIR)":"$(TCL_BIN_DIR)":"$(PATH)" \
+	$(TCLSH_PROG) `@CYGPATH@ $(srcdir)/tests/all.tcl` \
+		-exedir `@CYGPATH@ $(bindir)` $(TCLTESTARGS)
+
+depend:
+
+startup.tbc : $(srcdir)/src/startup.tcl
+	$(PROCOMP) -out startup.tbc `$(CYGPATH) $(srcdir)/src/startup.tcl`
+
+startup.tcl : $(srcdir)/src/startup.tcl
+	cp $(srcdir)/src/startup.tcl startup.tcl
+
+prodebug.tcl : $(bindir)/initdebug.tcl
+	cp  $(bindir)/initdebug.tcl ./prodebug.tcl
+
+$(DBG): $(FILES) $(IMAGES) prodebug.tcl
+	IMAGES_NATIVE=`for i in $(IMAGES); do \
+	    $(CYGPATH) $$i; \
+	done`; \
+	SRCS_NATIVE=`for i in $(FILES); do \
+	    $(CYGPATH) $$i; \
+	done`; \
+	PREFIX_NATIVE=`$(CYGPATH) $(prefix)`; \
+	$(PROWRAP) -nologo \
+		-uses `$(CYGPATH) $(USES_PATH)` \
+		-executable `$(CYGPATH) $(PRODEBUG_U)` \
+		-out $@ \
+		-startup $(STARTUP_FILE) \
+		$$SRCS_NATIVE \
+		-relativeto `$(CYGPATH) $(srcdir)/src` \
+		$$IMAGES_NATIVE \
+		-relativeto $$PREFIX_NATIVE \
+		$$PREFIX_NATIVE/lib/debugger*/* \
+		$$PREFIX_NATIVE/lib/debugger*/images/* \
+		$$PREFIX_NATIVE/lib/projectInfo*/*
+
+$(WRAPPER_SCRIPT):
+	sed -e 's#@PRODUCTHOME@#$(exec_prefix)#' -e 's#@STEM@#prodebug#' < $(WRAP_SH) > ./$(WRAPPER_SCRIPT)
+	chmod +x ./$(WRAPPER_SCRIPT)
+
+install-binaries: installdirs $(BINARIES)
+	@for i in $(BINARIES); do \
+		echo Installing $$i in $(bindir); \
+		$(INSTALL_PROGRAM) $$i $(bindir); \
+	done
+	@echo Installing prodebug.tcl in $(bindir); \
+	$(INSTALL_SCRIPT) prodebug.tcl $(bindir) 
+
+install-doc: installdirs
+	$(INSTALL_DATA) $(srcdir)/doc/prodebug.1 $(mandir)
+
+installdirs:
+	$(mkinstalldirs) $(pkglibdir)
+	$(mkinstalldirs) $(mandir)
+
+clean:  
+	-test -z "$(BINARIES)" || rm -f $(BINARIES)
+	-rm -f *.o core *.core
+	-rm -f *.$(OBJEXT)
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
+
+distclean: clean
+	-rm -f *.tab.c
+	-rm -f Makefile $(CONFIG_CLEAN_FILES)
+	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+	-rm -f config.status
+
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
+	cd $(top_builddir) \
+	  && CONFIG_FILES=$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+.PHONY: all binaries clean depend distclean doc install installdirs \
+libraries test
+
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:

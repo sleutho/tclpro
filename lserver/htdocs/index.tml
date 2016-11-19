@@ -1,0 +1,30 @@
+[lpage::head Home "Ajuba Solutions License Server"]
+[lserver::initview /setup.tml]
+[if {[info exists lserver::org]} {
+    set _ "<h3>$lserver::org</h3>"
+} else {
+    set _ "<h3>Current Usage</h3>"
+}]
+<h4>[lserver::Today] [lserver::Time]</h4>
+<p>
+Welcome to the Ajuba Solutions License Server.
+<p>
+[lserver::summary]
+
+<h3><a href=/admin/index.tml>Administration</a></h3>
+Use the Administration section to manage your license keys
+and to tune the system for your site's needs.
+
+<h3><a href=/reports/index.tml>Reports</a></h3>
+Reports summarize the use of your TclPro products.
+
+<h3><a href=/doc/index.tml>Documentation</a></h3>
+There is detailed documentation about the operation
+and management of the Ajuba Solutions License Server.
+
+<h3><a href=/ajuba.tml>Ajuba Solutions Links</a></h3>
+Here are links to Ajuba Solutions web site for
+technical support, product updates, license purchases and
+general information.
+
+[lpage::footer]

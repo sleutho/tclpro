@@ -1,0 +1,23 @@
+/*
+ * Resource file for the TclPro tclsh executable.
+ * Contains the VS_VERSION_INFO resource and main icon.
+ *
+ * Copyright (c) 1998-1999 by Scriptics Corporation. 
+ * All rights reserved.
+ *
+ */
+
+#define RESOURCE_INCLUDED
+#include "tcl.h"
+
+/*
+ * Icon
+ */
+
+/*
+ * Icon with lowest ID value placed first to ensure application icon
+ * remains consistent on all systems.
+ */
+
+TCLPRO_ICON	ICON	DISCARDABLE	"rc/sampleAppTclsh.ico"
+

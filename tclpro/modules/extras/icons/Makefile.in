@@ -1,0 +1,122 @@
+# Makefile.in --
+#
+#	This file is a Makefile for the Windows icon DLL.
+#
+# Copyright (c) 1999 Scriptics Corporation.
+#
+# See the file "license.terms" for information on usage and redistribution
+# of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+#
+# RCS: @(#) $Id: Makefile.in,v 1.1 2000/07/19 01:24:55 welch Exp $
+
+#========================================================================
+# Nothing of the variables below this line need to be changed.
+#========================================================================
+
+SHELL = @SHELL@
+EXEEXT	= @EXEEXT@
+BIN_EXEEXT = @BIN_EXEEXT@
+
+PACKAGE = @PACKAGE@
+VERSION = @VERSION@
+
+PROJECT_ICONS = \
+	$(srcdir)/comptcl.ico \
+	$(srcdir)/dbg.ico \
+	$(srcdir)/protclsh.ico \
+	$(srcdir)/prowish.ico
+
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+libdir = @libdir@
+
+top_builddir = .
+
+pkgdatadir = $(datadir)/@PACKAGE@@VERSION@
+pkglibdir = $(libdir)/@PACKAGE@@VERSION@
+pkgincludedir = $(includedir)/@PACKAGE@@VERSION@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+
+TCLSH = @TCLSH@
+PROWRAP = @PROWRAP@
+PROCOMP = @PROCOMP@ -nologo
+AUTOCONF = autoconf
+CYGPATH=@CYGPATH@
+mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+
+
+#========================================================================
+# TEA TARGETS.  Please note that the "libraries:" target refers to platform
+# independent files, and the "binaries:" target inclues executable programs and
+# platform-dependent libraries.  Modify these targets so that they install
+# the various pieces of your package.  The make and install rules
+# for the BINARIES that you specified above have already been done.
+#========================================================================
+
+BINARIES = scicons.dll
+
+all: binaries libraries doc
+
+binaries: $(BINARIES)
+
+libraries:
+
+doc:
+
+install: all install-binaries install-libraries install-doc
+
+test:
+
+depend:
+
+scicons.res: $(srcdir)/scicons.rc
+	rc -fo scicons.res `$(CYGPATH) $(srcdir)/scicons.rc`
+
+scicons.dll: scicons.res
+	cl -LD scicons.res msvcrt.lib
+
+install-binaries: installdirs $(BINARIES)
+	@for i in $(BINARIES); do \
+		echo Installing $$i in $(bindir); \
+		$(INSTALL_PROGRAM) $$i $(bindir); \
+	done
+
+install-libraries: installdirs
+	@echo "Installing icons in $(pkglibdir)"
+	@for i in $(PROJECT_ICONS) ; do \
+		$(INSTALL_DATA) $$i $(pkglibdir); \
+	done
+
+install-doc:
+
+installdirs:
+	$(mkinstalldirs) $(pkglibdir)
+
+clean:  
+	-test -z "$(BINARIES)" || rm -f $(BINARIES)
+	-rm -f *.o core *.core
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
+
+distclean: clean
+	-rm -f *.tab.c
+	-rm -f Makefile $(CONFIG_CLEAN_FILES)
+	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+	-rm -f config.status
+
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
+	cd $(top_builddir) \
+	  && CONFIG_FILES=$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+.PHONY: all binaries clean depend distclean doc install installdirs \
+libraries test
+
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:

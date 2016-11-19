@@ -1,0 +1,32 @@
+#!/bin/sh
+
+# Retrieve trf distribution and modify it for use by the TclPro
+# build framework. Assume WD is parent of 'tclpro' directory.
+
+if [ -f trf2.1p2.tar.gz ]
+then
+    mv trf2.1p2.tar.gz trf2.1p2.tar.gz.old
+    rm -rf trf2.1.old
+    mv trf2.1 trf2.1.old
+fi
+
+wget http://www.purl.org/NET/akupries/soft/trf/download/trf2.1p2.tar.gz
+if test $? -ne 0
+then
+    echo "wget failed"
+    exit 1
+fi
+#cp                 ~aku/web/sites/oche/soft/trf/download/trf2.1p2.tar.gz .
+
+tar xfz trf2.1p2.tar.gz
+mv trf2.1p2 trf2.1
+
+cd trf2.1
+ln -s ../config config
+
+chmod u+w *
+
+echo "builtin(include,config/tcl.m4)" > aclocal.m4
+echo "builtin(include,trf.m4)"       >> aclocal.m4
+rm configure
+autoconf

@@ -1,0 +1,7 @@
+# -*- tcl -*-
+
+module expand {
+    location expand
+    version		2.0
+    configure.loc	{} .
+}

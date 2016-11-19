@@ -1,0 +1,480 @@
+'\"
+'\" Copyright (c) 1998-2000 by Ajuba Solutions
+'\" All rights reserved.
+'\"
+'\" RCS: @(#) $Id: prowrap.1,v 1.2 2000/08/08 02:06:34 welch Exp $
+'\" 
+.so man.macros
+.TH prowrap 1 "" TclPro "TclPro Applications"
+.BS
+'\" Note:  do not modify the .SH NAME line immediately below!
+.SH NAME
+prowrap \- TclPro Wrapper
+.SH SYNOPSIS
+\fBprowrap\fR
+?\fIoptions\fR ...? \
+?\fIfileNamePattern\fR ...?
+?\fIoptions\fR?
+\fIfileNamePatterns\fR ...
+'\"
+'\"
+.SH OPTIONS
+.IP "\fB\-help\fR" 15
+Displays usage information, then exits without doing anything.
+'\"
+.IP "\fB\-nologo\fR" 15
+Hides the copyright and version information. 
+'\"
+.IP "\fB\-verbose\fR" 15
+Produces detailed output during the wrapping process.
+'\"
+.IP "\fB\-uses\fR \fIusesSpec\fR" 15
+This flag selects one of several predefined configurations for wrapping.
+Each configuration causes a particular base application to be
+included in the wrapped application along with any auxiliary files
+needed by the base application, such as script library files.
+\fIUsesSpec\fR may be one of the built-in specifications from
+the following list:
+.RS
+.TP
+\fBtclsh\fR
+Uses \fBtclsh\fR as the base application (Tcl 8.0.5).
+.TP
+\fBwish\fR
+Uses \fBwish\fR as the base application (Tcl 8.0.5 and Tk 8.0.5).
+.TP
+\fBbigtclsh\fR
+Uses \fBtclsh\fR as the base application; includes Tcl 8.0.5 plus
+[incr Tcl] 3.0, TclX 8.0.5, and Expect 5.29 (on UNIX only).
+.TP
+\fBbigwish\fR
+Uses \fBwish\fR as the base application; includes Tcl 8.0.5 and Tk 8.0.5,
+plus [incr Tcl] 3.0, [incr Tk] 3.0, [incr Widgets] 2.2, [incr Widgets] 3.0,
+TclX 8.0.5, TkX 8.0.5, and Expect 5.29 (on UNIX only).
+.TP
+\fBitclsh\fR (deprecated)
+Uses \fBtclsh\fR as the base application; includes Tcl 8.0.3 plus
+[incr Tcl] 3.0.
+This flag uses the same base application as \fBbigtclsh\fR, but appropriate
+initialization is performed to maintain backward compatibility.  Support
+for this uses specification will be removed in future versions of TclPro.
+.TP
+\fBiwish\fR (deprecated)
+Uses \fBwish\fR as the base application; includes Tcl 8.0.3 and Tk 8.0.3,
+plus [incr Tcl] 3.0, [incr Tk] 3.0, [incr Widgets] 2.2, and [incr Widgets] 3.0.
+This flag uses the same base application as \fBbigwish\fR, but appropriate
+initialization is performed to maintain backward compatibility.  Support
+for this uses specfication will be removed in future versions of TclPro.
+.TP
+\fBtclsh\-dynamic\fR
+Same as \fBtclsh\fR except doesn't include the Tcl shared library
+or Tcl library scripts; TclPro must be installed on
+any machine where the wrapped application executes.
+.TP
+\fBwish\-dynamic\fR
+Same as \fBwish\fR except doesn't include the Tcl and Tk shared
+libraries or the Tcl and Tk script libraries; TclPro must be installed on
+any machine where the wrapped application executes.
+.RE
+.IP "" 15
+The default value for this flag is \fBbigwish\fR.
+A \fIusesSpec\fR of an empty string (e.g., "") directs \fBprowrap\fR
+to not use any settings for the \fB\-uses\fR flag.
+See the section \fBCUSTOM -USES CONFIGURATIONS\fR below for information
+on how a site may define new \fIusesSpec\fR values.
+'\"
+.IP "\fB\-startup\fR \fIinitialScriptFileName\fR" 15
+By default, \fBprowrap\fR uses the first file from the
+command line as the startup script file for the wrapped application.
+This flag allows you to override the default and direct \fBprowrap\fR
+to instead use \fIinitialScriptFileName\fR as the name of the file that is
+to be sourced when the wrapped application is started.
+This flag does not cause TclPro Wrapper to actually include the
+file; the file must also be
+specified as one of the \fIfileNamePattern\fR arguments.
+If you want to create an interactive Tcl shell (e.g., one that does
+not have a specific startup script file) with wrapped files, specify
+\fIinitialScriptFileName\fR as the empty string (e.g., "");
+this empty string specification may also be used if the executable
+named by the \fB\-executable\fR flag internally handles initialization
+and boot-strapping on its own (see \fBprowrap(3)\fR).
+'\"
+.IP "\fB\-arguments\fR \fIarguments\fR" 15
+Specifies additional arguments to your wrapped applications, just as if
+they were submitted to your unwrapped application on the command line.
+The given arguments are inserted before any command line
+arguments entered by your end-user and will appear in the Tcl
+\fBargv\fR variable.
+If \fB-startup\fR is called with the empty string, then the first
+element of \fIarguments\fR is taken as the startup file.
+The \fIarguments\fR must be passed to \fBprowrap\fR as one string;
+use proper quoting convention for your command shell to preserve
+an argument string that may contain spaces.
+'\"
+.IP "\fB\-out\fR \fIfileName\fR" 15
+\fIFileName\fR specifies the name of the output file in which to
+create the wrapped application.
+Without the specification of this flag, \fBprowrap\fR creates a wrapped
+executable with the name \fBprowrapout\fR (with a \fB.exe\fR extension on
+Windows) in the working directory where TclPro Wrapper was invoked.
+Use this flag to produce a file with a different name.
+If the named file already exists, it is overwritten.
+'\"
+.IP "\fB\-relativeto\fR \fIdirectory\fR" 15
+If this flag is specified, each of the \fIfileNamePattern\fR arguments
+that follow must have \fIdirectory\fR as its leading characters.
+The name used for the file in the wrapped application will consist
+of \fIfileNamePattern\fR with the leading \fIdirectory\fR characters
+removed.
+If this switch is not specified, or is specified as an empty string,
+then the name of each file in the wrapped application is the same
+as its \fIfileNamePattern\fR.
+Multiple \fB\-relativeto\fR flags may appear on the command line and
+each instance applies to the file names between it and the next
+\fB\-relativeto\fR flag.
+See the section \fBRELATIVE PATHS\fR for more details.
+'\"
+.IP "\fB\-executable\fR \fIexeName\fR" 15
+Specifies the file name for the base application that will be
+used for the wrapped application.
+This executable must include the TclPro wrapper library (see
+\fBprowrap(3)\fR.
+This flag is not required if you use the \fB\-uses\fR flag.
+'\"
+.IP "\fB\-code\fR \fIscript\fR" 15
+This switch is not normally needed; it is used primarily to specify
+the locations of library directories in the definitions of custom \fB\-uses\fR
+configurations.  \fIScript\fR contains a Tcl script that is evaluated
+when the wrapped application starts up.  The script is invoked very
+early in application initialization, before \fBTcl_Init\fR or any
+package-specific initialization procedures have been invoked.
+Multiple \fB\-code\fR scripts may be specified and \fBprowrap\fR
+arranges for these scripts to be evaluated in the order they appear
+on the command line.
+'\"
+.IP "\fB\-temp\fR \fIdirectory\fR" 15
+Use the specified directory to temporarily hold files created
+during the wrapping process.
+By default, TclPro Wrapper uses the directory given by either
+\fBTEMP\fR, \fBTMP\fR, or \fBTMPDIR\fR environment variables
+(checked in that order); if no such environment variable exists,
+on UNIX the temporary directory falls through to the \fI/tmp\fR
+directory and on Windows an error is generated.
+'\"
+.IP "\fB\-@\fR" 15
+Get additional command line specifications from standard input.
+Flags from standard input are processed after all other flags on
+the actual command line.
+This flag is useful if the command line becomes too large to be
+submitted to the current command processor (e.g. \fBsh\fR,
+\fBCMD.EXE\fR, etc.) or can be used as a more convenient way to
+specify command line arguments to \fBprowrap\fR.
+.PP
+Except for the \fB\-relativeto\fR and \fB\-code\fR flags, all other
+flags may appear more than once, but only their last occurrence is
+used as the actual value for the respective flag.
+Multiple \fB\-relativeto\fR flags may appear on the command line and
+each instance applies \fIdirectory\fR to all \fIfileNamePatterns\fR
+that follow it.
+Multiple \fB\-code\fR options may be specified and \fBprowrap\fR
+arranges for these scripts to be evaluated in the order they appear
+on the command line.
+.BE
+'\"
+.SH DESCRIPTION
+The command \fBprowrap\fR invokes TclPro Wrapper.
+TclPro Wrapper is a utility for bundling together a collection of
+Tcl scripts and other files along with a Tcl interpreter into one
+executable file.
+The resulting executable is a self-contained Tcl application that
+can be run like any other executable.
+.PP
+TclPro Wrapper works by appending the collection of Tcl scripts and
+other files to the end of a base application containing a Tcl
+interpreter.
+The base application includes a special package that allows it to
+access the wrapped files as if they were actually separate files on disk.
+The result is that your existing Tcl scripts can be wrapped with very
+few changes to your source code.
+.PP
+You may wrap any type of file that your application would otherwise
+access from disk.
+Here are some examples of the types of files that TclPro Wrapper can include:
+.sp 1
+.RS
+\(bu Tcl scripts (either text files or compiled .tbc files)
+ that are accessed via the \fBsource\fR command.
+.br
+\(bu Data files that are accessed via the \fBopen\fR command.
+.br
+\(bu Image files that are accessed via the \fB\-file\fR option to the
+\fBimage\fR command.
+.br
+\(bu Bitmap files that are specified with the ``@'' syntax of the
+\fB\-bitmap\fR option.
+.br
+\(bu The standard library files for Tcl, Tk, and extensions such as [incr Tcl].
+.RE
+.PP
+The various command-line flags to TclPro Wrapper define the locations
+of the above Tcl application components.
+Deciding how to craft the \fBprowrap\fR command line with its various
+flags, file name, and directory patterns is closely connected with the
+current working directory from which the tool is invoked.
+Another detail to keep in mind when wrapping your application is
+how your Tcl source performs file referencing during its runtime.
+.PP
+A typical use of TclPro Wrapper will be to create a stand-alone
+application using one of the various built-in \fB\-uses\fR
+configurations.
+A more complex use of TclPro Wrapper is to create a stand-alone
+application using a custom Tcl shell.
+You will need to compile and link your own custom Tcl shell to
+include the TclPro Wrapper library (see \fBprowrap(3)\fR).
+Once built, this executable is specified to \fBprowrap\fR via the
+\fB\-executable\fR flag or through a custom \fB-uses\fR option.
+'\"
+.SH "ACCESSING FILES IN THE WRAPPED APPLICATION"
+An application created by TclPro Wrapper has the files it needs during
+runtime wrapped together with the application itself.
+The Tcl scripts that run within the application access the files
+as if they were on disk.
+However, those files really only exist within the application itself.
+This leads to some subtle issues users should be aware of when using
+TclPro Wrapper.
+Fortunately, by following some simple guidelines users can easily wrap
+complex applications.
+.PP
+The wrapped files appear to your application's Tcl code as a file
+hierarchy accessible from your current working directory.
+(This is true no matter what directory your application has as its
+working directory.)
+For example, if you had a file wrapped as \fButil/io.tcl\fR you will
+be able to source that file with \fBsource util/io.tcl\fR no matter what
+your current directory is when the wrapped application runs.
+.PP
+When designing an application that will be wrapped, you should organize
+your file usage so that the application will work equally well
+unwrapped and wrapped.  This way you can test your application in
+unwrapped form, then wrap it for delivery to your customers without
+having to change anything in the application.
+.PP
+If your application reads files that will be part of the wrapped
+application, always use relative names to read those files.  For
+example, suppose the directory where you develop the application has
+a subdirectory \fButil\fR and that the application needs to source a file
+\fBio.tcl\fR in that directory.  Then you should use the following command
+in your application to read the file:
+.CS
+           source [file join util io.tcl]
+.CE
+When you are testing the application, your working directory needs to be
+the directory containing \fButil\fR so this command will work.  If you then
+wrap the file with the name \fButil/io.tcl\fR, the same command will work
+in the wrapped application.
+.PP
+If your application doesn't currently use relative file names like
+this, you will need to modify the application before you can wrap
+it with TclPro Wrapper.  For example, some applications reference
+files that are part of the application with absolute names in a
+library directory.  For example, the file \fBio.tcl\fR above might
+be read with the following command:
+.CS
+            source [file join $libDir util io.tcl]
+.CE
+In this case \fB$libDir\fR might refer to the place where the application is
+installed, such as \fBC:\eProgram Files\eMyApp\fR.  In examples like this, you
+will need to modify the code to behave differently depending on
+whether the application is wrapped.  TclPro Wrapper arranges for the
+variable \fBtcl_platform(isWrapped)\fR to have the value 1 if an application
+is wrapped.  If the application isn't wrapped then this variable will
+not exist.  The following code sample shows how to use the variable
+to make your application behave correctly whether it is wrapped or not:
+.CS
+             if {[info exists tcl_platform(isWrapped)]} {
+                 source[file join util io.tcl]
+             } else {
+                 source [file join $libDir util io.tcl]
+             }
+.CE
+'\"
+.SH "ACCESSING THE FILE SYSTEM FROM WRAPPED APPLICATIONS"
+.PP
+The second issue related to file names is how to ensure that your
+wrapped application uses a disk file instead of a wrapped file, when
+that is needed.  For example, suppose your application allows its
+user to enter a file name for the application to manipulate.  In
+this case you will always want to use the file from disk.  However,
+if the user enters a relative name like \fButil/io.tcl\fR and the
+application uses this name to open the file, and there is also a file by
+that name wrapped with the application, then the application will access the
+wrong file!
+.PP
+Fortunately, there is an easy workaround for this issue.  Whenever
+your code gets a file name from a user, you must convert the file
+name to an absolute name before opening the file.  This guarantees
+that a wrapped file will not be used.  If the variable \fB$path\fR contains
+a file name typed by a user, the following code will convert it to
+an absolute path name:
+.CS
+            set path [file join [pwd] $path]
+.CE
+'\"
+.SH "FILE PATTERN SPECIFICATION"
+.PP
+The \fIfileNamePatterns\fR arguments to \fBprowrap\fR identify
+files to be wrapped.  There must be at least one file
+name specified to be wrapped.
+They may include relative paths as well as fully-qualified absolute
+file paths.
+On UNIX, wild cards can be used to allow the shell (e.g. \fBsh\fR,
+\fBcsh\fR, etc.) to expand the \fIfileNamePatterns\fR into lists of
+matching file names.
+On Windows, \fBprowrap\fR uses the Tcl's \fBglob\fR command to
+expand \fIfileNamePatterns\fR into lists of matching names.
+.PP
+For example, a file name pattern specification of:
+.CS
+/myApp/*.tcl
+.CE
+would include all .tcl files in the ``/myApp'' directory.
+.PP
+If the \fB\-startup\fR flag is not used, then the first file name
+on the \fBprowrap\fR command line is used as the startup file for
+the wrapped application.
+(Care should be taken to ensure that if the first \fIfileNamePattern\fR
+contains wild cards, the first file name in resulting expansions is
+the desired startup file.)
+.PP
+TclPro Wrapper keeps only relative file information within
+the wrapped application.
+The leading directory character (e.g. '/') of any absolute path is
+automatically stripped off.
+For example, the file path specification \fB/home/joe/tclApp/app.tcl\fR
+is stored as \fBhome/joe/tclApp/app.tcl\fR.
+To locate this file at runtime, the Tcl script must access the file
+by the name \fBhome/joe/tclApp/app.tcl\fR.
+'\"
+.SH "RELATIVE PATHS"
+.PP
+The \fB\-relativeto\fR flag is used to remove leading directories from
+the file names stored in the wrapped application.  The value following
+the \fB\-relativeto\fR flag specifies the part of the file name that
+is to be omitted.  Consider the following options specified on a
+\fBprowrap\fR command line:
+.CS
+\-relativeto\0/home/joe\0/home/joe/tclApp/app.tcl
+.CE
+The file \fB/home/joe/tclApp/app.tcl\fR will be wrapped under the
+name \fBtclApp/app.tcl\fR instead of \fB/home/joe/tclApp/app.tcl\fR
+and must be accessed by the wrapped application using the shorter
+name.
+.PP
+A \fB\-relativeto\fR flag applies to all of the files
+following it up to the next \fB\-relativeto\fR flag.
+If no \fB\-relativeto\fR flag has been specified, or if the most
+recent \fB\-relativeto\fR flag was specified with an empty string
+argument, then files are stored under the same names used
+to specify them on the command line.
+'\"
+.SH "CUSTOM -USES CONFIGURATIONS"
+.PP
+You can extend the set of configurations understood by the \fB\-uses\fR
+option by creating a directory with
+the name \fBprowrapuses\fR in the \fBlib\fR directory of your TclPro
+installation tree (e.g., adjacent to the \fBlib/tcl8.0\fR directory).
+Files in this directory that end with the \fB.uses\fR
+extension are recognized by \fBprowrap\fR to provide additional
+\fB\-uses\fR configurations.  For example, a file \fBnew.uses\fR in
+the \fBprowrapuses\fR directory will define a configuration named
+\fBnew\fR, which may be used in \fB\-uses\fR options.
+\fBProwrap\fR will also find and use \fB.uses\fR files in the current
+working directory.  The builtin configurations have highest priority,
+followed by those in the \fBprowrapuses\fR directory, followed by
+those in the current working directory.
+.PP
+The contents of a \fB.uses\fR file is a Tcl script that is evaluated
+in a special Tcl interpreter during the execution of \fBprowrap\fR.
+Prior to the script evaluation, \fBprowrap\fR changes the working
+directory to the directory where the \fB.uses\fR file is located.
+This gives the script a point of reference from which to locate
+other files relative to itself.
+The working directory is restored once the script returns.
+The evaluated script must return a Tcl list that contains additional
+\fBprowrap\fR command line arguments.
+The script may include the \fB\-relativeto\fR flag, but the specified
+directory will only apply to files that appear in the returned list of
+additional command line arguments.
+.PP
+For example, suppose you were to create your own Tcl shell with the name
+\fBsiteTclSh10\fR and place it in the directory
+\fB/usr/local/siteTclSh/solaris-sparc/bin\fR.
+If this shell requires library script files that have been placed in the
+\fBlib/site1.0\fR directory, adjacent to the \fBprowrapuses\fR directory,
+you should list them within the script.
+The \fB\-code\fR flag can be used to set a Tcl variable that will specify
+the location of the wrapped library script files; the \fBsiteTclSh10\fR
+executable can use this Tcl variable to locate and source one of the
+library script files in its \fBTcl_AppInit\fR routine.
+To provide this shell to your site, create the file \fBsiteTclSh10.uses\fR
+and place it in the \fBlib/prowrapuses\fR directory.
+The contents of the file would look something like:
+.CS
+# lib/prowrapuses/siteTclSh10.uses
+return [list -executable /usr/local/siteTclSh/siteTclSh10 -relativeto ../../ \\
+	../../lib/site1.0/site.tcl ../../lib/site1.0/siteApp.tcl ../../lib/site1.0/site.gif \\
+	-code "set site_library lib/site1.0"]
+.CE
+The following \fBprowrap\fR command line is used to create a wrapped
+application based on \fBsiteTclSh10\fR, with \fBfile1.tcl\fR as
+the startup script file:
+.CS
+prowrap \fB\-uses\fR siteTclSh10 file1.tcl file2.tcl 
+.CE
+'\"
+.SH EXAMPLES
+The simplest command is to wrap a set of Tcl files.
+The result of the command below is a wrapped application that includes
+\fBwish\fR, including Tcl, Tk, [incr Tcl], [incr Tk],
+[incr Widget], any auxiliary files needed by these packages,
+plus the files \fBfile1.tcl\fR and \fBfile2.tcl\fR:
+.CS
+prowrap file1.tcl file2.tcl 
+.CE
+The next example wraps a single Tcl script up with the \fBtclsh\fR
+application:
+.CS
+prowrap \-uses tcl myScript.tcl 
+.CE
+.PP
+The following command wraps the \fIHiQ\fR demo application using
+\fBwish\fR.  The resulting application is completely stand-alone and
+will not require any install step for itself or Tcl/Tk.
+Assuming the current working directory is \fBdemos/HiQ\fR:
+.CS
+prowrap \-uses wish \-out hiq \-startup hiq.tcl hiq.tcl hiqGUI.tcl hiqState.tcl
+.CE
+.PP
+The final example wraps the familiar \fIwidget\fR demo
+included as part of the standard Tk distribution.
+This example uses a dynamically linked \fBwish\fR and
+thus expects TclPro to be installed on the system where the
+resulting executable is run (furthermore, TclPro must be installed
+in the same place where it was installed when the application was
+wrapped).
+Assuming the current working directory is the location of the file
+\fIwidget.tcl\fR:
+.CS
+prowrap \-out widgetDemo \-uses wish-dynamic \-startup widget.tcl *.* images/*.*
+.CE
+.SH INFO-ZIP COPYRIGHT INFORMATION
+TclPro Wrapper incorporates compression code from the Info-ZIP group.
+There are no extra charges or costs in TclPro due to the use of this code,
+and the original compression sources are freely available from
+http://www.cdrom.com/pub/infozip/ or ftp://ftp.cdrom.com/pub/infozip/
+on the Internet.  We thank the Info-ZIP group for an outstanding piece
+of open source software.
+.SH SEE ALSO
+prowrap(3)
+.SH KEYWORDS
+prodebug procomp procheck prowrap

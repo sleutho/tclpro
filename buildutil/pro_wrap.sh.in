@@ -1,0 +1,48 @@
+#! /bin/sh
+#
+#  This shell script sets up LD_LIBRARY_PATH and SHLIB_PATH so that the TclPro
+#  libraries are found first.
+#
+# Copyright (c) 2000 by Ajuba Solutions
+# All rights reserved
+# 
+# RCS: @(#) $Id: pro_wrap.sh.in,v 1.2 2001/03/07 08:58:12 karll Exp $
+
+PRODUCTHOME='@PRODUCTHOME@'
+TCLPROBIN=${PRODUCTHOME}/bin
+TCLPROLIB=${PRODUCTHOME}/lib
+
+TCLPROEXEFILE=${TCLPROBIN}/@STEM@.bin
+
+# set up the environment
+
+HOST_TYPE=`uname -srvm`
+
+case $HOST_TYPE in
+    Linux*)
+        if [ "X$LD_LIBRARY_PATH" != "X" ]; then
+            TCLPRO_LD_LIBRARY_PATH="${LD_LIBRARY_PATH}"
+            export TCLPRO_LD_LIBRARY_PATH
+        fi
+        ;;
+    *)
+        if (set -u; JUNK=${LD_LIBRARY_PATH}) 2>&- >&- ; then
+            TCLPRO_LD_LIBRARY_PATH="${LD_LIBRARY_PATH}"
+            export TCLPRO_LD_LIBRARY_PATH
+        fi
+        if (set -u; JUNK=${SHLIB_PATH}) 2>&- >&- ; then
+            TCLPRO_SHLIB_PATH="${SHLIB_PATH}"
+            export TCLPRO_SHLIB_PATH
+        fi
+        ;;
+esac
+
+SHLIB_PATH="${TCLPROLIB}:${SHLIB_PATH}"
+export SHLIB_PATH
+
+LD_LIBRARY_PATH="${TCLPROLIB}:${LD_LIBRARY_PATH}"
+export LD_LIBRARY_PATH
+
+# invoke the real executable
+
+exec "$TCLPROEXEFILE" "$@"

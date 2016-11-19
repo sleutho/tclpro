@@ -1,0 +1,8 @@
+Notice: at $info(date) $info(time), a license key was $info(action)
+for $info(app) and $info(seats) seats.  You can manage license keys
+by visiting http://$Httpd(name):$Httpd(port)/admin/license.tml
+
+This message was sent automatically from
+Ajuba Solutions License Server.  To remove yourself
+from its mailing list, please visit
+http://$Httpd(name):$Httpd(port)/admin/preferences.tml

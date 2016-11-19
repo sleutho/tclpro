@@ -1,0 +1,8 @@
+2000-8-07  Brent Welch <welch@ajubasolutions.com>
+
+	* App3:
+	Got this configure/Make example to work.
+
+2000-8-06  Brent Welch <welch@ajubasolutions.com>
+
+	* Created some simple Unix examples.

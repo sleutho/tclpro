@@ -1,0 +1,8 @@
+# -*- tcl -*-
+
+module zip {
+    location infozip/zip-2.1
+    version		2.1
+    configure.loc	{} .
+    configure.with	{} "--disable-shared --with-tcl=[file join %bld:tcl_static% %arch%]"
+}

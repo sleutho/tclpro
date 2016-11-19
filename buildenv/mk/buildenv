@@ -1,0 +1,51 @@
+# -*- tcl -*-
+
+module buildenv {
+    location            buildenv
+    version		1.0
+    configure.loc	{} .
+    configure.with	{} ""
+    testsuite		tests
+}
+
+module buildInfo {
+    configure.with {} "--with-wsname=%workspace% --with-buildid=%build_id%"
+}
+
+# Special module. Just contains the standard switches used everywhere!
+# Part of the build framework.
+
+module **standard** {
+    # configure switches for the various modules.  The configure switches
+    # are additive.  The order in which they are added is:
+    #
+    #	$srcdir (added automatically by build_module.tcl)
+    #	standard
+    #	$moduleName
+    #	$platform
+    #	$flavorStr
+    #	$moduleName,$platform
+    #	$moduleName,$flavorStr
+    #	$moduleName,$flavorStr,$platform
+    #
+    # You don't need to specify --srcdir here.  That flag is automatically
+    # added during the build.
+
+    configure.with \
+	    standard "                  \
+	    --prefix=%prefix%           \
+	    --exec-prefix=%exec_prefix% \
+	    --with-tcl=[file join %bld:tcl% %arch%]"
+
+    configure.with \
+	    Debug		"--enable-symbols"  \
+	    Release 		"--disable-symbols" \
+	    linux-ix86		"--enable-gcc"  \
+	    solaris-sparc	"--enable-gcc" \
+	    hpux-parisc		"--enable-gcc" \
+	    irix-mips		"" \
+	    aix-risc		"" \
+	    freebsd-ix86	"--enable-gcc" \
+	    win32-ix86		""
+}
+

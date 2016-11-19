@@ -1,0 +1,145 @@
+#!/usr/local/bin/wish8.0
+
+# RCS: @(#) $Id: licdemo,v 1.1 2000/06/21 00:06:43 welch Exp $
+
+# This is a little test GUI for the
+# Scriptics License Key Generator and Parser
+
+lappend auto_path [file dirname [info script]]
+lappend auto_path [file join [file dirname [info script]] .. util]
+
+package require lic
+package require licgen
+package require licdata
+
+source [file join [file dirname [info script]] .. util version.tcl]
+
+licdata::init 1.2
+
+# Testing routines.
+
+proc test1 {} {
+    global custid prodid version expire key result limit
+    incr custid
+    if {[string compare $expire 0] != 0} {
+	set limit [clock scan $expire]
+    } else {
+	set limit $expire
+    }
+    set key [licgen::genkey $custid $prodid $version $limit]
+
+    set result [lic::parsekey $key]
+}
+
+proc cheat {} {
+    global  key result
+
+    catch {lic::parsekey $key} result
+}
+
+proc Break {} {
+    global  key result stop digits keyfile
+    global licdata::map		;# The alphabet
+    set limit 20
+
+    if {![info exist digits]} {
+	set keyfile [open keylist a]
+	if {![info exists key] || [string length $key] == 0} {
+	    array set digits {
+		0 0
+		1 0
+		2 0
+		3 0
+		4 0
+		5 0
+		6 0
+		7 0
+		8 0
+		9 0
+		10 0
+		11 0
+		12 0
+		13 0
+		14 0
+		15 0
+		16 0
+		17 0
+		18 0
+		19 1
+	    }
+	} else {
+	    set i 19
+	    foreach c [split $key ""] {
+		if {[string compare $c -] == 0} {
+		    continue
+		}
+		set digits($i) $licdata::unmap($c)
+		incr i -1
+	    }
+	}
+    }
+    catch {unset stop}
+    while 1 {
+	set i 0
+	while {[incr digits($i)] == 32} {
+	    set digits($i) 0
+	    update
+	    incr i
+	}
+	set key {}
+	foreach d {19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0} {
+	    append key $::licdata::map($digits($d))
+	}
+	if {![catch {lic::parsekey $key} x]} {
+	    set result $x
+	    puts $keyfile "$key $result"
+	    flush $keyfile
+	    update
+	}
+	if {[info exist stop]} {
+	    break
+	}
+    }
+}
+
+proc save {} {
+    global key result
+
+    if {[info exists key] && [string length $key]} {
+	licgen::savekey $key
+	set result "key saved"
+    }
+}
+
+proc testgui {} {
+    global custid prodid version expire result key limit
+    set w 0
+    set custid 1
+    set prodid 1
+    set version 1.0.0
+    set expire "now + 31 days"
+    
+    eval destroy [winfo children .]
+    foreach {var label} {
+	    custid "Customer ID"
+	    prodid "Product ID"
+	    version "Version"
+	    expire "Expire Date"
+	    key "Key" 
+	    result "Result" } {
+	label .l$w -text $label
+	entry .e$w -textvariable $var -width 30
+	grid .l$w .e$w -sticky news -pady 2
+	incr w
+    }
+    grid columnconfigure . 1 -weight 1
+    button .test -command test1 -text Test
+    button .save -command save -text Save
+    button .cheat -command cheat -text Cheat
+    button .break -command Break -text Break
+    button .stop -command {set stop 1} -text Stop
+    grid .test .break
+    grid .save .stop
+}
+
+testgui

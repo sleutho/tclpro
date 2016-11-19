@@ -1,0 +1,5 @@
+[lpage::head Reports "Current Users"]
+<p>
+[lserver::reportusers]
+
+[lpage::footer]

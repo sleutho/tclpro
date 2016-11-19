@@ -1,0 +1,61 @@
+'\"
+'\" Copyright (c) 1998-2000 by Ajuba Solutions
+'\" All rights reserved.
+'\"
+'\" RCS: @(#) $Id: prodebug.1,v 1.2 2000/08/08 02:06:33 welch Exp $
+'\" 
+.so man.macros
+.TH prodebug 1 "" TclPro "TclPro Applications"
+.BS
+'\" Note:  do not modify the .SH NAME line immediately below!
+.SH NAME
+prodebug \- TclPro Debugger
+
+.SH SYNOPSIS
+\fBprodebug\fR ?\fB\-help\fR? ?\fB\-nologo\fR? ?\fB\-coverage\fR? ?\fB\-display\fR \fIdisplay\fR? ?projectFile?
+
+.SH OPTIONS
+.PP
+.IP "\fB\-help\fR" 15
+Displays usage information, then exit without doing anything.
+.IP "\fB\-nologo\fR" 15
+Hides the copyright and version information. 
+.IP "\fB\-coverage\fR" 15
+Enables the code coverage analysis feature.
+.IP "\fB\-display\fR \fIdisplay\fR" 15
+Display (and screen) on which to display window.  (UNIX only.)
+.BE
+
+.SH DESCRIPTION
+.PP
+
+TclPro Debugger is a graphical debugger for the Tcl scripting
+language.  TclPro Debugger allows you to interactively step through
+your Tcl scripts to find bugs as they occur.  You may also use the
+TclPro Debugger to modify the state of your running Tcl application to
+test hard-to-execute or otherwise unreachable code branches.
+
+.PP
+
+The command \fBprodebug\fR is used to start TclPro Debugger.  If you
+specify a \fIprojectFile\fR on the command line, TclPro Debugger will
+open the project upon startup.
+
+.SH "USER MANUAL"
+.PP
+For more information, please see the TclPro User's Guide or online
+help system.
+
+.PP
+The code coverage feature is a late addition to the tool and is
+not documented in the user manual.  If you start \fBprodebug\fR
+with the \fB-coverage\fR option then a "Show Coverage" menu entry appears under
+the View menu, and a toolbar button labeled \fBC\fR appears.  These
+display a simple code coverage tool that will highlight either
+the code that has been executed so far, or the code that has
+not been executed so far.  The idea of this tool is to show you
+how well test inputs are exercising your program.
+
+
+.SH KEYWORDS
+debug

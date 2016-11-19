@@ -1,0 +1,20 @@
+# pkgIndex.tcl --
+#
+#	This file contains the package index for the Tcl Debugger.
+#
+# Copyright (c) 1998-2000 Ajuba Solutions
+# All rights reserved.
+# 
+# RCS: @(#) $Id: pkgIndex.tcl.in,v 1.6 2000/07/26 04:51:40 welch Exp $
+
+# We need to load two files.  debugger.tcl has the main code,
+# but system.tcl has some support routines needed very early
+# in the case that we need to launch the license manager.
+
+if {[file exists [file join $dir debugger.tbc]]} {
+   package ifneeded @PACKAGE@ @VERSION@ \
+       [list source [file join $dir debugger.tbc]]
+} else {
+   package ifneeded @PACKAGE@ @VERSION@ \
+       [list source [file join $dir debugger.tcl]]
+}

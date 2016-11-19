@@ -1,0 +1,129 @@
+
+NOTES FOR BUILDING TCLPRO UNDER MICROSOFT WINDOWS
+
+by karl@procplace.com on Feb 25, 2001
+
+REQUIRED READING
+
+Before you do anything, read http://dev.scriptics.com/doc/tea/windows.html
+
+GET THE TCLPRO SOURCE TREE
+
+Examine README.build for details.
+
+INSTALL CYGWIN
+
+Note that cygwin doesn't use the full.exe installer anymore.  They now
+have a nice net-based installer that you can run on your net-connected
+Windows box from 
+http://sources.redhat.com/cygwin/setup.exe
+
+Go grab the cygwin installer and get cygwin installed.
+
+For the rest of this doc, we're going to treat things as if you have an
+E: drive (or a network mount mapped as E:),and you set it
+up where the tclpro source tree is at
+
+	E:\tclpro\src\tclpro
+
+GET A MODERN TCL IN YOUR PATH INCLUDING TCLLIB
+
+You need to have a modern (Tcl 8+) version of Tcl with the tcllib library
+installed.  This requirement will be removed in a future release.  You
+could go get a binary install of TclPro and use that, or you can get
+tcl from http://dev.scriptics.com and install it and configure and install
+tcllib in there, too.
+
+I put mine in D:\tcl832
+
+START CYGWIN
+
+Fire up Cygwin.
+
+You're running bash, so if you're a bash person, set up your profile and
+stuff the way you like.  I particularly like "set -o vi"
+
+DIDDLE YOUR PATH TO INCLUDE TCL WITH TCLLIB
+
+Set your path to include your modern Tcl with tcllib.  Since mine
+is in D:\tcl832, I do the following to set the PATH:
+
+	PATH=/cygdrive/d/tcl832/bin:$PATH
+
+You're also going to need the TclPro output directory in your path, because
+the build process will be using the tools as they're being built to help
+build the other tools, so instead say this:
+
+	PATH=/cygdrive/d/tcl832/bin:/cygdrive/e/tclpro/src/tclpro/win32-ix86/out/win32-ix86/bin:$PATH
+
+For now, you'll want the path to the good Tcl including tcllib in front
+of the ...win32-ix86/bin... path, or if you reconfigure after the big
+build gets tcl installed but hasn't done tcllib, you won't yet have a tcl
+that'll have tcllib.
+
+NOTE ABOUT CONFIGURE RESULTS CACHING AND PATHS TO THINGS
+
+Note... watch what the configure scripts are picking for paths.  Once
+configure has run for a package, the config.cache file caches results
+like paths, so if you want paths to change (say, for example, you've
+now gotten a good Tcl in the right place), you need to remove the
+package-specific config.cache and configure the package again.
+
+LET'S SET UP THE BUILD DIRECTORY
+
+Now let's set up the build directory:
+
+
+	cd //e/tclpro/src/tclpro
+	mkdir win32-ix86
+	cd win32-ix86
+
+	../configure --with-flavor=Release
+
+BUILD TCLPRO
+
+After this you should be able to say "make" and start making.
+
+If all goes well, it'll build everything.  If it doesn't, it'll print an
+error message.  You can make changes and then do a "make" again and it'll
+pretty much pick up where it left off.
+
+You can also explicitly configure and make things, like you can say
+"make bigtclshdyn-configure" and "make bigtclshdyn-install", etc.
+Actually you can do this for any of the 12 TEA targets.
+
+BUT... it's best to let the build handle it because stuff has to be built
+and installed in the right order.
+
+You can also say "make bigtclshdyn-deps" and it'll build and install all the 
+stuff that are prerequisites for building bigtclshdyn
+
+MAKE A DISTRIBUTION
+
+On your UNIX system, do a "make dist".  If you get the path to the win
+stuff right (and I'm skipping the detailed explanation right now), it'll
+put the windows bins and libs in the distribution.
+
+You can say "make windist" on the windows machine to make the windows
+distribution.  This currently results in an error that i haven't debugged
+yet.
+
+MAKE IMAGE IS SLIGHTLY BROKEN
+
+You say "make image" to create the CDROM image and the web images.
+Unfortunately at this time only the libraries seem to get picked up
+for the Windows stuff, which renders it unusable.
+
+It's getting very close to being good, though.
+
+NOTES FROM PHONE CONV WITH BRENT ABOUT THE ABOVE
+
+Need the "slash tools" including the wise installer, for now.
+
+It should work as:
+
+    make dist
+    make winimage
+    make image
+
+

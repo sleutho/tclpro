@@ -1,0 +1,108 @@
+#!@WISHX@ -f
+
+######################################################################
+#
+# klondike
+#
+# Copyright (C) 1993-1999 by John Heidemann <johnh@isi.edu>
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+# 3. The name of John Heidemann may not be used to endorse or promote products
+#    derived from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY JOHN HEIDEMANN ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED.  IN NO EVENT SHALL JOHN HEIDEMANN BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+# OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+# OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+# SUCH DAMAGE.
+#
+#
+# $Id: klondike.in,v 1.1 2000/07/14 18:00:05 welch Exp $
+#
+######################################################################
+
+
+if {[info exists tcl_platform(isWrapped)]} {
+    set table(sourcedir) ""
+    set table(releasefile) "release"
+    set table(bitmapdir) "@CARDS"
+    set score(scoredir) [file join [file dir [info script]] SCORES]
+    set score(scorefile) [file join $score(scoredir) scores]
+
+    set table(tclx_srcfile) tclx_compat.tbc
+    set table(table_srcfile) table.tbc
+    set table(rules_srcfile) klondikeRules.tbc
+    set table(menus_srcfile) klondikeMenus.tbc
+    set table(score_srcfile) klondikeScore.tbc
+} else {
+	# to make this work on Windows, without GNU configure
+    if { $tcl_platform(platform) == "windows" } {
+		set table(sourcedir) [file dir [info script]]
+    } else {
+		set table(sourcedir) "@mydatadir@/@package@"
+    }	
+    set table(releasefile) "$table(sourcedir)/release"
+    set table(bitmapdir) "@$table(sourcedir)/CARDS"
+    set score(scoredir) "$table(sourcedir)/SCORES"
+    set score(scorefile) "$score(scoredir)/scores"
+
+    set table(tclx_srcfile)  [file join $table(sourcedir) tclx_compat.tcl]
+    set table(table_srcfile) [file join $table(sourcedir) table.tcl]
+    set table(rules_srcfile) [file join $table(sourcedir) klondikeRules.tcl]
+    set table(menus_srcfile) [file join $table(sourcedir) klondikeMenus.tcl]
+    set table(score_srcfile) [file join $table(sourcedir) klondikeScore.tcl]
+}
+
+#
+# Load tclx exivalents if needed.
+#
+global tcl_version
+if {$tcl_version >= 7.5} {
+	source $table(tclx_srcfile)
+}
+
+#
+# Some simple version checking
+# Make sure tk and tclX are both present.
+#
+proc dieIfLackingCommand {cmd prog} {
+	global errorInfo
+	catch $cmd
+	if { [regexp {^invalid command name} $errorInfo] } {
+		puts "Klondike requires $prog and appears to have been mis-installed without\nthis tcl extension.  See the README file for information on obtaining $prog\nand installing klondike.\n"
+		exit 1
+	}
+}
+#
+# Note that these are not the only commands I need from these
+# packages, just two that I use to identify them.
+#
+dieIfLackingCommand {tk} "tk"
+dieIfLackingCommand {random} "tclx or tcl7.5"
+
+file mkdir $score(scoredir)
+
+if { [file exists $score(scoredir)] && [file isdirectory $score(scoredir)]} {
+    set score(writeScores) 1
+} else {
+    set score(writeScores) 0
+}
+    
+
+source $table(rules_srcfile)
+
+

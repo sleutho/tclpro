@@ -1,0 +1,13 @@
+[lpage::head Administration "Date Format"]
+[lserver::initview /setup.tml]
+<p>
+<h3>Select Date Format</h3>
+<p>
+Your current date format selection looks like this:
+<pre>[lserver::Today]</pre>
+<p>
+Please choose a date format that will be used in reports.
+<p>
+[lserver::dateprefs]
+
+[lpage::footer]

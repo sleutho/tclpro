@@ -1,0 +1,14 @@
+1999-07-21  Melissa Hirschl  <hershey@matisse.scriptics.com>
+
+	* proWrap.c (WrapOpenFileChannel): changed -encodingDir to
+	-tcllibrary.  This was just a name change, not a change in
+	functionality.
+
+1999-07-09  Melissa Hirschl  <hershey@matisse.scriptics.com>
+
+	* proWrapTclMain.c (Pro_WrapTclMain):
+	* proWrapTkMain.c (Pro_WrapTkMain): fixed bug that caused a
+	wrapped app's argv0 value to give the source file name rather than
+	the executable file name.
+
+

@@ -1,0 +1,21 @@
+2001-1-30  Brent Welch <welch@ajubasolutions.com>
+
+	* Makefile.in: Eliminated use of .tbc files.
+
+2000-8-28  Brent Welch <welch@ajubasolutions.com>
+
+	* src/startup.tcl:
+	Set license release hook.
+
+2000-8-07  Brent Welch <welch@ajubasolutions.com>
+
+	* doc/procheck.1:
+	Added the man page.
+
+2000-7-18  Brent Welch <welch@ajubasolutions.com>
+
+	* configure.in, Makefile.in: Added use of procompU wrapper shell.
+
+2000-6-22  Brent Welch <welch@ajubasolutions.com>
+
+	* src/startup.tcl - added TclPro license hooks

@@ -1,0 +1,242 @@
+# Makefile.in --
+#
+#    Template make file for TclPro Sample Application
+# 
+# Copyright (c) 1998-2000 by Ajuba Solutions. 
+# All rights reserved.
+# 
+# RCS: @(#) $Id: Makefile.in,v 1.3 2000/07/26 00:55:11 davidg Exp $
+
+SHELL			= /bin/sh
+
+TCL_VERSION		= @TCL_VERSION@
+TK_VERSION		= @TK_VERSION@
+TCLPRO_VERSION		= @TCLPRO_VERSION@
+TBC_VERSION		= @TBC_VERSION@
+WRAPPER_VERSION		= @WRAPPER_VERSION@
+ITCL_VERSION		= @ITCL_VERSION@
+ITK_VERSION		= @ITK_VERSION@
+TCLX_VERSION		= @TCLX_VERSION@
+TKX_VERSION		= @TKX_VERSION@
+EXPECT_VERSION		= @EXPECT_VERSION@
+
+TCLPRO_PLATFORM		= @TCLPRO_PLATFORM@
+
+SRC_DIR			= @srcdir@
+TCLPRO_ROOT_DIR		= ${SRC_DIR}/../..
+TCLPRO_INCLUDE_DIR	= ${TCLPRO_ROOT_DIR}/include
+TCLPRO_LIBDIR		= ${TCLPRO_ROOT_DIR}/${TCLPRO_PLATFORM}/lib
+TCLPRO_BINDIR		= ${TCLPRO_ROOT_DIR}/${TCLPRO_PLATFORM}/bin
+TCLPRO_TCLLIBDIR	= ${TCLPRO_ROOT_DIR}/lib/tcl8.2
+TCLPRO_TKLIBDIR		= ${TCLPRO_ROOT_DIR}/lib/tk8.2
+TCL_INCLUDE_DIR		= ${TCLPRO_ROOT_DIR}/src/include
+
+PROCOMP			= ${TCLPRO_BINDIR}/procomp
+PROWRAP			= ${TCLPRO_BINDIR}/prowrap
+PROTCLSH		= ${TCLPRO_BINDIR}/protclsh82
+
+LIB_RUNTIME_DIR		= ${TCLPRO_LIBDIR}
+
+AC_FLAGS		= @EXTRA_CFLAGS@
+CC			= @CC@
+
+CFLAGS_WARNING		= @CFLAGS_WARNING@
+CFLAGS_DEBUG		= @CFLAGS_DEBUG@
+CFLAGS_OPTIMIZE		= @CFLAGS_OPTIMIZE@
+
+# To change the compiler switches, for example to change from optimization to
+# debugging symbols, change the following line:
+#CFLAGS			= $(CFLAGS_DEBUG)
+#CFLAGS			= $(CFLAGS_OPTIMIZE)
+#CFLAGS			= $(CFLAGS_DEBUG) $(CFLAGS_OPTIMIZE)
+CFLAGS			= $(@CFLAGS_DEFAULT@)
+
+SHLIB_LD		= @SHLIB_LD@
+SHLIB_SUFFIX		= @SHLIB_SUFFIX@
+SHLIB_CFLAGS		= @SHLIB_CFLAGS@
+SHLIB_LD_LIBS		= @SHLIB_LD_LIBS@
+
+X11_INCLUDES		= @XINCLUDES@
+X11_LIB_SWITCHES	= @XLIBSW@
+
+CC_SWITCHES		= ${AC_FLAGS} ${CFLAGS} ${CFLAGS_WARNING} -I${TCLPRO_INCLUDE_DIR}
+CC_GUI_FLAGS		= ${X11_INCLUDES} ${CC_SWITCHES}
+LD_FLAGS		= @LD_FLAGS@
+
+TCL_LIBS		= @DL_LIBS@ @LIBS@ @MATH_LIBS@ -lc
+
+LIB_SEARCH_FLAGS	= -L${TCLPRO_LIBDIR} 
+LD_SEARCH_FLAGS		= @LD_SEARCH_FLAGS@
+
+STATIC_TCL_FLAG		= @STATIC_TCL_FLAG@ \
+				${TCLPRO_LIBDIR}/libtcl${TCL_VERSION}.a
+DYNAMIC_TCL_FLAG	= @DYNAMIC_TCL_FLAG@
+STATIC_TK_FLAG		= @STATIC_TK_FLAG@ \
+			  	${TCLPRO_LIBDIR}/libtk${TK_VERSION}.a
+DYNAMIC_TK_FLAG		= @DYNAMIC_TK_FLAG@
+
+STATIC_TBCLOAD_FLAG	= -ltbcload${TBC_VERSION}s
+STATIC_WRAPPER_FLAG	= -lwrapper${WRAPPER_VERSION}s
+STATIC_BIGTCL_FLAG	= ${TCLPRO_LIBDIR}/libitcl${ITCL_VERSION}s.a \
+			  ${TCLPRO_LIBDIR}/libtclx${TCLX_VERSION}.a \
+			  ${TCLPRO_LIBDIR}/libexpect${EXPECT_VERSION}.a
+STATIC_BIGWISH_FLAG	= ${TCLPRO_LIBDIR}/libtcl${TCL_VERSION}.a \
+			  ${TCLPRO_LIBDIR}/libitk${ITK_VERSION}s.a \
+			  ${TCLPRO_LIBDIR}/libtkx${TKX_VERSION}.a
+
+DYNAMIC_TBCLOAD_FLAG	= -ltbcload${TBC_VERSION}
+DYNAMIC_WRAPPER_FLAG	= -lwrapper${WRAPPER_VERSION}s
+
+STATIC_TCL_LIB_FLAGS	= ${LIB_SEARCH_FLAGS} \
+				${STATIC_TBCLOAD_FLAG} ${STATIC_WRAPPER_FLAG} \
+				${STATIC_TCL_FLAG} \
+				${TCL_LIBS}
+STATIC_TK_LIB_FLAGS	= ${LIB_SEARCH_FLAGS} \
+				${STATIC_TBCLOAD_FLAG} ${STATIC_WRAPPER_FLAG} \
+				${STATIC_TK_FLAG} ${STATIC_TCL_FLAG} \
+				${X11_LIB_SWITCHES} \
+				${TCL_LIBS}
+STATIC_BIGTCL_LIB_FLAGS	= ${LIB_SEARCH_FLAGS} \
+				${STATIC_TBCLOAD_FLAG} ${STATIC_WRAPPER_FLAG} \
+				${STATIC_BIGTCL_FLAG} ${STATIC_TCL_FLAG} \
+				${TCL_LIBS}
+STATIC_BIGWISH_LIB_FLAGS= ${LIB_SEARCH_FLAGS} \
+				${STATIC_TBCLOAD_FLAG} ${STATIC_WRAPPER_FLAG} \
+				${STATIC_BIGWISH_FLAG} ${STATIC_TK_FLAG} \
+				${STATIC_BIGTCL_FLAG} ${STATIC_TCL_FLAG} \
+				${X11_LIB_SWITCHES} \
+				${TCL_LIBS}
+
+DYNAMIC_TCL_LIB_FLAGS	= ${LIB_SEARCH_FLAGS} ${LD_SEARCH_FLAGS} \
+				${DYNAMIC_TBCLOAD_FLAG} \
+				${DYNAMIC_WRAPPER_FLAG} \
+				${DYNAMIC_TCL_FLAG} ${TCL_LIBS}
+DYNAMIC_TK_LIB_FLAGS	= ${LIB_SEARCH_FLAGS} ${LD_SEARCH_FLAGS} \
+				${DYNAMIC_TBCLOAD_FLAG} \
+				${DYNAMIC_WRAPPER_FLAG} \
+				${DYNAMIC_TK_FLAG} ${DYNAMIC_TCL_FLAG} \
+				${X11_LIB_SWITCHES} ${TCL_LIBS}
+
+SAMPLE_STATIC_TCLSH	= tclsh-static
+SAMPLE_DYNAMIC_TCLSH	= tclsh-dynamic
+SAMPLE_STATIC_WISH	= wish-static
+SAMPLE_DYNAMIC_WISH	= wish-dynamic
+SAMPLE_STATIC_BIGTCLSH	= bigtclsh-static
+SAMPLE_STATIC_BIGWISH	= bigwish-static
+
+SAMPLE_TCLSH_OBJS	= proTclUnixMain.o proWrapTclMain.o
+SAMPLE_WISH_OBJS	= proTkUnixMain.o proWrapTkMain.o
+SAMPLE_BIGTCLSH_OBJS	= proBigtclUnixMain.o proWrapTclMain.o
+SAMPLE_BIGWISH_OBJS	= proBigwishUnixMain.o proWrapTkMain.o
+
+FACTORIAL_TCL_FILES	= ${SRC_DIR}/factorial.tcl \
+			  ${SRC_DIR}/startup.tcl
+FACTORIAL_WRAP_FILES	= factorial/factorial.tbc \
+			  factorial/startup.tbc \
+			  factorial/pkgIndex.tcl
+FACTORIAL_STATIC	= fac-static
+FACTORIAL_DYNAMIC	= fac-dynamic
+
+all : static dynamic factorial
+
+static : ${SAMPLE_STATIC_TCLSH} ${SAMPLE_STATIC_WISH} \
+		${SAMPLE_STATIC_BIGTCLSH} ${SAMPLE_STATIC_BIGWISH}
+
+dynamic : ${SAMPLE_DYNAMIC_TCLSH} ${SAMPLE_DYNAMIC_WISH}
+
+tclsh : ${SAMPLE_STATIC_TCLSH} ${SAMPLE_DYNAMIC_TCLSH}
+
+wish : ${SAMPLE_STATIC_WISH} ${SAMPLE_DYNAMIC_WISH}
+
+bigtclsh : ${SAMPLE_STATIC_BIGTCLSH}
+
+bigwish : ${SAMPLE_STATIC_BIGWISH}
+
+# The factorial target creates two wrapped executables:
+#  - from the statically linked tclsh that was just created
+#  - from one of the .in files provided with the TclPro distribution.
+# These are examples of how to wrap your own extension, and of how to use
+# the prebuilt ones.
+
+factorial : ${SAMPLE_STATIC_TCLSH} compile-factorial
+	$(PROWRAP) -nologo \
+		-uses "" \
+		-executable ${SAMPLE_STATIC_TCLSH} \
+		-out ${FACTORIAL_STATIC} \
+		-startup factorial/startup.tbc \
+		${FACTORIAL_WRAP_FILES} \
+		-relativeto $(TCLPRO_ROOT_DIR) $(TCLPRO_TCLLIBDIR)/* \
+		-code "set tcl_library lib/tcl8.2"
+	$(PROWRAP) -nologo \
+		-uses tclsh-dynamic \
+		-out ${FACTORIAL_DYNAMIC} \
+		-startup factorial/startup.tbc \
+		${FACTORIAL_WRAP_FILES}
+
+# compile the factorial package, generate a pkgIndex.tcl file
+
+compile-factorial :
+	if test -d factorial ; then \
+		chmod -R u+w factorial ; \
+		rm -r factorial ; \
+	fi
+	mkdir factorial
+	$(PROCOMP) -verbose -out factorial ${FACTORIAL_TCL_FILES}
+	echo "cd factorial ; pkg_mkIndex -load tbcload . factorial.tbc" | $(PROTCLSH)
+
+${SAMPLE_STATIC_TCLSH}: ${SAMPLE_TCLSH_OBJS}
+	${CC} -o $@ ${CC_SWITCHES} ${LD_FLAGS} ${SAMPLE_TCLSH_OBJS} \
+		${STATIC_TCL_LIB_FLAGS}
+
+${SAMPLE_DYNAMIC_TCLSH}: ${SAMPLE_TCLSH_OBJS}
+	${CC} -o $@ ${CC_SWITCHES} ${LD_FLAGS} ${SAMPLE_TCLSH_OBJS} \
+		${DYNAMIC_TCL_LIB_FLAGS}
+
+${SAMPLE_STATIC_WISH}: ${SAMPLE_WISH_OBJS}
+	${CC} -o $@ ${CC_GUI_FLAGS} ${LD_FLAGS} ${SAMPLE_WISH_OBJS} \
+		${STATIC_TK_LIB_FLAGS}
+
+${SAMPLE_DYNAMIC_WISH}: ${SAMPLE_WISH_OBJS}
+	${CC} -o $@ ${CC_GUI_FLAGS} ${LD_FLAGS} ${SAMPLE_WISH_OBJS} \
+		${DYNAMIC_TK_LIB_FLAGS}
+
+${SAMPLE_STATIC_BIGTCLSH}: ${SAMPLE_BIGTCLSH_OBJS}
+	${CC} -o $@ ${CC_SWITCHES} ${LD_FLAGS} ${SAMPLE_BIGTCLSH_OBJS} \
+		${STATIC_BIGTCL_LIB_FLAGS}
+
+${SAMPLE_STATIC_BIGWISH}: ${SAMPLE_BIGWISH_OBJS}
+	${CC} -o $@ ${CC_GUI_FLAGS} ${LD_FLAGS} ${SAMPLE_BIGWISH_OBJS} \
+		${STATIC_BIGWISH_LIB_FLAGS}
+
+proTclUnixMain.o: ${TCLPRO_TCLLIBDIR}/proTclUnixMain.c
+	$(CC) $(CC_SWITCHES) -c $?
+
+proWrapTclMain.o: ${TCLPRO_TCLLIBDIR}/proWrapTclMain.c
+	$(CC) $(CC_SWITCHES) -c $?
+
+proTkUnixMain.o: ${TCLPRO_TKLIBDIR}/proTkUnixMain.c
+	$(CC) $(CC_GUI_FLAGS) -c $?
+
+proWrapTkMain.o: ${TCLPRO_TKLIBDIR}/proWrapTkMain.c
+	$(CC) $(CC_GUI_FLAGS) -c $?
+
+proBigtclUnixMain.o: ${TCLPRO_TCLLIBDIR}/proTclUnixMain.c
+	$(CC) -DITCL_STATIC_BUILD -DEXPECT_STATIC_BUILD -DTCLX_STATIC_BUILD \
+		$(CC_SWITCHES) -c -o $@ $?
+
+proBigwishUnixMain.o: ${TCLPRO_TKLIBDIR}/proTkUnixMain.c
+	$(CC) -DITCL_STATIC_BUILD -DEXPECT_STATIC_BUILD -DTCLX_STATIC_BUILD \
+		$(CC_GUI_FLAGS) -c -o $@ $?
+
+clean:
+	rm -f config.cache config.log config.status \
+		${SAMPLE_TCLSH_OBJS} ${SAMPLE_WISH_OBJS} \
+		${SAMPLE_BIGTCLSH_OBJS} ${SAMPLE_BIGWISH_OBJS} \
+		${SAMPLE_STATIC_TCLSH} ${SAMPLE_STATIC_WISH} \
+		${SAMPLE_STATIC_BIGTCLSH} ${SAMPLE_STATIC_BIGWISH} \
+		${SAMPLE_DYNAMIC_TCLSH} ${SAMPLE_DYNAMIC_WISH} \
+		${FACTORIAL_STATIC} ${FACTORIAL_DYNAMIC}
+	rm -rf factorial
+
+distclean: clean
+	rm -f Makefile

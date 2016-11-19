@@ -1,0 +1,12 @@
+dnl This is the configure script for the build environment.  These files are
+dnl designed to be used directly from the source directory.
+
+AC_INIT(build_module.tcl)
+
+AC_CONFIG_AUX_DIR(config)
+AC_PROG_INSTALL
+
+SC_SET_PLATFORM
+SC_PROG_TCLSH
+
+AC_OUTPUT([Makefile])

@@ -1,0 +1,38 @@
+[lpage::head Administration "Email"]
+[lserver::initview /setup.tml]
+<p>
+<h3>Select Email Notifications</h3>
+The license server can generate email notifications when various
+events occur. You can define which users get email in response
+to which kind of events.
+The default is that the site administrator receives email notifications
+for all events.
+<p>
+For each event,
+to remove someone from the list, select Remove.
+To add someone to the list,
+enter their email address and select Add.
+[lserver::emailprefs]
+<p>
+In addition, 
+the license server can optionally send email messages to Ajuba Solutions
+that contain summary reports as well as problem notifications.
+<br>
+<b>You have currently elected
+[if {[lserver::emailajuba]} {
+    set _ "to send email notifications to Ajuba Solutions."
+} else {
+    set _ "NOT to send email to Ajuba Solutions."
+}]
+</b>
+<br>
+<form action=/srvr/emailajuba method=post>
+<input type=hidden name=ok value=1>
+<input type=submit value='OK to email Ajuba Solutions'>
+</form>
+<form action=/srvr/emailajuba method=post>
+<input type=hidden name=ok value=0>
+<input type=submit value='Do not send email to Ajuba Solutions'>
+</form>
+
+[lpage::footer]

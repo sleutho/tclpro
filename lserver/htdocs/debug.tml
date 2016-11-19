@@ -1,0 +1,54 @@
+[lpage::head Documentation Debug]
+
+<h4><a href=/srvr/reset>Reset</a></h4>
+<h4><a href=/srvr/logview>View Log</a></h4>
+
+<h4><a href=/debug/source?source=lserver.tcl>Source lserver.tcl</a></h4>
+<h4><a href=/debug/source?source=debug.tcl>Source debug.tcl</a></h4>
+<h4><a href=/debug/source?source=audit.tcl>Source audit.tcl</a></h4>
+
+<!--
+Process form data
+[Doc_Dynamic]
+[lserver::handleform]
+ -->
+<form action=/debug/pvalue method=get>
+<table>
+[html::textInputRow "Variable name" aname]
+</table>
+<input type=submit value="Print Value">
+
+<form action=/srvr/checkoutDirect method=get>
+<table>
+
+[html::textInputRow "Product ID" prod]
+[html::textInputRow "User" userid]
+<input type=hidden name=host value=browser>
+[html::textInputRow "Application" appname]
+<input type=hidden name=noise1 value=[clock clicks]>
+</table>
+<input type=submit value="Checkout License">
+</form>
+
+<form action=/srvr/releaseDirect method=get>
+<table>
+[html::textInputRow "Token" token]
+<input type=hidden name=noise1 value=[clock clicks]>
+</table>
+<input type=submit value="Release License">
+</form>
+
+<form action=/debug.html method=get>
+
+<table>
+
+[html::textInputRow "Product ID" prod]
+[html::textInputRow "Overdraft left" newover]
+[html::textInputRow "Max Licenses" newmax]
+
+</table>
+
+<input type=submit value="Set parameters">
+</form>
+
+[lpage::footer]

@@ -1,0 +1,59 @@
+README:  TclPro Demos
+
+Copyright (c) 1998-1999 by Scriptics Corporation
+All rights reserved
+-------------------
+
+This directory contains 6 demos for TclPro:
+
+Factorial:  The fac.tcl file can be used to demonstrate TclPro
+            Debugger's single-stepping features, breakpoints, and
+            handling of variables.  This Tcl script can be run with
+            any standard Tcl interpreter.  It requires an integer on
+            the command line and computes the factorial of this value.
+
+Hi-Q Game:  The Hi-Q game can be used to demonstrate TclPro
+            Debugger's handling of call stacks, the Tk event loop,
+            file sourcing, and error handling.  The Hi-Q game is
+            driven by the hiq.tcl script and can be run with a Tk8.0
+            interpreter.  An error is purposely generated if the 
+            "Undo" button is pressed after a game piece is moved.
+            This is done to demonstrate TclPro Debugger's error
+            handling capabilities.
+
+Uplevel:    The uplevel.tcl file can be used to demonstrate TclPro
+            Debugger's handling of uplevel scripts.  This Tcl script
+            can be run with any standard Tcl interpreter.
+
+Compile and Wrap:
+            CompileAndWrap.tcl demonstrates how to compile and wrap
+            the Factorial and Hi-Q demos.  This script creates one
+            stand-alone wrapped executable for each demo.  The wrapped
+            executables will be in the files: demo.$plaform/fac.exe
+            and demos.$plaform/hiq.exe.
+
+            Note: This demo is omitted if TclPro Compiler and TclPro
+            Wrapper are not part of the distribution.
+
+SampleApp:  SampleApp is a directory that contains Makefiles for both
+            Windows and UNIX. These Makefiles demonstrate how to build
+            your own custom interpreter using TclPro template source
+            files. See the file sampleApp/README and the TclPro User's
+            Guide, Chapter 7, "TclPro Applications and Libraries" for
+            more information.
+
+            Note: This demo is part of the C Development Component of
+            TclPro.   This demo is omitted if TclPro Compiler and
+            TclPro Wrapper are not part of the distribution.
+
+Expect:     The expect.tcl file is an augmentation of Don Libes'
+            xrlogin.exp example that ships with the source release of
+            Expect.  The example uses some of the more common Expect
+            commands to demonstrate how to rlogin to another host
+            and automatically set the DISPLAY environment variable.
+            The demo may not work on all Unix systems, as
+            implementations of standard unix commands may vary.
+
+            Note:  This demo is omitted if Expect is not part of the
+            distribution.  Expect is a Tcl extension that only runs on
+            Unix operating systems.

@@ -1,0 +1,432 @@
+# configure.in --
+#
+#     Configure template for TclPro Sample Application
+# 
+# Copyright (c) 1998-1999 by Ajuba Solutions. 
+# All rights reserved.
+# 
+# RCS: @(#) $Id: configure.in,v 1.2 2000/07/26 00:58:15 davidg Exp $
+
+# Name a file autoconf should find in the source directory
+AC_INIT(../../include/proWrap.h)
+
+TCL_VERSION=8.3
+TCL_MAJOR_VERSION=8
+TCL_MINOR_VERSION=3
+TCL_PATCH_LEVEL=".2"
+
+TK_VERSION=8.3
+TK_MAJOR_VERSION=8
+TK_MINOR_VERSION=3
+TK_PATCH_LEVEL=".2"
+
+TCLPRO_VERSION=14
+TCLPRO_MAJOR_VERSION=1
+TCLPRO_MINOR_VERSION=4
+TCLPRO_PATCH_LEVEL="a1"
+
+TBC_VERSION=13
+WRAPPER_VERSION=10
+
+ITCL_VERSION=32
+ITCL_MAJOR_VERSION=3
+ITCL_MINOR_VERSION=2
+ITCL_PATCH_LEVEL="a1"
+
+ITK_VERSION=32
+ITK_MAJOR_VERSION=3
+ITK_MINOR_VERSION=2
+ITK_PATCH_LEVEL="a1"
+
+TCLX_VERSION=8.2
+TCLX_MAJOR_VERSION=8
+TCLX_MINOR_VERSION=2
+TCLX_PATCH_LEVEL="b1"
+
+TKX_VERSION=8.2
+TKX_MAJOR_VERSION=8
+TKX_MINOR_VERSION=2
+TKX_PATCH_LEVEL="b1"
+
+EXPECT_VERSION=5.31
+EXPECT_MAJOR_VERSION=5
+EXPECT_MINOR_VERSION=31
+EXPECT_PATCH_LEVEL=""
+
+if test "${prefix}" = "NONE"; then
+    prefix=/usr/local
+fi
+if test "${exec_prefix}" = "NONE"; then
+    exec_prefix=$prefix
+fi
+TCLPRO_SRC_DIR=`cd $srcdir/..; pwd`
+
+AC_ARG_ENABLE(gcc, [  --enable-gcc            allow use of gcc if available],
+    [tcl_ok=$enableval], [tcl_ok=no])
+if test "$tcl_ok" = "yes"; then
+    AC_PROG_CC
+else
+    CC=${CC-cc}
+AC_SUBST(CC)
+fi
+
+# set the warning flags depending on whether or not we are using gcc
+
+if test "${GCC}" = "yes" ; then
+    # leave -Wimplicit-int out, the X libs generate so many of these warnings
+    # that they obscure everything else.
+
+    CFLAGS_WARNING="-Wall -Wconversion -Wno-implicit-int"
+else
+    CFLAGS_WARNING=""
+fi
+
+#--------------------------------------------------------------------
+#	Locate the X11 header files and the X11 library archive.  Try
+#	the ac_path_x macro first, but if it doesn't find the X stuff
+#	(e.g. because there's no xmkmf program) then check through
+#	a list of possible directories.  Under some conditions the
+#	autoconf macro will return an include directory that contains
+#	no include files, so double-check its result just to be safe.
+#--------------------------------------------------------------------
+
+AC_PATH_X
+not_really_there=""
+if test "$no_x" = ""; then
+    if test "$x_includes" = ""; then
+	AC_TRY_CPP([#include <X11/XIntrinsic.h>], , not_really_there="yes")
+    else
+	if test ! -r $x_includes/X11/Intrinsic.h; then
+	    not_really_there="yes"
+	fi
+    fi
+fi
+if test "$no_x" = "yes" -o "$not_really_there" = "yes"; then
+    AC_MSG_CHECKING(for X11 header files)
+    XINCLUDES="# no special path needed"
+    AC_TRY_CPP([#include <X11/Intrinsic.h>], , XINCLUDES="nope")
+    if test "$XINCLUDES" = nope; then
+        dirs="/usr/unsupported/include /usr/local/include /usr/X386/include /usr/X11R6/include /usr/X11R5/include /usr/include/X11R5 /usr/include/X11R4 /usr/openwin/include /usr/X11/include /usr/sww/include"
+        for i in $dirs ; do
+	    if test -r $i/X11/Intrinsic.h; then
+		AC_MSG_RESULT($i)
+	        XINCLUDES=" -I$i"
+		break
+	    fi
+        done
+    fi
+else
+    if test "$x_includes" != ""; then
+	XINCLUDES=-I$x_includes
+    else
+	XINCLUDES="# no special path needed"
+    fi
+fi
+if test "$XINCLUDES" = nope; then
+    AC_MSG_RESULT(couldn't find any!)
+    XINCLUDES="# no include files found"
+fi
+
+if test "$no_x" = yes; then
+    AC_MSG_CHECKING(for X11 libraries)
+    XLIBSW=nope
+    dirs="/usr/unsupported/lib /usr/local/lib /usr/X386/lib /usr/X11R6/lib /usr/X11R5/lib /usr/lib/X11R5 /usr/lib/X11R4 /usr/openwin/lib /usr/X11/lib /usr/sww/X11/lib"
+    for i in $dirs ; do
+	if test -r $i/libX11.a -o -r $i/libX11.so -o -r $i/libX11.sl; then
+	    AC_MSG_RESULT($i)
+	    XLIBSW="-L$i -lX11"
+	    x_libraries="$i"
+	    break
+	fi
+    done
+else
+    if test "$x_libraries" = ""; then
+	XLIBSW=-lX11
+    else
+	XLIBSW="-L$x_libraries -lX11"
+    fi
+fi
+if test "$XLIBSW" = nope ; then
+    AC_CHECK_LIB(Xwindow, XCreateWindow, XLIBSW=-lXwindow)
+fi
+if test "$XLIBSW" = nope ; then
+    AC_MSG_RESULT(couldn't find any!  Using -lX11.)
+    XLIBSW=-lX11
+fi
+
+#--------------------------------------------------------------------
+#	Various manipulations on the search path used at runtime to
+#	find shared libraries:
+#	1. If the X library binaries are in a non-standard directory,
+#	   add the X library location into that search path.
+#	2. On systems such as AIX and Ultrix that use "-L" as the
+#	   search path option, colons cannot be used to separate
+#	   directories from each other. Change colons to " -L".
+#	3. Create two sets of search flags, one for use in cc lines
+#	   and the other for when the linker is invoked directly.  In
+#	   the second case, '-Wl,' must be stripped off and commas must
+#	   be replaced by spaces.
+#--------------------------------------------------------------------
+
+if test "x${x_libraries}" != "x"; then
+    LIB_RUNTIME_DIR="${LIB_RUNTIME_DIR}:${x_libraries}"
+fi
+if test "${TCL_LD_SEARCH_FLAGS}" = '-L${LIB_RUNTIME_DIR}'; then
+    LIB_RUNTIME_DIR=`echo ${LIB_RUNTIME_DIR} |sed -e 's/:/ -L/g'`
+fi
+
+# The statement below is very tricky!  It actually *evaluates* the
+# string in TCL_LD_SEARCH_FLAGS, which causes a substitution of the
+# variable LIB_RUNTIME_DIR.
+
+eval "TK_CC_SEARCH_FLAGS=\"$TCL_LD_SEARCH_FLAGS\""
+TK_LD_SEARCH_FLAGS=`echo ${TK_CC_SEARCH_FLAGS} |sed -e "s|-Wl,||g" -e "s|,| |g"`
+# Check for the need to include system libraries on the link line
+
+LIBS=""
+
+AC_CHECK_FUNC(sin, MATH_LIBS="", MATH_LIBS="-lm")
+AC_CHECK_LIB(ieee, main, [MATH_LIBS="-lieee $MATH_LIBS"])
+AC_CHECK_LIB(inet, main, [LIBS="$LIBS -linet"])
+
+tcl_checkBoth=0
+AC_CHECK_FUNC(connect, tcl_checkSocket=0, tcl_checkSocket=1)
+if test "$tcl_checkSocket" = 1; then
+    AC_CHECK_LIB(socket, main, LIBS="$LIBS -lsocket", tcl_checkBoth=1)
+fi
+if test "$tcl_checkBoth" = 1; then
+    tk_oldLibs=$LIBS
+    LIBS="$LIBS -lsocket -lnsl"
+    AC_CHECK_FUNC(accept, tcl_checkNsl=0, [LIBS=$tk_oldLibs])
+fi
+AC_CHECK_FUNC(gethostbyname, , AC_CHECK_LIB(nsl, main, [LIBS="$LIBS -lnsl"]))
+
+# Set the variable "system" to hold the name and version number for the system.
+
+AC_MSG_CHECKING([system version])
+system=`uname -s`-`uname -r`
+if test "$?" -ne 0 ; then
+    AC_MSG_RESULT([unknown (can't find uname command)])
+    system=unknown
+else
+    # Special check for weird MP-RAS system (uname returns weird
+    # results, and the version is kept in special file).
+
+    if test -r /etc/.relid -a "X`uname -n`" = "X`uname -s`" ; then
+        system=MP-RAS-`awk '{print $3}' /etc/.relid'`
+    fi
+    if test "`uname -s`" = "AIX" ; then
+        system=AIX-`uname -v`.`uname -r`
+    fi
+    AC_MSG_RESULT($system)
+fi
+
+# Set configuration options based on system name and version.
+
+fullSrcDir=`cd $srcdir; pwd`
+EXTRA_CFLAGS=""
+TCLPRO_SHARED_LIB_SUFFIX=""
+TCLPRO_UNSHARED_LIB_SUFFIX=""
+TCLPRO_LIB_VERSIONS_OK=ok
+CFLAGS_DEBUG=-g
+CFLAGS_OPTIMIZE=-O
+case $system in
+    HP-UX-*.08.*|HP-UX-*.09.*|HP-UX-*.10.*)
+	AC_CHECK_LIB(dld, shl_load, tcl_ok=yes, tcl_ok=no)
+	if test "$tcl_ok" = yes; then
+	    SHLIB_CFLAGS="+z"
+	    SHLIB_LD_LIBS=""
+	    SHLIB_SUFFIX=".sl"
+	    DL_LIBS="-ldld"
+	    LD_FLAGS="-Wl,-E"
+	    LD_SEARCH_FLAGS='-Wl,+s,+b,${LIB_RUNTIME_DIR}:.'
+	fi
+	if test "${GCC}" = "yes" ; then
+	    STATIC_TCL_FLAG='-Wl,-a,archive -Wl,-a,default'
+	    DYNAMIC_TCL_FLAG='-Wl,-a,shared -ltcl${TCL_VERSION} -Wl,-a,default'
+	    STATIC_TK_FLAG='-Wl,-a,archive -Wl,-a,default'
+	    DYNAMIC_TK_FLAG='-Wl,-a,shared -ltk${TK_VERSION} -Wl,-a,default'
+	else
+	    STATIC_TCL_FLAG='-Wl,-Bdynamic'
+	    DYNAMIC_TCL_FLAG='-Wl,-Bdynamic -ltcl${TCL_VERSION}'
+	    STATIC_TK_FLAG='-Wl,-Bdynamic'
+	    DYNAMIC_TK_FLAG='-Wl,-Bdynamic -ltk${TK_VERSION}'
+	fi
+	TCLPRO_PLATFORM=hpux-parisc
+	;;
+    SunOS-5*)
+	if test "${GCC}" = "yes" ; then
+	    SHLIB_CFLAGS="-fPIC"
+
+	    STATIC_TCL_FLAG='-Wl,-Bdynamic -lnsl -lsocket'
+	    DYNAMIC_TCL_FLAG='-Wl,-Bdynamic -ltcl${TCL_VERSION}'
+	    STATIC_TK_FLAG='-Wl,-Bstatic'
+	    DYNAMIC_TK_FLAG='-Wl,-Bdynamic -ltk${TK_VERSION}'
+	else
+	    STATIC_TCL_FLAG='-Wl,-Bdynamic -lnsl -lsocket'
+	    DYNAMIC_TCL_FLAG='-Wl,-Bdynamic -ltcl${TCL_VERSION}'
+	    STATIC_TK_FLAG='-Wl,-Bdynamic'
+	    DYNAMIC_TK_FLAG='-Wl,-Bdynamic -ltk${TK_VERSION}'
+
+	    SHLIB_CFLAGS="-KPIC"
+	fi
+
+	# Note: need the LIBS below, otherwise Tk won't find Tcl's
+	# symbols when dynamically loaded into tclsh.
+
+	SHLIB_LD_LIBS='${LIBS}'
+	SHLIB_SUFFIX=".so"
+	DL_LIBS="-ldl"
+	LD_FLAGS=""
+	LD_SEARCH_FLAGS='-R ${LIB_RUNTIME_DIR}'
+	TCLPRO_PLATFORM=solaris-sparc
+	;;
+    IRIX-5.*|IRIX-6.*)
+	SHLIB_LD="ld -n32 -shared -rdata_shared"
+	SHLIB_SUFFIX=".so"
+	LD_SEARCH_FLAGS='-Wl,-rpath,${LIB_RUNTIME_DIR}'
+	DL_LIBS=""
+	if test "$CC" = "gcc" -o `$CC -v 2>&1 | grep -c gcc` != "0" ; then
+	    STATIC_TCL_FLAG='-Wl,-Bdynamic'
+	    DYNAMIC_TCL_FLAG='-Wl,-Bdynamic -ltcl${TCL_VERSION}'
+	    STATIC_TK_FLAG='-Wl,-Bdynamic'
+	    DYNAMIC_TK_FLAG='-Wl,-Bdynamic -ltk${TK_VERSION}'
+
+	    EXTRA_CFLAGS="-mabi=n32"
+	    LD_FLAGS="-mabi=n32"
+	else
+	    STATIC_TCL_FLAG='-Wl,-Bdynamic'
+	    DYNAMIC_TCL_FLAG='-Wl,-Bdynamic -ltcl${TCL_VERSION}'
+	    STATIC_TK_FLAG='-Wl,-Bdynamic'
+	    DYNAMIC_TK_FLAG='-Wl,-Bdynamic -ltk${TK_VERSION}'
+
+	    case $system in
+		IRIX-6.3)
+		    # Use to build 6.2 compatible binaries on 6.3.
+		    EXTRA_CFLAGS="-n32 -D_OLD_TERMIOS"
+		    ;;
+		*)
+		    EXTRA_CFLAGS="-n32"
+		    ;;
+	    esac
+	    LD_FLAGS="-n32"
+	fi
+	TCLPRO_PLATFORM=irix-mips
+	;;
+    Linux*)
+	SHLIB_CFLAGS="-fPIC"
+	SHLIB_LD_LIBS=""
+	SHLIB_SUFFIX=".so"
+
+	SHLIB_LD="${CC} -shared"
+	DL_LIBS="-ldl"
+	LD_FLAGS="-rdynamic"
+	LD_SEARCH_FLAGS=""
+
+	if test "$CC" = "gcc" -o `$CC -v 2>&1 | grep -c gcc` != "0" ; then
+	    STATIC_TCL_FLAG='-Wl,-Bdynamic -lutil'
+	    DYNAMIC_TCL_FLAG='-Wl,-Bdynamic -ltcl${TCL_VERSION}'
+	    STATIC_TK_FLAG='-Wl,-Bdynamic'
+	    DYNAMIC_TK_FLAG='-Wl,-Bdynamic -ltk${TK_VERSION}'
+	else
+	    STATIC_TCL_FLAG='-Wl,-Bdynamic -lutil'
+	    DYNAMIC_TCL_FLAG='-Wl,-Bdynamic -ltcl${TCL_VERSION}'
+	    STATIC_TK_FLAG='-Wl,-Bdynamic'
+	    DYNAMIC_TK_FLAG='-Wl,-Bdynamic -ltk${TK_VERSION}'
+	fi
+
+	TCLPRO_PLATFORM=linux-ix86
+	;;
+esac
+
+# If we're running gcc, then change the C flags for compiling shared
+# libraries to the right flags for gcc, instead of those for the
+# standard manufacturer compiler.
+
+# Set the default compiler switches based on the --enable-symbols option
+
+AC_ARG_ENABLE(symbols, [  --enable-symbols        build with debugging symbols],
+    [tcl_ok=$enableval], [tcl_ok=no])
+if test "$tcl_ok" = "yes"; then
+    CFLAGS_DEFAULT=CFLAGS_DEBUG
+else
+    CFLAGS_DEFAULT=CFLAGS_OPTIMIZE
+fi
+
+#--------------------------------------------------------------------
+#	The statements below define a collection of symbols related to
+#	building agains a shared library instead of a static library.
+#--------------------------------------------------------------------
+
+if test "$TCLPRO_SHARED_LIB_SUFFIX" = "" ; then
+    TCLPRO_SHARED_LIB_SUFFIX='${VERSION}${SHLIB_SUFFIX}'
+fi
+if test "$TCLPRO_UNSHARED_LIB_SUFFIX" = "" ; then
+    TCLPRO_UNSHARED_LIB_SUFFIX='${VERSION}.a'
+fi
+
+VERSION='${VERSION}'
+eval "CFG_TCLPRO_SHARED_LIB_SUFFIX=${TCLPRO_SHARED_LIB_SUFFIX}"
+eval "CFG_TCLPRO_UNSHARED_LIB_SUFFIX=${TCLPRO_UNSHARED_LIB_SUFFIX}"
+eval "TCLPRO_LIB_FILE=${TCLPRO_LIB_FILE}"
+
+
+# Note:  in the following variable, it's important to use the absolute
+# path name of the Tcl directory rather than "..":  this is because
+# AIX remembers this path and will attempt to use it at run-time to look
+# up the Tcl library.
+
+if test "${TCLPRO_LIB_VERSIONS_OK}" = "ok"; then
+    TCLPRO_LIB_FLAG="-ltcl${TCLPRO_VERSION}\${TCLPRO_DBGX}"
+else
+    TCLPRO_LIB_FLAG="-ltcl`echo ${TCLPRO_VERSION} | tr -d .`\${TCLPRO_DBGX}"
+fi
+TCLPRO_BUILD_LIB_SPEC="-L`pwd` ${TCLPRO_LIB_FLAG}"
+TCLPRO_LIB_SPEC="-L${exec_prefix}/lib ${TCLPRO_LIB_FLAG}"
+
+#--------------------------------------------------------------------
+#	The statements below define the symbol TCLPRO_PACKAGE_PATH, which
+#	gives a list of directories that may contain packages.  The list
+#	consists of one directory for machine-dependent binaries and
+#	another for platform-independent scripts.
+#--------------------------------------------------------------------
+
+if test "$prefix" != "$exec_prefix"; then
+    TCLPRO_PACKAGE_PATH="${exec_prefix}/lib ${prefix}/lib"
+else
+    TCLPRO_PACKAGE_PATH="${prefix}/lib"
+fi
+
+AC_SUBST(CFLAGS_DEBUG)
+AC_SUBST(CFLAGS_DEFAULT)
+AC_SUBST(CFLAGS_OPTIMIZE)
+AC_SUBST(CFLAGS_WARNING)
+AC_SUBST(DL_LIBS)
+AC_SUBST(DYNAMIC_TCL_FLAG)
+AC_SUBST(DYNAMIC_TK_FLAG)
+AC_SUBST(EXPECT_VERSION)
+AC_SUBST(EXTRA_CFLAGS)
+AC_SUBST(ITCL_VERSION)
+AC_SUBST(ITK_VERSION)
+AC_SUBST(LD_FLAGS)
+AC_SUBST(LD_SEARCH_FLAGS)
+AC_SUBST(LIBS)
+AC_SUBST(MATH_LIBS)
+AC_SUBST(SHLIB_CFLAGS)
+AC_SUBST(SHLIB_LD)
+AC_SUBST(SHLIB_LD_LIBS)
+AC_SUBST(SHLIB_SUFFIX)
+AC_SUBST(STATIC_TCL_FLAG)
+AC_SUBST(STATIC_TK_FLAG)
+AC_SUBST(TCL_VERSION)
+AC_SUBST(TCLX_VERSION)
+AC_SUBST(TCLPRO_PLATFORM)
+AC_SUBST(TCLPRO_VERSION)
+AC_SUBST(TBC_VERSION)
+AC_SUBST(WRAPPER_VERSION)
+AC_SUBST(TK_VERSION)
+AC_SUBST(TKX_VERSION)
+AC_SUBST(XINCLUDES)
+AC_SUBST(XLIBSW)
+
+AC_OUTPUT(Makefile)

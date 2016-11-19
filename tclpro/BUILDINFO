@@ -1,0 +1,7 @@
+# -*- tcl -*-
+squash-this
+
+# TclPro is currently more of a container for some code and also
+# serves as the umbrella under which the rest of the distribution
+# is packed under and not a real module in its own right. So don't
+# try to configure or compile it.

@@ -1,0 +1,47 @@
+README:  TclPro Klondike Demo
+
+README Copyright (c) 1999 by Scriptics Corporation
+Klondike Copyright (c) 1993-1999 by John Heidemann <johnh@isi.edu>
+All rights reserved
+-------------------
+
+This directory contains sample Makefiles that demonstrate how to
+build a Tk application using TclPro Compiler and TclPro Wrapper
+on UNIX and Windows.  The application is Klondike, a solitaire card
+game, written by John Heidemann <johnh@isi.edu> and used by 
+permission.  We have modified the files to work properly on Windows
+and when compiled and wrapped with the TclPro tools.  The sources
+were also modified to pass TclPro Checker (there are still some
+warning left due to some code that only runs on versions of Tk
+older than 4.0).
+
+The files in this directory are:
+
+README.klondike -   Original README (with some changes) provided by
+                    the author of the application.
+makefile.vc -       Visual C++ compatible Makefile for building the
+                    sample application.
+Makefile.in -       UNIX template Makefile used by "configure".
+configure -         UNIX configure script.
+config.status -     File used by "configure"
+klondike.in -       Template for "klondike" (UNIX) or "klondike.tcl" Tcl
+                    script used by "configure".  This source file is the
+                    main entry point for Klondike.
+klondikeMenus.tcl - Tcl source for creating and managing menus
+klondikeScore.tcl - Tcl source for managing scores
+klondikeRules.tcl - Tcl source for creating and managing the game
+table.tcl -         Tcl source for managing the card table
+tclx_compat.tcl -   Tcl source for checking the compatibility of Tcl/TclX
+release -           File containing the version number
+klondike.man -      Man page (UNIX)
+CARDS/ -            Directory containing the bitmaps for all of the card
+                    faces and backs
+
+The sample makefiles given here support building on both UNIX (Solaris,
+HP-UX, Irix, and Linux) and Windows (Windows NT and Windows 95/98).  For
+all cases, the sources are compiled with TclPro Compiler, wrapped with
+TclPro Wrapper, and the resulting stand-alone application uses iwish
+(which is linked statically to Tcl and Tk) which is embedded into the
+executable by TclPro Wrapper.
+
+

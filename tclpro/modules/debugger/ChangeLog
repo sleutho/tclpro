@@ -1,0 +1,50 @@
+2001-2-8  Brent Welch <welch@ajubasolutions.com>
+
+	* about.gif: Changed to version 1.5
+
+2001-1-30  Brent Welch <welch@ajubasolutions.com>
+
+	* Makefile.in: Eliminated use of .tbc files.
+
+2000-11-01  David Gravereaux <davygrvy@ajubasolutions.com>
+
+	* src/startup.tcl: removed unchecked call to [console show]
+	and wrapped it in a check for windows.  [BUG: 6346]
+
+2000-8-28  Brent Welch <welch@ajubasolutions.com>
+
+	* src/startup.tcl:
+	Set license release hook.
+
+2000-8-25  Brent Welch <welch@ajubasolutions.com>
+
+	* src/startup.tcl:
+	Made the default application type "local", not "remote"
+
+2000-8-07  Brent Welch <welch@ajubasolutions.com>
+
+	* doc/prodebug.1:
+	Added the man page.
+
+2000-7-28  Brent Welch <welch@ajubasolutions.com>
+
+	* src/startup.tcl: Fixed TclProAboutBox to have the
+	Ajuba logo.  I had to nuke the OK button in the process
+	to make room.
+
+2000-7-25  Brent Welch <welch@ajubasolutions.com>
+
+	* src/startup.tcl: Added better error handling during
+	startup so we can diagnose what is going wrong more easily.
+
+2000-7-22  Brent Welch <welch@ajubasolutions.com>
+
+	* src/startup.tcl: fixed use of system package.
+
+2000-7-18  Brent Welch <welch@ajubasolutions.com>
+
+	* configure.in, Makefile.in: Added use of prodebugU wrapper shell.
+
+2000-6-22  Brent Welch <welch@ajubasolutions.com>
+
+	* src/startup.tcl - added TclPro license hooks

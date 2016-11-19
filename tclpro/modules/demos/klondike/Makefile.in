@@ -1,0 +1,150 @@
+
+#
+# klondike Makefile
+#
+# Copyright (C) 1993-1996 by John Heidemann <johnh@isi.edu>
+# All rights reserved.
+#
+# $Id: Makefile.in,v 1.1 2000/07/14 18:00:04 welch Exp $
+#
+
+srcdir = @srcdir@
+
+INSTALL = @INSTALL@
+# INSTALL_PROGRAM breaks on FreeBSD beacuse we try to strip shell scripts
+MY_INSTALL_PROGRAM = $(INSTALL) -m 555
+INSTALL_DATA = @INSTALL_DATA@
+MKDIR_P = @mkdir_p@
+
+
+WISHX = @WISHX@
+TCL_PRO_COMPILER = @TCL_PRO_COMPILER@
+TCL_PRO_WRAPPER = @TCL_PRO_WRAPPER@
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+enable_scoring=@enable_scoring@
+
+
+#
+# finally, the real directories
+#
+BINDIR = @mybindir@
+LIBDIR = @mydatadir@/@package@
+MANEXT = 6
+MANDIR = @mymandir@/man$(MANEXT)
+
+
+TCL_FILES=klondike klondikeMenus.tcl klondikeRules.tcl klondikeScore.tcl table.tcl tclx_compat.tcl
+TBC_FILES=klondike.tbc klondikeMenus.tbc klondikeRules.tbc klondikeScore.tbc table.tbc tclx_compat.tbc
+BITMAP_FILES=CARDS/*.xbm
+
+#
+# default target
+#
+all:
+	@echo "Klondike is ready for installation."
+
+binary: bin_dir compile wrap
+
+bin_dir:
+	test -d bin || $(MKDIR_P) bin
+
+compile:
+	test "x$(TCL_PRO_COMPILER)" != "x" && $(TCL_PRO_COMPILER) $(TCL_FILES)
+
+wrap:
+	test "x$(TCL_PRO_WRAPPER)" != "x" && $(TCL_PRO_WRAPPER) $(TBC_FILES) $(BITMAP_FILES) -out bin/@package@
+
+binary_install: binary install_man
+	test -d $(BINDIR) || $(MKDIR_P) $(BINDIR)
+	test -d $(BINDIR)/SCORES || $(MKDIR_P) $(BINDIR)/SCORES
+	cp bin/@package@ $(BINDIR)
+
+#
+# administrativia
+#
+
+install: install_dirs install_progs install_bitmaps install_scores install_man install_release
+	@echo Installation of klondike is complete.
+
+install_dirs:
+	test -d $(BINDIR) || $(MKDIR_P) $(BINDIR)
+	test -d $(LIBDIR) || $(MKDIR_P) $(LIBDIR)
+	test -d $(LIBDIR)/CARDS || $(MKDIR_P) $(LIBDIR)/CARDS
+	test -d $(LIBDIR)/SCORES || $(MKDIR_P) $(LIBDIR)/SCORES
+
+install_progs:
+	@for i in $(TCL_FILES); \
+	do \
+		$(MY_INSTALL_PROGRAM) $$i $(LIBDIR); \
+	done
+	mv $(LIBDIR)/klondike $(BINDIR)
+
+install_bitmaps:
+	$(INSTALL_DATA) $(BITMAP_FILES) $(LIBDIR)/CARDS
+
+install_release:
+	$(INSTALL_DATA) release $(LIBDIR)
+
+#
+# To mitigate the effects of a world-writable directory,
+# we deny read (list) permission on the directory.
+# If your file system doesn't support UFS-semantics for a 0733 mode
+# you may need to chane its permission.
+#
+install_scores:
+	test -d $(LIBDIR)/SCORES || $(MKDIR_P) $(LIBDIR)/scores
+	test $(enable_scoring) = yes && chmod 0733 $(LIBDIR)/SCORES
+
+# to be like normal X programs
+install.man: install_man
+
+install_man:
+	test -d $(MANDIR) || $(MKDIR_P)  $(MANDIR)
+	$(INSTALL_DATA) klondike.man $(MANDIR)/klondike.$(MANEXT)
+
+
+#
+# distribution stuff
+#
+
+TOSHAR=README release klondike.man Makefile makefile.vc \
+	klondike.lsm \
+	Makefile.in klondike.in \
+	configure install-sh \
+	klondike.spec \
+	$(TCL_FILES) $(BITMAP_FILES)
+
+PORT_FILES=\
+	./klondike-freebsd-port/Makefile \
+	./klondike-freebsd-port/files/md5 \
+	./klondike-freebsd-port/pkg/COMMENT \
+	./klondike-freebsd-port/pkg/DESCR \
+	./klondike-freebsd-port/pkg/PLIST
+
+klondike-freebsd-port.tar.gz:
+	ln -s FREEBSD_PORT ./klondike-freebsd-port
+	tar cvf - $(PORT_FILES) | gzip >klondike-freebsd-port.tar.gz
+	rm ./klondike-freebsd-port
+
+
+.tar_files: Makefile release
+	for i in $(TOSHAR); \
+	do \
+		echo ./klondike-`cat release`/$$i; \
+	done >.tar_files	
+
+tar: .tar_files
+	ln -s . ./klondike-`cat release`
+	tar cvf - `cat .tar_files` >klondike-`cat release`.tar
+	rm ./klondike-`cat release`
+
+tar.gz: .tar_files
+	ln -s . ./klondike-`cat release`
+	tar cvf - `cat .tar_files` |gzip >klondike-`cat release`.tar.gz
+	rm ./klondike-`cat release`
+
+
+

@@ -1,0 +1,37 @@
+AC_INIT(wrap.sh.in)
+
+AC_CONFIG_AUX_DIR(config)
+CONFIGDIR=${srcdir}/config
+AC_SUBST(CONFIGDIR)
+
+AC_PROG_INSTALL
+
+#--------------------------------------------------------------------
+# Specify the (dotted) version of Tcl to use for the library name.
+#--------------------------------------------------------------------
+
+AC_ARG_WITH(tcllibdir, [ --with-tcllibdir=tclx.y         Subdirectory containing the tcl library.  Do _NOT_ use the full path.], tcllibdir=${withval}, tcllibdir=tcl8.3)
+
+TCL_LIBDIR=${tcllibdir}
+TCL_DOTTED_VERSION=`echo ${tcllibdir} | sed -e 's#tcl##'`
+TCL_NODOT_VERSION=`echo ${TCL_DOTTED_VERSION} | sed -e 's#\.##'`
+
+AC_SUBST(TCL_LIBDIR)
+AC_SUBST(TCL_DOTTED_VERSION)
+AC_SUBST(TCL_NODOT_VERSION)
+
+SC_SET_PLATFORM
+SC_PROG_TCLSH
+
+# wrap.sh is a template used to create /bin/sh wrappers around
+# the TclPro executables.  We do not need these on Windows,
+# and we sometimes use different templates for different
+# product lines.
+
+AC_ARG_WITH(wrap-sh, [ --with-wrap-sh=wrap.sh         Template for wrap.sh], WRAP_SH=${withval}, WRAP_SH="wrap.sh")
+AC_SUBST(WRAP_SH)
+
+AC_OUTPUT([Makefile \
+	wrap.sh \
+	pro_wrap.sh \
+	wrapUses.tcl])

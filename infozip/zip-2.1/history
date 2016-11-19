@@ -1,0 +1,532 @@
+------------------------ Sept 16th  1994   version 2.0j ----------------------
+1.  In msdos/makefile.gcc use coff instead of aout (Kevin Fritz)
+2.  Accept "-" as stdin for MSDOS and VMS (Christian Spieler)
+3.  Avoid some warnings with djgpp 1.12 (Kevin Fritz)
+4.  Support for EMX (gcc) for 32-bit DOS (alternative to djgpp) (Kai Uwe)
+5.  Support for Watcom C/C++ not only for 32-bit OS/2 but also for
+    32-bit DOS, 16-bit DOS and 16-bit OS/2 (Kai Uwe)
+6.  Support for Metaware High C/C++, 32-bit OS/2 (Kai Uwe)
+7.  Added file_id.diz
+8.  Use align 4 instead of 16 for 16-bit match.asm (Christian)
+9.  Generate extra-field for Unix (Greg)
+10. Use creation time on VMS (undo change made in zip 2.0i) (Christian).
+    Compile with -DUSE_MTIME if you really want modification time.
+11. Added -A option: adjust self-extracting zip file (Greg)
+12. Added -J option: junk zip file prefix (Christian)
+13. Took crypt.c from zcrypt24a (Greg)
+14. On OS/2, volume labels must be marked as made on DOS for pkunzip (Kai Uwe)
+15. Set correctly the date for OS/2 volume labels (Kai Uwe)
+16. On VMS, "zip foo [a.b]c" now correctly adds a/b/c instead of b/c (Igor)
+17. In vms/descrip.mms, let debugging on by command MMS/MACRO=DEBUG=YES (Igor)
+18. Include sys/param.h in tailor.h, suppress from crypt.c (Onno)
+19. Replace __386BSD__ with BSD4_4 everywhere (Onno)
+
+------------------------ September 3rd 1995 version 2.0k ----------------------
+1.  Do not use -O for "make hpux" (Rainer Gerling)
+2.  Use int main() in zipcloak.
+3.  Normalize <> to [] on VMS (to avoid deleting zip file with -m) (Christian)
+4.  Use exit for VMS, return 0 on other systems (Christian, Greg)
+5.  New vms/descrip.mms (Christian):
+    - Unified use of $(EXE) and $(OBJ) macros: all uppercase.
+    - Added the "utils" version of vms.c object.
+    - Slight modification of the architecture specific option section.
+    - Added /ANSI_ALIAS option for DECC (AXP)
+    - Added architecture option "__DECC_VAX__" for DECC on OpenVMS(VAX) 6.1.
+      (This is untested).
+    - Added clean target. This removes all objects, executables, and the option
+      file.
+6.  Added Makefile entry for solaris to be consistent with unzip (Bo Kullmar)
+7.  Support MSDOS file system on NetBSD (Onno)
+8.  On OS/2, clear pGEA to avoid GP trap in DosQueryPathInfo() (Kai Uwe)
+9.  New makefile.os2 supporting PMODE/W (Kai Uwe)
+10. Remove old extra-fields when updating a file (Greg)
+11. Avoid word access at offset 64K-1 for MSDOS (Neil Parks)
+12. rename match.s as match.S for consistency with gzip
+13. Use 'finish' instead of 'leave' (leave is reserved by one MS compiler).
+14. use %ld instead of %d in template string of zipsplit (Paul Kienitz)
+15. Fix 'near' problem causing crash on 16-bit OS/2 (Kai Uwe)
+16. include the major cleanup of fileio.c (Onno)
+17. include the generation of Pkware-style extra-fields for VMS (Igor)
+18. include Acorn support (Sergio Monesi)
+19. include MVS support (George Petrov)
+20. include aosvs support (Dave Lovelace)
+21. change voidp to zvoid to avoid conflicts with zlib (Greg)
+22. on WIN32, open in SHARE_READ mode (Greg Walker)
+23. rename file_io.c as fileio.c to avoid _ on MVS.
+24. added makefile.dj2 for djgpp 2.0 Beta (Frank Donahoe)
+25. added <dir.h> to msdos/msdos.c for djgpp 2.0 Beta (Onno)
+26. use setftime instead of utime in msdos/msdos.c to fix zip -o for djgpp
+
+------------------------ September 9th 1995 version 2.0k2 ---------------------
+1. Fix extra_fields for the unix port (Onno)
+2. Add more stuff from zip101vm.zip to the vm directory (Onno)
+3. Change defined(SYSV) to defined(__ELF__) match.S (Mark Shadley)
+
+------------------------ September 30th 1995 version 2.0l ---------------------
+1. VMS:rename VMSmunch_private.h to VMSdefs.h to fit within 8.3 filenames
+   (Christian Spieler)
+2. Never use continuation lines in "#if ..." preprocessor conditionals
+   that appear in parts of the source which are active under VMS (Christian)
+3. Finish the transition "voidp" -> "zvoid" (Christian)
+4. Fix the code to add volume labels. (Christian)
+5. VMS: fix missing forward declarations (Christian)
+6. Remove all duplicate prototype declarations of global fileio.c (Christian)
+7. Forward declarations of local functions are now present independent
+   from the declaration of PROTO (Christian).
+8. Remove unneeded external variable declarations in the new fileio.c
+   (Christian).
+9. Modify vms_exit() to be a function of type "void", similar to the
+   standard C exit() function (Christian).
+10. Introduce the capital letter RETURN macro to hide the special VMS
+    handling of "return" from main() function (Christian).
+11. Add Assembler CRC32 calculation routine for MSDOS (and OS2) 16bit.
+    (Christian)
+12. Update Make procedures for VMS (Christian)
+13. Add patch to support "-" as `file name' for compressing from
+    stdin for MSDOS and VMS (Christian)
+14. Add two targets to the Unix Makefile: ultrix_ansi and ultrix_modern.
+    (Christian)
+15. VMS:Fix cutpath() in zipfile.c (deletion of empty directories
+    which are not stored in the zip archive) (Christian)
+16. VMS:Fix initialization of default name FAB fields in vms_wild(),
+    vmszip.c (Christian).
+17. VMS: Reorganize the include file setup for the VMS specific sources;
+    vms.h and VMSdefs.h are now shared with UnZip (Christian).
+18. Make the VMS source files Alpha AXP and DEC C compatible (Christian).
+19. VMS: Remove UTIL definition from vms.c (Christian).
+20. Bring back Igors extended attributes for vms in the form of vms_im.c
+    (Christian)
+21. VMS: Delete vms_exit make_gcc.com vaxclib.opt from the vms distribution
+    (Christian)
+22. VMS: Rename vms/make_vms.com to vms/make_zip.com (Christian)
+23. Add -DDIRENT to most of the sun entries in unix/Makefile (Greg)
+24. Rename err() to ziperr() to avoid conflicts with 4.4BSD libc function
+    in shared libraries (Andrey Chernov)
+25. Rename warn() to zipwarn() for the same reasons (Andrey Chernov)
+26. Make win32 port use win32 instead of nt consistently (Steve Salisbury)
+27. Add match32.asm to win32 port (Steve Salisbury)
+28. Acorn fixes from Sergio Monesi.
+
+------------------------ October 2nd 1995 zip20l2.zip -------------------------
+1. Fix unix.c w.r.t. warn() and err() conversion. (Mark Shadley)
+
+------------------------ October 2nd 1995 zip20l3.zip -------------------------
+1. Fix the rest of the ports w.r.t. warn() and err() conversion. (Christian)
+
+------------------------ October 14th 1995 version 2.0m -----------------------
+1. New functionality to -L license display: verbose "version info" report,
+   similar to "unzip -v" display (Christian).
+2. Remove duplicate win32/match32.asm and change makefile.w32 to use
+   the original source located in the os2/ subdirectory (Christian).
+3. Modifications to the 16bit Win32 Makefile win32/makefile.msc: Add win32
+   specific code to list of objects; name executables  "*.e16" (Christian).
+4. Integrate both vms_im.c and vms_pk.c in source and make procedures.
+   vms_im.c is used per default, vms_pk.c can be selected through the
+   compile time option VMS_PK_EXTRA. (Christian)
+5. Update contents and VMS part of install.doc (Christian).
+6. Comment out the 16bit LDFLAGS line in makefile.w32 (Steve Salisbury)
+7. Change hpux entry in unix/Makefile to use -DDIRENT (Sergio Monesi)
+8. Fixes to get the win32 stuff to compile (Steve Salisbury)
+9. Fix to get make -f unix/Makefile generic working (Onno)
+10. Remove the obsolete contents file (Jean-loup)
+11. Add reference for deflate algorithm to algorith.doc (Jean-loup)
+12. use match.S to test for ASMV in unix/configure (Onno)
+13. Change IsFileSystemFAT to IsFileSystemOldFAT (Steve)
+14. Fixed unix installation rule for manual pages (Onno)
+15. Include VMSCLI command line parser.
+16. Use lower case filenames consistently (Christian via Greg)
+17. OS/2 fixes (Kai Uwe)
+18. change prototypes in zipnote.c to use OF macro (Onno)
+19. removed CONVEX define from tailor.h since it is unused (Onno)
+20. change assembler detection in unix/configure since NCR SVR4 produces
+    foo and __AIR_foo (Onno)
+21. Don't use VPATH in unix/Makefile for now, the solaris make util
+    does not appear to handle it the right way. (Onno)
+22. Don't normalize fcalloc pointers for BorlandC++ versions > 3.1
+    (Stewart Loving-Gibbard, Onno)
+
+------------------------ October 30th 1995 version 2.0n -----------------------
+0. Change October xxth to October 14th in history (Onno)
+1. os2/match32.asm supported for IBM and Watcom 32-bit targets (Kai Uwe)
+2. use rename() for all ports (Onno)
+3. more os2/match32.asm from Kai Uwe
+4. added tzset() call in msdos.c's filetime() for Turbo C++ 1.0 to work
+   around a RTL bug (Christian)
+5. added (time_t *) typecast to unix2dostime() call in msdos.c (Christian)
+6. msdos/match.asm: added comment with information about assembly option
+   switches (Christian).
+7. msdos/makefile.msc: disabled `install' and `clean' targets, for better
+   compatibility with MSC 5.1 "old" Make utility. (Christian)
+8. win32/makefile.w32: Corrected the target dependencies. (Christian)
+9. vms/cmdline.c: revised help message. (Christian)
+10. vms/descrip.mms: Added missing dependencies on vms_im.c,vms_pk.c (Christian)
+11. vms/vms_pk.c: Corrected severe bug when calculating extra field CRC
+   (wrong size of data area). (Christian)
+12. vms/vms.h, vms/vms_pk.c: Removed the tweaked IZ_VMS_NEWSIGNATURE test extra
+    field id from the code; use the official PK VMS signature instead.
+    (Christian).
+13. vms/vms.h: Added (disabled) alternative code to document the original
+    PK VMS extra field layout and comments on the reason of the change for
+    Info-Zip's implementation. (Christian)
+14. zipfile.c: Enhanced the "noisy" mode message about detected extra field
+    data to report the location ("local" vs "central"), when only one is used.
+    (Christian).
+15. fixes to get the AMIGA port working. (Paul Kienitz)
+16. add some amiga specific options. (Paul)
+17. fix the directory stuff for the amiga port. (Paul)
+------------------------ November 11th 1995 version 2.0o -----------------------
+1. Use the special fcalloc for _all_ the TurboC/BorlandC compiler versions
+   (Micheal Lawler, Onno)
+2. Use -DDIRENT for the NeXT (Mark Adler, Onno)
+3. get make generic working for the NeXT (Onno)
+4. change LFN detection in win32/win32.c (Steve)
+5. encryption instead of decryption in zip.c (Paul Kienitz)
+6. zipnote should work now (Onno)
+7. integration of zip105vm into the vmcms directory (Onno)
+------------------------ November 13th 1995 version 2.0o1 ---------------------
+1. revision.h has the right version number now (Kai Uwe)
+2. get make install for unix working (Santiago Vila Doncel)
+3. slightly updated Makefile.os2 (Kai Uwe)
+------------------------ November 18th 1995 version 2.0p ----------------------
+1. add -D_POSIX_SOURCE for the NeXT to use dirent.h (Onno)
+2. add -DTERMIOS for the NeXT to use termios.h (Onno)
+3. fix zipgrep install (Santiago Vila Doncel)
+4. set zipgrep mode to 755 (Greg)
+5. fix 8.3 name conversion (Paul)
+6. fixes for amiga's procname() (Paul)
+7. Get rid of -DSYSV in the sun dependencies in the unix makefile.
+8. New Atari port (Harald Denker)
+9. Get rid of the MODERN define, use NO_* defines instead. (Onno)
+------------------------- December 9th 1995 version 2.0q --------------------
+Changes / fixes from Onno:
+1. Check for dirent.h not sys/dirent.h in unix/configure.
+2. Delete a number of prototype definitions from .c sources.
+3. Added NO_FCNTL_H detection to unix/configure
+
+Changes / fixes from Christian:
+4. Fixed VMS: NO_UNISTD_H; VAXC problems with void and stdlib.h.
+5. Fixed MSDOS 16bit with MSC: farmalloc definition was missing
+6. Fixed the STAT stuff:
+   * renamed STAT macro to a (hopefully) Info-Zip specific name: LSSTAT
+   and
+   * used it consistently in ALL source files (not only ATARI port)
+7. Replaced all these "defined(VM_CMS)||defined(MVS)" by "defined(VMCMS_MVS)".
+   VM_CMS and MVS share all system specific code with two exceptions:
+   a) the extra field ID
+   b) The OS name in version_local().
+8. Added (blindly) some missing stuff for VM_CMS/MVS.
+9. Added all my missing VMS fixes sent prior to Zip2.0p release.
+10. Fixed a typecast bug and ANSIfied vms/cmdline.c
+11. Moved the zcalloc stuff back to the system specific source files
+13. Added a default definition for FOPR and friends.
+14. zip.h: malloc(), free(), getenv(), atol() are declared in stdlib.h, not
+    string.h.
+15. Moved all declaration of external calloc() to zip.h (next to malloc()),
+    and do only activate it for NO_STDLIB_H.
+16. Rearranged the system specific file_io codes (<system>/xxx.c) to have
+    the functions listed in a constistent order.
+17. I took the occasion and renamed msdos/crc32.asm to msdos/crc_i86.asm,
+    in preparation for the transition to zlib's crc32() calling interface.
+18. Fixed wrong or missing source files in the (obsolete) win32(NT) makefiles.
+19. Added the ZIP_H macro to acorn/makefile, for better maintainabiblity.
+20. Removed spurious "zip-bugs@wkuvx1.bitnet" addresses.
+21. Added documentation of -A and -J to man/zip.1 (and zip.doc).
+    Updated copyright note and dates.
+22. Update of VMS help source.
+23. New file: VMS help source for CLI interface
+
+Some more fixes / changes from Onno:
+
+24. Get rid of all the SYSV and BSD defines.
+25. Use struct utimbuf and utime.h if _POSIX_VERSION is defined.
+26. Add NetBSD 1.1 to version_local()
+27. copy Makefile to Makefile.old, just in case.
+28. delete numerous system entries from Makefile, they should use
+    make generic instead.
+29. define WSIZE as 0x8000, eliminates warnings for some compilers.
+
+
+30. delete occurences of \a in zipsplit.c (Jean-loup)
+------------------------- December 16th 1995 version 2.0r --------------------
+1. new tzset for the amiga (Paul)
+2. untabify all of the sources (Christian)
+3. use zlibs crc32 (Christian)
+4. include <unixlib.h> for VMS in crypt.c (Christian)
+5. changes for Watcom C in win32 and elsewhere (Paul)
+6. change Pauls address in infozip.who (Onno)
+7. use the label err instead of error in msdos/match.asm (Onno, Paul)
+8. use NO_UNISTD_H on the amiga (Paul)
+9. use prototypes by default, define NOPROTO if the compiler barfs (Onno)
+10. make -DNO_UNDERLINE check in unix/configure work (Onno, Fred Lenk)
+11. add check for presence of strrchr in unix/configure (Onno)
+12. change RMDIR flag to NO_RMDIR
+13. put more or less generic have_func and have_lib functions in unix/configure
+    and use 'em (Onno)
+14. add check for presence of opendir in unix/configure (Onno)
+15. change directory include stuff at the beginning of unix/unix.c (Onno)
+16. only include <sys/param.h> for 4.4BSD based systems to let version_local()
+    have the BSD4_4 symbol. (Onno)
+17. add ultrix, mips and vax predefinitions to version_local()  (Christian)
+18. add Watcom compiler to version_local for win32 (Paul)
+19. use OF() macro for prototypes in zipsplit.c (Onno)
+20. make zip -ye working (Onno)
+------------------------- December 20th 1995 version 2.0s -------------------
+1. Add the 2.0r history that somehow got missing (Onno)
+2. Change Michael Lawlers address in infozip.who (Onno)
+3. Add a couple of (uch *) casts to fix BCC 4.51 warnings (Micheal, Onno)
+4. Removed NO_STDLIB_H for VMS VAXC; no longer needed. (Christian)
+5. Moved "extern" declaration of crc_32_tab into crypt.h. (Christian)
+6. Removed compile time initialization of crc_32_tab in zip.c and zipcloak.c.
+   (Christian)
+7  Repaired declaration of free() RTL function (zip.h). (Christian)
+8. Removed several typos in crctab.c. (Christian)
+9. Add DEC Unix targets in unix/Makefile (Christian)
+10. Revised the MSDOS 16bit assembler sources. (Christian)
+11. Add check for handling of const (Onno)
+12. define NO_UNISTD_H and NO_FCNTL_H for acorn (Sergio)
+13. remove mktime() prototype from all the sources. (Onno)
+14. remove -DNOPROTO for the ultrix case in unix/Makefile (Onno)
+15. rename NOPROTO to NO_PROTO for consistency (Onno)
+16. split tailor.h up into os dependent versions (Onno)
+17. delete invlocal(), use mktime() instead (Onno)
+18. delete sco_dos entry from unix/Makefile, it doesn't work (Onno)
+19. delete some prototypes in zip.h and put them in tailor.h (Onno)
+20. removed support for the MAC (Onno, Antoine)
+21. rename NODIR to NO_DIR for consistency (Onno)
+22. add check for ANSI C options to unix/configure (Onno)
+23. add check for -Olimit option to unix/configure (Onno)
+24. make os dependent zipup.h include files (Onno)
+25. delete NO_TERMIO from crypt.c, don't need it.
+26. define NO_UNISTD_H for IBM C on OS/2. (Kai Uwe)
+27. fix for input file read error. (Kai Uwe)
+28. add CPP check for Solaris to get match.S working on x86 (Onno)
+------------------------- January 6th 1996 version 2.0t -------------------
+1. change #ifdef RISCOS to #ifdef __arm in tailor.h (Onno)
+2. add #define RISCOS to acorn/tailor.h (Onno)
+3. fixes for amiga/crc_68.a (Paul)
+4. fix warning in zipup.c (Michael Lawler)
+5. define zopen different in win32/zipup.h if __WATCOM__ (Onno)
+6. tzset changes for amiga/filedate.c (Paul)
+7. define _exit as exit_ for Watcom (Paul)
+8. reshuffle things in vmcms/vmzip.h (Christian)
+9. add a vms/zipup.h dependency to vms/descrip.mms (Christian)
+10. add -DUNIX to the non generic entries in unix/Makefile (Christian)
+11. fix -S option for 32-bit dos (Onno)
+12. rename tailor.h in all the port directories to osdep.h (Christian, Onno)
+13. if M_I86 is defined, define MSC (Onno)
+14. feed ${CC} from unix/Makefile to unix/configure (Onno)
+15. new os2/makefile.os (Kai Uwe)
+16. make *.* equal to * on OS/2 (Kai Uwe)
+17. change zcalloc for 16-bit OS/2 (Kai Uwe)
+18. fix bug in .LONGNAME case for OS/2 (Kai Uwe)
+19. add io.h to os2/osdep.h (Kai Uwe)
+20. add Microsoft C specific defines to os2/osdep.h (Kai Uwe)
+21. #if defined MY_ZCALLOC is wrong.... (Christian)
+22. __WATCOMC__ uses the same zcalloc as MSC (Christian)
+23. add crc_i386.S (Christian)
+24. add win32/crc_i386.asm (Christian)
+25. move vms_exit() and vms_stat() declarations to zip.h (Christian)
+26. move OS/2 #pragma things from deflate.c to os2/osdep.h (Onno)
+27. add compiler detect to unix/configure, prefer c89, gcc or scc (Onno)
+28. add WSIZE compile time option (Christian, Paul)
+29. delete compile detect in unix/configure (Onno)
+------------------------- January 15th 1996 version 2.0u -------------------
+ 1. move zipcopy() to zipfile.c (Christian)
+ 2. delete zipup_.* from all makefile (Christian)
+ 3. consequent use of DOS vs. MSDOS (Christian)
+ 4. change VMCMS_MVS definition to CMS_MVS (Christian)
+ 5. synchronize crypt for zip and unzip (Christian)
+ 6. directory rename:vmcms --> cmsmvs
+ 7. unix/unix.c: initialize t in stamp() to fix zip -o bug (Onno)
+ 8. Added #include "crypt.h" to vms/cmdline.c (Christian)
+ 8. Correct typo in cmdline.c (Hunter).
+ 9. Add cmdline.c's crypt.h dependency to descrip.mms (Christian)
+10. Add minimal dummy code for VMS in crypt_dummy.c (Christian)
+11. Fix typos in msdos/makefile.dj2 (Christian)
+12. Update targets for MSDOS (cross) compilation in os2/makefile.os2 (Christian)
+13. Fix bug in check_dup() (Ray Zick)
+14. Use zcrypt25j (Onno)
+15. Fix missing "{ }" for if statement in crypt.c 2.5j (Christian)
+16. Add mips cc no const check (Onno)
+17. feed ${CFLAGS} from unix/Makefile to unix/configure (Onno)
+18. Add size_t and time_t detection code to unix/configure (Onno)
+19. Add future code for zlib preparation (Onno)
+------------------------- February 8th 1996 version 2.0v -------------------
+ 1. Add dummy_funct for acorn (Sergio, Christian)
+ 2. Fix acorn/RunMe1st (Sergio)
+ 3. Fix 1995 dates in several places (Christian, Onno)
+ 4. Delete ultrix entries from unix/Makefile (Onno)
+ 5. Corrected the false "local char *label" in all ports (Christian, Kai Uwe)
+ 6. accept the "-DWIZE=32768" switch in match.S (Christian)
+ 7. WatCom defines M_I86, don't define MSC in that case (Paul, Christian)
+ 8. Add 16bit Watcom C pragmas to {os2|msdos}/osdep.h. (Christian)
+ 9. Add 32bit Watcom C pragmas to os2/osdep.h for crc_i386.asm (Christian)
+10. Make -v look like unzips -v (Christian, Greg)
+11. Use unix extra field time stamp in time comparisons (Christian, Greg)
+12. Fix renaming operation of ZipNote (Christian).
+13. Add "-v" print version info support to the utility programs.
+14. Add additional central extra field (cextra) for "UX" EF data. (Christian)
+15. include "revision.h" after "zip.h" for NO_CONST. (Christian)
+16. use loadds in 16bit Watcom C pragmas. (Paul)
+------------------------- March 3rd 1996 version 2.0w -------------------
+ 1. Add OF to get_ef_ux_ztime prototype (Onno, Kevin Fritz)
+ 2. Use NO_PROTO instead of NO_STDLIB_H,NO_STRING_H in tailor.h for some
+    standard forward declarations since the pyramid has an empty stdlib.h
+    (Onno, Kevin Fritz)
+ 3. Add errno declaration detection in unix/configure (Onno, Kevin Fritz)
+ 4. Add errno declaration to fileio.c if we need it (Onno, Kevin Fritz)
+ 5. Fix size_t and time_t detection in unix/configure (Onno)
+ 6. unix/configure: replace user defined functions with loop constructions
+    because some sh's don't handle the former (Onno, Kevin Fritz)
+ 7. vms/vms.h: changed name of EB_HEADER_SIZE macro to EB_HEADSIZE, which
+    is now defined in zip.h (and unzpriv.h) (Christian)
+ 8. msdos/crc_i86.asm: Removed the necessity for "pragma loadds" with
+    Watcom C 16bit (large model) (Christian)
+ 9. Use FFIRST and FNEXT instead of *dir() and readd() in msdos.c (Christian)
+10. win32: "clean up" directory lookup stuff (Christian, Paul)
+11. ATARI needs wild prototype in zip.h (Christian)
+12. zipfile.h: Fixed false debugging output introduced with the addition
+    of EF_UX_TIME (Christian)
+12. Fixed the support for "zip -r foo .."; allow "zip -r foo <path>/" with
+    trailing '/' for msdos, os2 and win32 (Christian)
+13. win32/win32.c: fix zipping from stdin.
+14. replace the error "invalid option(s) used with -d" with the warning
+    "invalid options used with -d; ignoring them" (Onno, Greg)
+15. add support for writing "UX" timestamp extra fields to all non-UNIX
+    ports (except AOSVS) (Christian)
+16. enable the "-X" option for VMS (Christian)
+17. update cli interface and online help (both interfaces) to reflect
+    the interface change and the addition of "UX" time stamps (Christian)
+18. fixed the bug in ex2in() (vms/vmszip.c) that prevented use of
+    VMS style relative paths in "-i" or "-x" lists (Christian, Hunter Goatley)
+19. avoid "type conversion" warnings of picky (ANSI C) compilers (Christian)
+20. another fix for VMS ex2in(): it allowed absolute paths to survive
+    in certain cases (Christian)
+21. Fix for ex2in(); it returned a "non-malloced" non-NULL pointer when the
+    external name was recognized as a dirspec (with trailing '/') (Christian)
+22. Add an additional parameter "sep char" to the calling interface of
+    last() (in fileio.c) (Christian)
+23. Make error message for ZE_NONE clearer (Christian, Jean-loup)
+24. Add detection of Visual C++ 4.1 (Steve Salisbury)
+25. Use stat structure from c370.h and put it in stat.h for VM (Onno)
+26. Use different stat(), fstat() and procname() in mvs.c for VM/CMS (Onno)
+27. Add mvs.c to zipvmc.exec (Onno)
+28. Really compile crc32.c and crctab.c in zipvmc.exec (Onno, Carl Forde)
+29. Don't know a unix system without string.h or strings.h delete check
+    in unix/configure for the latter (Onno)
+30. Use exit value of cpp to check for include files in unix/configure (Onno)
+31. Split up VM/CMS and MVS for OS_CODE in tailor.h (Christian, Greg)
+32. Add empty definitions for ech{on,off} for VM/CMS (Christian, Onno)
+33. Split up CMS and MVS specific sources (Onno)
+34. Add dummy zip{warn,err} to zipcloak.c for NOCRYPT case (Onno)
+------------------------- April 9th 1996 version 2.0x -------------------
+ 1. ttinp -> ttyio for AOS/VS, MVS and WIN32 (Christian)
+ 2. Fix library detection in unix/configure (Onno, Christian)
+ 3. Updated/extended install.doc;  UNIX, MSDOS, and OS/2 sections. (Christian)
+ 4. update unix/Makefile with help, comments and new entry (Christian)
+ 5. Fix memory leak in procname() for all the ports (Christian)
+ 6. get djgpp v2 working (Christian, Kjetil Wiekhorst J|rgenson, Frank Donahoe)
+ 7. new ebcdic.h based on ISO 8859-1 <-> CECP 1047 conversion tables from
+    ftp://segi.ulg.ac.be/pub/docs/iso8859 (Onno, pointer by Carl Forde)
+ 8. Add missing _H to HAVE_SYS_DIR in unix/unix.c (Onno, Kevin M. Fritz)
+ 9. fix vms/make_zip.com (Mike Freeman)
+10. use izshr005 (Onno, Christian)
+11. win32 uses same directory handling routines as unzip (Paul)
+12. detect VMS DEC compiler in version_info (Christian)
+13. fix spurious VMS variable length error message from zip (Christian)
+14. fix msdos mapname() routine (Paul, Christian)
+15. add VMSCLI support to vms/make_zip.com (Christian).
+16. better error message for zip -T (Onno, Stan Brown).
+17. change GetFileMode for djgpp v2 (Onno, Douglas E. Wegscheid)
+18. VFAT=14,MVS=15 (Greg).
+19. Remove superfluous commands from msdos/makefile.dj* (Christian)
+20. Make default settings in msdos/makefile.dj* more generic (Christian)
+21. Don't repeat link stage unconditionally in msdos/makefile.dj* (Christian)
+22. Add missing ASM_CRC support  to msdos/makefile.dj* (Christian).
+23. Optimize for 486 processor in msdos/makefile.dj* (Christian).
+24. Changed the condition in zip.c which selects "scan all ziparchive
+    entries for update/freshen" to work when filters are specified but
+    no arguments.  (Christian)
+25. Modified the "get volume label" call condition to skip the call
+    when volumelabel has been already fetched. (Christian)
+26. Added "safe exit" code to procname() for OS/2 and MSDOS if called with
+    a NULL argument. This could happen if someone tries to combine "freshen"
+    or "delete" with a Volume-Label request. (Christian)
+27. Fix filename generation for zipsplit (Christian, Douglas E. Wegscheid)
+28. Fix EBCDIC '\n' translation for VM/CMS (Christian)
+29. Verify password in zipcloack encrypt (Onno)
+30. Always verify passwords with zip -e (Onno)
+31. Update copyrights (Onno)
+32. Define dummy_crypt for all platforms (Jean-loup)
+33. Change NetBSD handling in version_info (Onno)
+34. Use path from argv[0] with zip -T if unzip not found the first time (Onno)
+35. Add directory library handling for xenix in unix/configure (Onno)
+36. Add OS/2 ACL support (Kai Uwe)
+------------------------- April 16th 1996 version 2.0y -------------------
+ 1. Fix NeXT routines in unix/configure (Onno, Mark Adler)
+ 2. Fix typo in spawnlp statement used for zip -T (Steve Salisbury)
+ 3. Don't show -ee as an option in the default help (Kevin M. Fritz)
+ 4. Silently allow -ee (Greg)
+ 5. Add detection of ANSI compile options to unix/configure (Onno)
+ 6. Remove detection of libposix, it breaks things on NeXT (Onno)
+ 7. Split CMS and MVS readmes (Christian)
+ 8. Completely fix the -ee situation for VMS (Christian)
+ 9. Update a couple of copyrights to 1996 (Christian)
+10. msdos/makefile.dj2 should use .exe (Frank Donahoe)
+11. use / as path delimiter for msc in os2/makefile.os2 (Christian)
+12. add -DNO_MKTIME to gccdos in os2/makefile.os2 (Christian)
+13. bump REVISION in revision.h to 21 (Greg)
+14. Use /dev/tty instead of ttyname(2) in ttyio.c (Onno)
+15. Change {open,read,close}dir detection in unix/configure (Onno)
+16. search for -lseq only if needed in unix/configure (Onno)
+17. initialize tm struct in dos2unixtime by passing the current time to
+    localtime() (Onno, Greg)
+18. Add -Xa to Ansi option detection in unix/configure (Onno)
+19. Add AIX, OSF/1 and ultrix to Ansi option detection in unix/configure (Onno)
+20. Add the zipdll code from Mike White.
+21. wizzipdll should only init use_longname_ea in zip.c with WIN32 (Onno)
+------------------------- April 19th 1996 version 2.0z -------------------
+ 1. Acorn fixes (mainly cleanup) from Sergio
+ 2. Additional files for Where (Onno and Sergio)
+ 3. Remove win32/makefile.nt (Johnny Lee)
+ 4. if PASSWD_FROM_STDIN is defined don't verify the password (Kevin M. Fritz)
+ 5. updates from izshr008 (Christian)
+ 6. Only use -lseq if it really adds readlink() (Onno)
+ 7. rename windll to wizdll (Onno)
+ 8. Cleanup wizdll/*.mak (Onno)
+ 9. Add acorn ftp site to Where (Karl)
+10. Add cast to strlen() in zip.c to fix compiler warning (Jean-loup)
+11. Remove os2/README.asm (Onno)
+12. #include "win32/win32zip.h" instead of #include "win32zip.h" (Onno)
+------------------------- April 20th 1996 version 2.0z1 ------------------
+ 1. *Really* update from izshr008 (Christian)
+ 2. Update Where (Greg, Christian)
+ 3. PASSWORD_FROM_STDIN -> PASSWD_FROM_STDIN (Onno)
+ 4. #if WSIZE != 32768 -> #if WSIZE != 0x8000 (Michael D. Lawler)
+ 5. Remove check for (e != NULL) before password verify (Christian)
+------------------------- April 23th 1996 version 2.0z2 ------------------
+ 1. Use -posix in LFLAGS2 for the NeXt to catch tc*attr() at link time (Mark)
+ 2. Back out PASSWD_FROM_STDIN patch (Kevin M. Fritz)
+ 3. Note in amiga/README that -A doesn't work (Paul)
+ 4. Use simple crypt.c from Jean-loup
+ 5. Fixes for win32 and DOS where filetime forgets that - means stdin (Paul)
+ 6. 'if (st.st_mode & S_IFDIR)' is wrong: S_* isn't bitwise everywhere (Onno)
+ 7. Don't define MSDOS16 in MSWIN (anchal@rc.lrs.lt)
+ 8. Add BorlandC to win32's version_local() (Onno)
+------------------------- April 24th 1996 version 2.0z3 ------------------
+ 1. Use -posix in LFLAGS1 and CFLAGS for the NeXT (Onno)
+ 2. Update to izshr009 (Onno)
+ 3. Export LFLAGS1 to flags in unix/configure (Onno)
+ 4. Detect various versions of IBM's OS/2 compiler (Greg)
+ 5. Only detect relevant compiler versions for win32 (Steve Salisbury)
+ 6. Note -A bug on the Amiga in the man page (Greg)
+ 7. Put -s into LFLAGS1 instead of LFLAGS2 (Onno)
+ 8. Add notes about the TZ environent variable in the docs (Onno, Christian)
+------------------------- April 25th 1996 version 2.0z4 ------------------
+ 1. define NO_SYS_TYPES_H for Aztec C on the Amiga (Paul)
+ 2. use NO_SYS_TYPES_H in mktime.c (Paul)
+ 3. fixes for OS/2 and human68k where filetime forgets that - means stdin (Paul)
+------------------------- April 27th 1996 version 2.0z5 ------------------
+ 1. update to izshr010 (Onno)
+ 2. define MEMORY16 for WIZZIP (Christian)
+ 3. DOS, win32 and amiga: use EF_UX_TIME if TZ environment is set (Christian)

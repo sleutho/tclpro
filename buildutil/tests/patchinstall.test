@@ -1,0 +1,72 @@
+# This file contains tests for the patchinstall.tcl file.
+#
+# This file contains a collection of tests for one or more Tcl commands.
+# Sourcing this file into Tcl runs the tests and generates output for
+# errors.  No output means no errors were found.
+#
+# Copyright (c) 2000 by Ajuba Solutions.
+# All rights reserved.
+#
+# RCS: @(#) $Id: patchinstall.test,v 1.3 2000/05/30 21:43:14 wart Exp $
+
+package require tcltest
+namespace import -force ::tcltest::*
+
+source [file join [file dirname [info script]] ../patchinstall.tcl]
+
+test patchinstall-1.1 {PatchInstall::substitute, input file does not exist} {
+    set result [::PatchInstall::substitute missingFile bar]
+
+    set result
+} {0}
+
+test patchinstall-1.2 {PatchInstall::substitute, input file unchanged} {
+    set fileContents "set foo foo\n"
+    set inputFile [file join $::tcltest::temporaryDirectory patchFile]
+
+    ::tcltest::makeFile $fileContents $inputFile.in
+
+    set result [::PatchInstall::substitute $inputFile [list pat sub]]
+
+    lappend result [catch {exec diff $inputFile.in $inputFile}]
+
+    ::tcltest::removeFile $inputFile
+
+    set result
+} {1 0}
+
+test patchinstall-1.3 {PatchInstall::substitute, one pattern listed} {
+    set fileContents "set foo @FOO@\n"
+    set inputFile [file join $::tcltest::temporaryDirectory patchFile]
+
+    ::tcltest::makeFile $fileContents $inputFile.in
+
+    set result [::PatchInstall::substitute $inputFile [list @FOO@ bar]]
+
+    source $inputFile
+    lappend result $foo
+
+    ::tcltest::removeFile $inputFile
+
+    set result
+} {1 bar}
+
+test patchinstall-1.4 {PatchInstall::substitute, multiple patterns listed} {
+    set fileContents "set foo1 @FOO1@\nset foo2 @FOO2@\nset foo3 @FOO3@"
+    set inputFile [file join $::tcltest::temporaryDirectory patchFile]
+
+    ::tcltest::makeFile $fileContents $inputFile.in
+
+    set result [::PatchInstall::substitute $inputFile \
+	    [list @FOO1@ bar1] [list @FOO2@ bar2] [list @FOO3@ bar3]]
+
+    source $inputFile
+    lappend result $foo1 $foo2 $foo3
+
+    ::tcltest::removeFile $inputFile
+
+    set result
+} {1 bar1 bar2 bar3}
+
+::tcltest::cleanupTests
+return

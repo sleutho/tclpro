@@ -1,0 +1,29 @@
+#!/bin/sh
+
+# Retrieve memchan distribution and modify it for use by the TclPro
+# build framework. Assume WD is parent of 'tclpro' directory.
+
+if [ -f memchan2.1p3.tar.gz ]
+then
+    mv memchan2.1p3.tar.gz memchan2.1p3.tar.gz.old
+    rm -rf memchan2.1.old
+    mv memchan2.1 memchan2.1.old
+fi
+
+wget http://www.purl.org/NET/akupries/soft/memchan/download/memchan2.1p3.tar.gz
+if test $? -ne 0
+then
+    echo "wget failed"
+    exit 1
+fi
+#cp                 ~aku/web/sites/oche/soft/memchan/download/memchan2.1p3.tar.gz .
+
+tar xfz memchan2.1p3.tar.gz
+mv memchan2.1p3 memchan2.1
+
+cd memchan2.1
+
+ln -s ../config config
+echo "builtin(include,config/tcl.m4)" > aclocal.m4
+rm configure
+autoconf

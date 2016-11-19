@@ -1,0 +1,182 @@
+# sybtcl.pcx --
+#
+#	This file implements the TclPro Checker extension for SybTcl.
+#
+# Copyright (c) 1999-2000 Ajuba Solutions
+# All rights reserved.
+# 
+# RCS: @(#) $Id: sybtcl.pcx,v 1.3 2000/05/30 22:28:54 wart Exp $
+
+package require checker
+package provide sybtcl 1.0
+
+checker::register sybtcl 1.0
+set configure::verTable(sybtcl,3.0) $::projectInfo::baseTclVers
+
+package require analyzer 1.0
+namespace import -force ::analyzer::*
+
+namespace eval sybtcl {
+
+    # scanCmdsX.X --
+    # Define the set of commands that need to be recuresed into when 
+    # generating a list of user defiend procs, namespace and Class 
+    # contexts and procedure name resolutions info.
+
+    variable scanCmds3.0 {
+	sybevent-TPC-SCAN		1		
+	sybnext-TPC-SCAN		1		
+    }
+
+    # Define the set of command-specific checkers used by this package.
+
+    variable checkers3.0 {
+	sybcancel	{checkSimpleArgs 1 1 {checkWord}}
+	sybclose	{checkSimpleArgs 1 1 {checkWord}}
+	sybcols		{checkSimpleArgs 1 1 {checkWord}}
+	sybconnect	{checkSimpleArgs 2 6 {checkWord checkWord
+		checkWord checkWord checkFileName checkWord}}
+	syberrhandler	{checkSimpleArgs 0 1 {{checkProcCall 6}}}
+	sybevent	{checkSimpleArgs 1 2 {checkWord checkBody}}
+	sybmsghandler	{checkSimpleArgs 0 1 {{checkProcCall 8}}}
+	sybnext		{checkSimpleArgs 1 -1 {checkWord checkBody
+		sybtcl::checkSubstChar sybtcl::checkVarColnumPairs}}
+	sybpoll		{checkSimpleArgs 1 3 {checkWord checkInt {
+	    checkSwitches 1 {-all} {}}}}
+	sybreadtext	{checkSimpleArgs 2 3 {checkWord {
+	    checkOption {
+		{-variable	{checkSimpleArgs 1 1 {checkVarName}}}
+		{-file		{checkSimpleArgs 1 1 {checkFileName}}}
+	    } {checkSimpleArgs 1 1 checkFileName}}}}
+	sybretval	{checkSimpleArgs 1 1 {checkWord}}
+	sybsql		{checkSimpleArgs 2 3 {checkWord checkWord {
+	    checkSwitches 1 {-async} {}}}}
+	sybuse		{checkSimpleArgs 1 2 {checkWord}}
+	sybwritetext	{checkSimpleArgs 4 6 {checkWord checkWord checkWord {
+	    checkOption {
+		{-variable	{checkSimpleArgs 1 2 {checkVarName {
+		    checkSwitches 1 {-nolog} {}}}}}
+		{-file		{checkSimpleArgs 1 2 {checkFileName {
+		    checkSwitches 1 {-nolog} {}}}}}
+	    } {checkSimpleArgs 1 2 {checkFileName {
+		checkSwitches 1 {-nolog} {}}}}}}}
+    }
+}
+
+proc ::sybtcl::init {ver} {
+
+    foreach name [lsort [info vars ::sybtcl::scanCmds*]] {
+	analyzer::addScanCmds [set $name]
+	if {$name == "::sybtcl::scanCmds$ver"} {
+	    break
+	}
+    }
+    foreach name [lsort [info vars ::sybtcl::checkers*]] {
+	analyzer::addCheckers [set $name]
+	if {$name == "::sybtcl::checkers$ver"} {
+	    break
+	}
+    }
+
+    # messages --
+    # Define the set of message types and their human-readable translations. 
+
+    variable messages
+    array set messages {
+	sybtcl::badSubstChar {"invalid Sybase substitution character" err}
+    }
+}
+
+# sybtcl::getMessage --
+#
+#	Convert the message type into a human readable
+#	string.  
+#
+# Arguments:
+#	mid	The messageID to look up.
+#
+# Results:
+#	Return the message string or empty string if the
+#	message type is undefined.
+
+proc sybtcl::getMessage {mid} {
+    variable messages
+
+    if {[info exists messages($mid)]} {
+	return [lindex $messages($mid) 0]
+    } else {
+	return $mid
+    }
+}
+
+# sybtcl::getTypes --
+#
+#	Convert the message id into a list of message types.
+#
+# Arguments:
+#	mid	The messageID to look up.
+#
+# Results:
+#	Return the list of message type keywords.
+
+proc sybtcl::getTypes {mid} {
+    variable messages
+
+    if {[info exists messages($mid)]} {
+	return [lrange $messages($mid) 1 end]
+    } else {
+	return err
+    }
+}
+
+# sybtcl::checkSubstChar --
+#
+#	Check to see the next token is a either a single character, empty
+#	string, or nonliteral.  If not, log an badSubstChar error.
+#
+# Arguments:
+#	tokens		The list of word tokens for the current command.
+#	index		The index of the next word to be checked.
+#
+# Results:
+#	Returns the index of the next token to be checked.
+
+proc sybtcl::checkSubstChar {tokens index} {
+
+    set word [lindex $tokens $index]
+
+    if {![getLiteral $word literal]} {
+	return [checkWord $tokens $index]
+    }
+    if {[string length $literal] > 1} {
+	logError sybtcl::badSubstChar [getTokenRange $word]
+    }
+    return [incr index]
+}
+
+# sybtcl::checkVarColnumPairs --
+#
+#	Check to see the tokens starting with index are ?varname wholenum?
+#	pairs.
+#
+# Arguments:
+#	tokens		The list of word tokens for the current command.
+#	index		The index of the next word to be checked.
+#
+# Results:
+#	Returns the index of the last token + 1 (all have been checked).
+
+proc sybtcl::checkVarColnumPairs {tokens index} {
+    
+    set argc [llength $tokens]
+
+    while {$index < $argc} {
+	set index [checkVarName $tokens $index]
+	if {$index >= $argc} {
+	    logError numArgs {}
+	} else {
+	    set index [checkWholeNum $tokens $index]
+	}
+    }
+    return $index
+}

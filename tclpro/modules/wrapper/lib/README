@@ -1,0 +1,14 @@
+This directory can include user defined .uses files for use with
+the prowrap application.  It also includes the source code for the
+standard -uses options.  The standard behavior is described in the
+following files:
+
+	tclsh.uses		wish.uses
+	bigtclsh.uses		bigwish.uses
+	tclsh-dynamic.uses	wish-dynamic.uses
+	prowrapUses.tcl
+
+Note: These files are wrapped up inside prowrap itself, so if
+you modify them you must specify them with an absolute file name.
+In particular, these all share prowrapUses.tcl, and if you change
+that you must reference the uses file with an absolute path.

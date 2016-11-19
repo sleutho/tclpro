@@ -1,0 +1,53 @@
+# This is a sample configure.in for a program that embeds Tcl.
+# The macros used are affected by command line arguments to
+# the configure script.  Each switch is explained next
+# to the macro that implements it
+
+# The aclocal.m4 file references "tcl.m4" from the
+# standard "config" module of the Tcl/Tk build process.
+# That file defines several autoconf macros that
+# are used when building Tcl programs and extensions
+
+AC_INIT(myMain.c)
+
+# --enable-gcc if you use gcc
+SC_ENABLE_GCC
+
+# --enable-shared or --disable-shared for building against
+# shared or static libraries
+SC_ENABLE_SHARED
+
+# --enable-threads if you have recompiled Tcl to enable
+# thread support.  TclPro is *not* compiled with --enable-threads.
+SC_ENABLE_THREADS
+
+# Get basic compiler settings
+SC_CONFIG_CFLAGS
+
+# --with-tcl=<directory> names the directory containing tclConfig.sh
+# This file contains a bunch of compiler and library settings
+# you'll need in order to compile your code in a way that
+# is compatible with TclPro libraries.
+
+# If you use the same compiler and same OS as we do, you can use
+# the tclConfig.sh distributed with TclPro.  This is what we use:
+#	Solaris: gcc on Solaris 2.5.1
+#	IRIX: cc on IRIX 6.4 with -n32
+#	Linux: gcc on Redhat 6.0
+#	HP-UX: gcc on HP-UX 10.20
+
+# If your configuration is significantly different
+# you'll probably want to run "configure" in the src/tcl8.3/unix
+# directory to recreate tclConfig.sh.  So, your choices are
+# --with-tcl=/opt/ajuba2/TclPro/<platform>/lib
+# or
+# --with-tcl=/opt/ajuab2/TclPro/src/tcl8.3/unix
+
+SC_PATH_TCLCONFIG
+SC_LOAD_TCLCONFIG
+
+# These are not already AC_SUBST'ed by the LOAD_TCLCONFIG
+AC_SUBST(TCL_PREFIX)
+AC_SUBST(TCL_EXEC_PREFIX)
+
+AC_OUTPUT(Makefile)

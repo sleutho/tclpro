@@ -1,0 +1,56 @@
+// RCS: @(#) $Id: shell.rc.in,v 1.2 2000/07/26 05:03:55 welch Exp $
+//
+// This file is only used on Windows.  The generic makefiles &
+// configure scripts will create one on all platforms, but it
+// will be ignored and not used on Unix.
+//
+// Version
+//
+#include <windows.h>
+
+#define RESOURCE_INCLUDED
+
+#define STRINGIFY1(x)       #x
+#define STRINGIFY(x)        STRINGIFY1(x) 
+ 
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION    @MAJOR_VERSION@,@MINOR_VERSION@,@PATCHLEVEL@
+ PRODUCTVERSION @MAJOR_VERSION@,@MINOR_VERSION@,@PATCHLEVEL@
+ FILEFLAGSMASK	0x3fL
+ FILEFLAGS	0x0L
+ FILEOS		0x4L
+ FILETYPE	0x1L
+ FILESUBTYPE	0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "FileDescription", "TclPro Application\0"
+            VALUE "OriginalFilename", "@EXE_FILE@\0"
+            VALUE "CompanyName", "Ajuba Solutions\0"
+            VALUE "FileVersion", "@VERSION@\0"
+            VALUE "LegalCopyright", "Copyright \251 2000 by Ajuba Solutions\0"
+            VALUE "ProductName", "@PRODUCT_NAME@ @VERSION@ for Windows\0"
+            VALUE "ProductVersion", "@VERSION@\0"
+            VALUE "BuildId", "@BUILD_ID@\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+//
+//  Icons - name the application icon "app" so it sorts before "tk"...
+//	Otherwise the tk icon seems to be used instead.
+
+// 	The "tk" icon is searched for by the Tk library, which we
+//	may have to supply in the case of a static shell build,
+//	otherwise it will come from the DLL
+//
+
+
+app        ICON    @ICON_FILE@
+tk         ICON    "tk.ico"

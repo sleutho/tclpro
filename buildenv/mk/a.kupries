@@ -1,0 +1,26 @@
+# -*- tcl -*-
+# Extensions by A. Kupries, build information
+
+module memchan {
+    depends.on tcl
+    testsuite  tests
+    configure.with {} "--with-tcl=[file join %bld:tcl% %arch%] --enable-shared"
+}
+
+module trf {
+    depends.on tcl memchan
+    testsuite  tests
+    configure.with {} "--with-tcl=[file join %bld:tcl% %arch%] --enable-shared"
+}
+
+module trfcrypt {
+    depends.on tcl memchan trf
+    testsuite  tests
+    configure.with {} "--with-tcl=[file join %bld:tcl% %arch%] --enable-shared"
+}
+
+module setops {
+    depends.on tcl
+    testsuite  tests
+    configure.with {} "--with-tcl=[file join %bld:tcl% %arch%] --enable-shared"
+}

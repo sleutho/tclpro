@@ -1,0 +1,5 @@
+[lpage::head Reports "Daily Usage"]
+<p>
+[lserver::report daily]
+
+[lpage::footer]

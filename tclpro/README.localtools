@@ -1,0 +1,40 @@
+Note: This is an old file relating to the build
+environment at Scriptics/Ajuba.  The host "pop"
+was the main server, and /tools there contained
+various compilation tools.  The information here
+doesn't really pertain to building TclPro from
+the SourceForge CVS tree.
+
+-- original file below here --
+
+In order to speed up the build process, it is common for engineers to copy the
+pop:/tools directory to a local drive.  This is a good idea as it reduces
+the number of times the build process needs to access the network.  If you
+decide to do this, be aware that there are a number of things you need to
+do to make this work:
+
+The pieces from /tools that you need are:
+
+    pop:/tools/1.3
+    pop:/tools/TclPro1.3
+
+The TclPro1.3 directory must be next to the 1.3 directory.  The build
+environment is not yet smart enough to locate a TclPro installation
+in a different location.
+
+The next step is to modify the autoconf executable so that it can locate
+the standard autoconf macros in the new location.  If you don't do this,
+then it will still try to use the macros in //pop/tools/...
+
+Modify line 38 of tools/1.3/win32-ix86/bin/autoconf to read:
+
+    : ${AC_MACRODIR=//d/tools/1.3/share/autoconf}
+
+Replace the "//d/" above with the drive letter containing your tools dir.
+It is important to use a cygwin path for the AC_MACRODIR instead of
+the Windows-style "c:/tools/..." path.
+
+When you run configure for the main xmlserver module, make sure to tell
+it the location of your local tools directory:
+
+    ./configure --with-toolsdir=//d/tools/1.3

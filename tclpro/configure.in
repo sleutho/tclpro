@@ -1,0 +1,242 @@
+# Configure script for the TclPro.
+#
+# This configure script is mostly responsible for setting the toplevel
+# directories for each module.  Use defaults if none are given on the
+# command line.
+
+AC_INIT(module_data.tcl.in)
+
+#========================================================================
+# Information about this main module
+#========================================================================
+
+PACKAGE=tclpro
+AC_SUBST(PACKAGE)
+
+#========================================================================
+# Version information for TclPro - watch out for
+# modules/projectInfo/projectInfo.tcl that also contains this.
+#========================================================================
+
+MAJOR_VERSION=1
+MINOR_VERSION=4
+PATCHLEVEL=1
+VERSION=${MAJOR_VERSION}.${MINOR_VERSION}.${PATCHLEVEL}
+NODOT_VERSION=${MAJOR_VERSION}${MINOR_VERSION}${PATCHLEVEL}
+AC_SUBST(MAJOR_VERSION)
+AC_SUBST(MINOR_VERSION)
+AC_SUBST(PATCHLEVEL)
+AC_SUBST(VERSION)
+AC_SUBST(NODOT_VERSION)
+
+# Version of Tcl/Tk that we bundle
+
+TCL_MAJOR_VERSION=8
+TCL_MINOR_VERSION=3
+TCL_PATCHLEVEL=2
+TCL_VERSION=${TCL_MAJOR_VERSION}.${TCL_MINOR_VERSION}.${TCL_PATCHLEVEL}
+TCL_NODOT_VERSION=${TCL_MAJOR_VERSION}${TCL_MINOR_VERSION}${TCL_PATCHLEVEL}
+AC_SUBST(TCL_MAJOR_VERSION)
+AC_SUBST(TCL_MINOR_VERSION)
+AC_SUBST(TCL_PATCHLEVEL)
+AC_SUBST(TCL_VERSION)
+AC_SUBST(TCL_NODOT_VERSION)
+
+#========================================================================
+# Scan for some commonly used configure switches that we don't honor here.
+#========================================================================
+
+AC_ARG_WITH(tools, , AC_MSG_ERROR(The --with-tools flag is deprecated.  Use --with-toolsdir instead))
+
+AC_ARG_WITH(tcl, ,
+	AC_MSG_ERROR(The --with-tcl flag is not valid for this configure script.
+	Use --with-tcldir to specify the location of your Tcl sources.
+	If you are trying to specify the location to tclConfig.sh then you
+	can't.  This script generates it's own path to tclConfig.sh based
+	on where the modules will be installed.))
+
+#========================================================================
+# Generate the common name for the platform we are using
+# Substs the following value:
+#	PLATFORM
+#	CYGPATH
+#========================================================================
+
+SC_SET_PLATFORM
+
+#========================================================================
+# Don't install in /usr/local by default.  Do something a little
+# more intelligent.  Don't use variable references here.
+# Relative paths won't work either.
+# Instead, invoke some shell voodoo and use the current working directory.
+#========================================================================
+
+AC_PREFIX_DEFAULT(`pwd`/out)
+
+#========================================================================
+# Use a platform-specific name for exec-prefix, by default.  Make sure the
+# echo'd value for prefix matches the one set above in AC_PREFIX_DEFAULT()
+#========================================================================
+
+if test x"${exec_prefix}" = x"NONE" ; then
+    if test x"${prefix}" != x"NONE" ; then
+	echo "Using prefix=${prefix}"
+	exec_prefix="${prefix}/${PLATFORM}"
+    else
+	echo "Using prefix=`pwd`/out"
+	exec_prefix="`pwd`/out/${PLATFORM}"
+    fi
+fi
+echo "Using exec-prefix=${exec_prefix}"
+
+#========================================================================
+# Determine the workspace directory for generating a dist and image.
+#========================================================================
+
+AC_MSG_CHECKING(the top level workspace name)
+WSDIR=`(cd ${srcdir}/.. ; pwd)`
+AC_SUBST(WSDIR)
+AC_MSG_RESULT(${WSDIR})
+
+#========================================================================
+# Default location of the build directory.  Adds a "--with-build-prefix="
+# switch to configure.  Substs @build_prefix@
+#========================================================================
+
+SC_SET_BUILDPREFIX
+
+#========================================================================
+# Locate the various modules.  Sets and Substs:
+#
+# MODULE_DIR_tcl
+# MODULE_DIR_expect
+# MODULE_DIR_tools
+# etc.
+#
+# See the header for the SC_PATH_MODULE for the search order for module
+# directories.
+#========================================================================
+
+SC_PATH_MODULE(buildenv)
+SC_PATH_MODULE(buildutil)
+#SC_PATH_MODULE(documentation)
+SC_PATH_MODULE(itcl)
+SC_PATH_MODULE(itcl_static,itcl)
+#SC_PATH_MODULE(mclistbox)
+SC_PATH_MODULE(tbcload)
+SC_PATH_MODULE(tbcload_static,tbcload)
+SC_PATH_MODULE(tbcload_dyn,tbcload)
+SC_PATH_MODULE(tcl)
+SC_PATH_MODULE(tcl_static,tcl)
+SC_PATH_MODULE(tclx)
+SC_PATH_MODULE(tclx_static,tclx)
+SC_PATH_MODULE(tk)
+SC_PATH_MODULE(tk_static,tk)
+SC_PATH_MODULE(tclparser)
+SC_PATH_MODULE(tclparser_static,tclparser)
+SC_PATH_MODULE(tclchecker)
+SC_PATH_MODULE(tcldebugger)
+SC_PATH_MODULE(tclcompiler_static,tclcompiler)
+SC_PATH_MODULE(tclwrapper)
+SC_PATH_MODULE(tclwrapper_dyn,tclwrapper)
+SC_PATH_MODULE(tclwrapper_static,tclwrapper)
+SC_PATH_MODULE(tcllib)
+SC_PATH_MODULE(tclhttpd)
+SC_PATH_MODULE(wrapwishdyn, proshells/prowish)
+SC_PATH_MODULE(wraptclshdyn, proshells/prowish)
+SC_PATH_MODULE(wrapwish, proshells/prowish)
+SC_PATH_MODULE(wraptclsh, proshells/prowish)
+SC_PATH_MODULE(prodebugU, proshells/prowish)
+SC_PATH_MODULE(procompU, proshells/prowish)
+SC_PATH_MODULE(procheckU, proshells/prowish)
+SC_PATH_MODULE(prowrapU, proshells/prowish)
+SC_PATH_MODULE(bigwishdyn, proshells/prowish)
+SC_PATH_MODULE(bigtclshdyn, proshells/prowish)
+SC_PATH_MODULE(bigwish, proshells/prowish)
+SC_PATH_MODULE(bigtclsh, proshells/prowish)
+SC_PATH_MODULE(memchan)
+SC_PATH_MODULE(trf)
+SC_PATH_MODULE(trfcrypt)
+SC_PATH_MODULE(setops)
+SC_PATH_MODULE(expand)
+
+case "${PLATFORM}" in
+    win32-ix86)
+	SC_PATH_MODULE(winutil)
+	SC_PATH_MODULE(winico)
+	SC_PATH_MODULE(icons)
+	;;
+    *)
+	SC_PATH_MODULE(expect)
+	SC_PATH_MODULE(expect_static,expect)
+	;;
+esac
+
+SC_PATH_MODULE(projectInfo)
+SC_PATH_MODULE(extras)
+SC_PATH_MODULE(zip, infozip/zip-2.1)
+SC_PATH_MODULE(unzip, infozip/unzip-5.31)
+SC_PATH_MODULE(unzip_dyn, infozip/unzip-5.31)
+SC_PATH_MODULE(unzip_static, infozip/unzip-5.31)
+SC_PATH_MODULE(procheck, modules/checker)
+SC_PATH_MODULE(prodebug, modules/debugger)
+SC_PATH_MODULE(prowrap, modules/wrapper)
+SC_PATH_MODULE(procomp, modules/compiler)
+SC_PATH_MODULE(tclpro, .)
+
+AC_SUBST(MODULE_LIST)
+
+#========================================================================
+# Don't use the SC_PATH_MODULE macro for this one because we look in
+# some non-standard places for it.
+#========================================================================
+
+SC_PATH_TOOLS
+
+#========================================================================
+# Locate some programs we need during the execution of "make"
+#========================================================================
+
+SC_PROG_TCLSH
+
+#========================================================================
+# Default build flavor.  Adds a "--with-flavor=" flag to configure.
+#========================================================================
+
+SC_SET_BUILDFLAVOR
+
+#========================================================================
+# Generate native script file names for the Makefile
+#========================================================================
+
+MODULE_DEPS=\"`${CYGPATH} ${MODULE_DIR_buildenv}/module_deps.tcl`\"
+BUILD_MODULE=\"`${CYGPATH} ${MODULE_DIR_buildenv}/build_module.tcl`\"
+AC_SUBST(MODULE_DEPS)
+AC_SUBST(BUILD_MODULE)
+
+#========================================================================
+# The TclPro programs are needed by some of the modules for
+# bootstrapping.  For example, the license module needs to
+# be compiled by some version of procomp before those compiled
+# license files can be wrapped into the new procomp.
+#========================================================================
+
+SC_PATH_PROTOOLS
+
+#========================================================================
+# Inform the user (very loudly) if some of the modules are missing.
+#========================================================================
+
+if test x"${MISSING_MODULE_LIST}" != x ; then
+    AC_MSG_WARN(MISSING MODULES FOUND.  Your build may be incomplete:)
+    for i in ${MISSING_MODULE_LIST} ; do
+	echo "        MISSING $i"
+    done
+fi
+
+#========================================================================
+# Generate the Makefile and module data file.
+#========================================================================
+
+AC_OUTPUT([Makefile \
+	module_data.tcl])

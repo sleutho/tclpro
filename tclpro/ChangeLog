@@ -1,0 +1,314 @@
+2001-03-31  Andreas Kupries <andreas_kupries@users.sourceforge.net>
+
+	* get-trfcrypt: Shortened in adaption to the new release of
+	  Trfcrypt (2.0p3).
+
+2001-03-31  Andreas Kupries <andreas_kupries@users.sourceforge.net>
+
+	* get-setops: Shortened in adaption to the new release of setops
+	  (1.0p2).
+
+2001-03-28  Andreas Kupries <andreas_kupries@users.sourceforge.net>
+
+	* get-trf:
+	* get-memchan: Shortened in adaption to the new releases of trf
+	  and memchan.
+
+2001-03-16  Andreas Kupries <andreas_kupries@users.sourceforge.net>
+
+	* get-trf:
+	* get-expand:
+	* get-trfcrypt:
+	* get-setops:
+	* get-memchan: Added code to move an existing archive before retrieving
+	  the current one from the web. Without this 'wget' will create
+	  names like 'foo.1', etc. instead of 'foo'. This causes the code
+	  after the wget to actually use the old archive and not the new one.
+
+2001-03-15  Karl Lehenbauer <karl@procplace.com>
+	* snapshot/{README bundle.tcl listpackages.tcl postpro.tcl}:
+	  Added snapshot directory and these new files.  
+
+	  postpro.tcl grinds a SNAPSHOT file to produce a SNAPSHOT.merge 
+	  file, containing concise information about what modules produced
+	  what files in the output and defined what packages.
+
+	  bundle.tcl takes a SNAPSHOT.merge file and produces numerous
+	  zip files consisting of the files for each module, with
+	  manual pages and demos split into separate zips.
+
+	  listpackage.tcl if run by a tcl or wish shell will list all
+	  of the packages available to that shell.
+
+2001-03-14  Karl Lehenbauer <karl@procplace.com>
+
+	* mkIndex.tcl.in: Altered Nativepath proc to work correctly with 
+	  new Cygwin drive specification syntax when running on Windows.
+	  (Was //d/foo -> D:/foo   Now also /cygdrive/d/foo -> D:/foo)
+
+2001-03-07 Karl Lehenbauer <karl@procplace.com>
+	* modules/install/src/setup.sh: Removed expectation that
+	  uname resides in /bin -- it doesn't on FreeBSD and probably
+	  others.
+
+2001-03-06 Andreas Kupries <andreas_kupries@users.sourceforge.net>
+
+	* configure.in:
+	* module_data.tcl.in
+	* modules/install/src/parts.in:
+	* modules/install/src/cdparts.in: Added information to allow the
+	  distribution of the tcl-based macro processor 'expand' by
+	  William H. Duquette <will@wjduquette.com>. See
+	  http://www.wjduquette.com/expand/index.html
+
+	* get-expand: New file. Retrieves expand2.0 and patches the
+	  distribution for usage by the huild framework.
+
+2001-03-06 Andreas Kupries <andreas_kupries@users.sourceforge.net>
+
+	* configure.in:
+	* module_data.tcl.in
+	* modules/install/src/parts.in:
+	* modules/install/src/cdparts.in: Added information to allow the
+	  compilation of 'memchan', 'trf' and 'trfcrypt'.
+
+	* get-trf:
+	* get-trfcrypt:
+	* get-memchan: New files. Retrieve the current source
+	  distributions of memchan, trf and trfcrypt, and patch them so
+	  that the build framework can use them.
+
+	* README.akupries: New file, short explanation of the above.
+
+2001-02-23 Karl Lehenbauer  <karl@procplace.com>
+	Documented and simplified soft status code in buildenv/buildModule.tcl.
+	It is only needed for caching that configure has been done and
+	whether or not "make install" has been done.  Now that's all
+	we try to track.
+
+	Added new make target, "make reinstall".  If you do this, it
+	will build and install everything, ignoring any soft status
+	information.
+
+2001-02-20 Karl Lehenbauer  <karl@procplace.com>
+	Modified dependency definitions in tclpro/module_data.tcl.in 
+	and tclchecker/DEPENDENCIES.  In particular, tclchecker needs
+	prowrap.  Noted in comments in module_data.tcl.in which modules'
+	dependencies are overridden by explicit DEPENDENCIES files.
+
+	Modified buildenv/buildModule.tcl and tclpro/Makefile.in to
+	add the capability of skipping steps that have already been
+	successfully performed by caching results in a SOFTSTATUS file
+	managed by buildModule.tcl in the directory you run "make"
+	from to build tclpro.  Thus if, for example, TclX has already
+	been installed, it isn't installed over and over again whenever
+	you do a make.  This is a little kludgey because it works by
+	having, for example, the successful return of "make install" of
+	TclX letting us know it worked, rather than looking for a specific
+	file result.
+
+	Also buildModule exits upon hitting an error, rather than proceeding.
+	This should probably be made an option.
+
+	Finally all TEA supported targets are now supported from the
+	Makefile, so you can say stuff like "make tcl-install", 
+	"make tcl_static-install", "make tcllib-clean", 
+	"make tclhttpd-configure" etc.  Using make in this manner bypasses
+	the soft status stuff described above.
+
+2001-02-8  Brent Welch  <brent.welch@interwoven.com>
+	TclProCheckout.tcl: Cleaned this up so it correctly detects if
+	a read/write checkout is successful.  Added -no_action cmdline arg.
+
+2001-02-6  Brent Welch  <brent.welch@interwoven.com>
+	modules/install/src/genImage.tcl: Rooted out more references to license
+	modules/install/src/text.tcl: Rooted out more references to license
+
+2001-01-30  Brent Welch  <brent.welch@interwoven.com>
+	README.FreeBSD: latest updates by Karl
+	configure.in: Removed builds of documentation and mclistbox
+
+2001-01-24  Brent Welch  <brent.welch@interwoven.com>
+	(For Karl Lehenbauer)
+	modules/wrapper/src/setup.tcl:
+	Removed references to license code
+	README.FreeBSD: added docs from Karl.
+
+2001-01-24  Brent Welch  <brent.welch@interwoven.com>
+	(For Karl Lehenbauer)
+	modules/wrapper/src/startup.tcl:
+	modules/debugger/src/startup.tcl: changed the way the
+	    lcient calls are commented out so it shows up from a grep better
+	modules/install/src/cdparts.in:
+	modules/install/src/genImage.tcl:
+	modules/install/src/gui.tcl:
+	modules/install/src/install.tcl:
+	modules/install/src/makeDist.tcl:
+	    Fixes by Karl to get the installer images working on FreeBSD!
+	modules/lmgr:
+	    Removed the old, unused license manager.
+
+2001-01-22  Brent Welch  <brent.welch@interwoven.com>
+	* Makefile.in:
+	Added a %-clean target that is equivalent to %-hose -
+	it removes the build directory for that module.
+
+2001-01-22  Brent Welch  <brent.welch@interwoven.com>
+	* modules/debugger/src/startup.tcl
+	Ripped out the license check.
+
+2001-01-22  Brent Welch  <brent.welch@interwoven.com>
+	* modules/install/src/cdparts.in
+	* modules/install/src/genImage.tcl:
+	More fixes to eliminate hard-coded paths.  Starting to get
+	image/web/tclpro14.solaris.tar files, but still no real
+	installer binaries (ptsol, pwsol)
+
+2001-01-15  Brent Welch  <brent.welch@interwoven.com>
+	* module_data.tcl.in
+	* modules/install/src/cdparts.in
+	* modules/install/src/genImage.tcl
+	* modules/install/src/install.tcl
+	* modules/install/src/makeDist.tcl
+	* modules/install/src/parts.in
+	* modules/install/src/setup.sh
+	Updated these for aix-risc and freebsd-ix86
+
+
+2001-01-15  Brent Welch  <brent.welch@interwoven.com>
+
+	* README.build:
+	Updated with better info about make, make dist, etc.
+	* modules/src/install/makeDist.tcl:
+	* modules/src/install/makeWinImage.tcl:
+	* modules/src/install/makeImage.tcl:
+	Fixed handling of the parts.in file so that variable references
+	in variable definitions are properly eval'ed.
+
+2001-01-07  Brent Welch  <brent.welch@interwoven.com>
+
+	* TclProCheckout.tcl: Fixed to ensure that itcl
+	and tclwrapper have config symlinks instead of
+	private config directory copies.
+
+2001-01-03  Brent Welch  <brent.welch@interwoven.com>
+
+	* TclProCheckout.tcl: Added -user <username>, -update, -checkout
+	command line options to this script.
+	* README.build - fixed this to mention "make install" before
+	"make dist"
+
+2000-12-14  Brent Welch  <brent.welch@interwoven.com>
+
+	* TclProCheckout.tcl: New and improved checkout script from
+	Karl Lehenbauer.
+
+2000-12-07  Brent Welch  <brent.welch@interwoven.com>
+
+	* modules/checker/Makefile.in: Removed license files from wrap target
+	* modules/compiler/Makefile.in: Removed license files from wrap target
+	* modules/debugger/Makefile.in: Removed license files from wrap target
+	* modules/wrapper/Makefile.in: Removed license files from wrap target
+
+2000-12-01  Brent Welch  <brent.welch@interwoven.com>
+
+	* module_data.tcl.in:
+	* configure.in:
+	Removed license, lmgr, keygen, lserver, which are
+	all license-related modules that are no longer needed.
+	* Makefile.in:
+	Removed use of SC_FIND_TCLSH (which looked in the
+	tools area) in favor of the standard SC_PROG_TCLSH.
+	* all aclocal.m4 files modified to use the shared
+	config/tcl.m4 instead of an out-of-date copy in
+	the tclpro module.
+	* README.build:
+	initial updates for building from SourceForge CVS.
+	* TclProCheckout:
+	Added this script to drive the checkout from SourceForge.
+	This works for me - you'll need to edit it to match your
+	own environment.
+
+2000-08-24  Brent Welch  <welch@ajubasolutions.com>
+
+	* module_data.tcl.in:
+	Added --with-tk to tclwrapper builds because of its
+	Tk_Main and tk.h dependencies.
+
+2000-08-14  David Gravereaux  <davygrvy@ajubasolutions.com>
+
+	* ChangeLog: Added this entry. (pun intended)
+	* configure.in: upped TclPro patchLevel from zero to 1
+
+2000-08-04-2000 Brent Welch     <welch@ajubasolutions.com>
+
+	* module_data.tcl.in: 
+	Fixed up the --with-tclx spec because the build directory
+	structure on windows is different than on unix!
+	Only showed up on windows, where tclx was silently not part of bigtclsh et. al.
+
+2000-08-03-2000 Brent Welch     <welch@ajubasolutions.com>
+
+	* module_data.tcl.in: 
+	Fixed up the --with-unzip-build for the various flavors
+	of tclwrapper, and removed this from modules that use
+	tclwrapper because that now includes the unzip library.
+
+2000-08-01-2000 Brent Welch     <welch@ajubasolutions.com>
+
+	* module_data.tcl.in: 
+	Added --with-expect to "big" wrapper inputs.
+
+2000-07-28-2000 Brent Welch     <welch@ajubasolutions.com>
+
+	* Makefile.in: Passing prefix and exec_prefix into genImage.tcl
+	so these values can be patched.
+	* configure.in:
+	* Makefile.in: Added dynamic parser build so
+	the debugger test suite can package require it.
+
+2000-07-25  Brent Welch     <welch@ajubasolutions.com>
+
+	* configure.in: Change wrapper bootstrap to use a proper
+	shell built by the proshells module instead of the primitive
+	shell built by the tclwrapper module.
+	* module_data.tcl.in: Updated module dependencies.
+
+2000-07-22  Brent Welch     <welch@ajubasolutions.com>
+
+	* configure.in, module_data.tcl.in: Unified the prochell
+	variants to use a single source directory.  Added
+	TclPro and Tcl/Tk version information to configure.in
+	so we can burn things into Windows resource files.
+
+2000-07-19  Brent Welch     <welch@ajubasolutions.com>
+
+	* module_data.tcl.in - Fixed all --with-tk to specify the correct
+	build directory.  Fixed --with-wrap-sh for buildutil on windows so
+	it doesn't install a cr-lf polluted pro_wrap.sh
+
+2000-07-18  Brent Welch     <welch@ajubasolutions.com>
+
+	* configure.in, module_data.tcl.in - added procheckU, procompU,
+	and prodebugU.
+	* modules/demos - added this.
+	* modules/extras/icons - added this.
+
+2000-07-14  Brent Welch     <welch@ajubasolutions.com>
+
+	* module_data.tcl.in - Mostly working configuration for complete build.
+
+2000-07-11  Brent Welch     <welch@ajubasolutions.com>
+
+	* module_data.tcl.in - Configuration for boot-strapping prowrap.
+
+2000-07-10  Brent Welch     <welch@ajubasolutions.com>
+
+	* configure.in, module_data.tcl.in - Adding static/dynamic pairs
+	of modules for things needed in the wrapper core.
+
+2000-06-22  Brent Welch     <welch@ajubasolutions.com>
+
+	* configure.in, module_data.tcl.in - fixed up configure switches for
+	all the TclPro 1.4 modules
+

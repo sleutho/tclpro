@@ -1,0 +1,366 @@
+Building TclPro
+=============================
+
+(Disclaimer:  I'm still working out the details of
+building TclPro from SourceForge.  There are likely
+to be inaccuracies here, but you should get started
+down the right path.  Please send feedback to me
+about improving this document at <welch@acm.org>
+but please don't expect a lot of hand-holding to
+get your build to work.  For help, use the
+tclpro-dev@lists.sourceforge.net mailing list, or
+the comp.lang.tcl newgroup.)
+
+0)  Preconditions:
+
+    * tclsh
+    The TclPro build uses Tcl scripts, so you'll need a
+    working tclsh to drive the scripts in the buildenv
+    module. Mostly likely any version 8.0 or later will
+    work, but it's always nice to have a recent version.
+
+    * autoconf
+    autoconf is used to generate the configure scripts.
+    (In turn, you may need version 1.4 of m4 to support autoconf)
+
+    * bash
+    It turns out to be most convenient to run autoconf via
+    bash because it looks for autoconf on your path, and
+    it works on both Unix and Windows.  This dependency
+    is in the buildenv/buildModule.tcl script.
+
+    * make/gmake
+    Apparently some platforms' "make" don't quite hack it,
+    so you might need to use gmake.
+
+    * Windows/cygwin.
+    To build on windows, you need the cygwin environment.
+    For help on that, please see
+    http://dev.scriptics.com/doc/tea/windows.html
+
+    * The right compiler.
+    We use gcc on most platforms, except for IRIX where
+    we couldn't quite get gcc to work, and on Windows
+    where we use the Microsoft VC compiler.  There is
+    work going on to use the "mingw" compiler on
+    Windows.  (There is no Macintosh build - wait for MacOS X)
+
+1)  Check out the sources:
+
+    The various modules are spread out across several
+    SourceForge Projects, and you might be splicing in
+    your own.  Use the TclProCheckout.tcl script as a template.
+    You'll need to edit that script to insert your own
+    Source Forge login.
+
+    Assume you have a cvs directory and you have already
+    done a checkout of the tclpro module.
+
+    cd ~/cvs
+    tclpro/TclProCheckout.tcl -user your_sf_login_name
+
+    now you should have a bunch more modules that will
+    be used by the build process, which you drive from
+    the tclpro module.
+
+    Later, if you want to update your sources to get changes by others,
+    do:
+    tclpro/TclProCheckout.tcl -update -user your_sf_login_name
+
+2)  Change directories to the tclpro module.
+
+    % cd tclpro
+
+    It is recommended that you create a subdirectory for your build so
+    that you can build for multiple platforms without running into
+    file conflicts:
+
+    % mkdir solaris-sparc
+    % cd solaris-sparc
+
+2)  The configure script locates the sources for all of the necessary
+    dependent modules (tcl, expat, etc.)  Run it to set up the build:
+
+    % ./configure <options>
+
+    or if you are building in a subdirectory (recommended):
+
+    % ../configure <options>
+
+    Here is what I use on Solaris:
+
+    sh ../configure --enable-gcc \
+	--with-protools=/usr/local/TclPro1.4
+
+    The protools directory is used to do things like
+    compile and wrap applications.  If you are building
+    TclPro for a new platform, try skipping this flag
+    and ignoring complaints about not finding "protclsh".
+
+    Note: there is also a --with--toolsdir flag
+    Originally we had a /tools directory with applications
+    like the Windows WISE installer and other GNU tools.
+    For now, just ignore this option as see how it goes.
+
+    Other options are explained later.
+
+3)  Run "make" to build the entire set of modules that were checked out.
+
+    % make
+
+    The output goes into the area specified by the --prefix and
+    --exec-prefix options.  By default, --prefix is the "out"
+    subdirectory of where you run the compile.  The --exec-prefix
+    is the out/<platform> directory.
+    Don't worry, you won't be installing into /usr/local or anything.
+
+    For TclPro production, we built on various platforms in parallel
+    and specified the same --prefix and platform-specifc --exec-prefix.
+    This arrangement is assumed by "make dist" and "make image"
+    described below.  So, I configure like this:
+
+sh ../configure --enable-gcc \
+	--with-flavor=Release \
+	--prefix=/export/home/bwelch/out/Release \
+	--exec-prefix=/export/home/bwelch/out/Release/solaris-sparc \
+	--with-protools=/usr/local/TclPro1.4
+    
+    The default build has debugging symbols.  For TclPro production
+    we'd build both sets.  So the debug configure would have been:
+
+
+sh ../configure --enable-gcc \
+	--prefix=/export/home/bwelch/out/Debug \
+	--exec-prefix=/export/home/bwelch/out/Debug/solaris-sparc \
+	--with-protools=/usr/local/TclPro1.4
+
+4) Making installers
+
+    When we did TclPro builds for the product, there were
+    three steps.  "make dist" copies the results of "make" on 
+    various builds on the different platforms.  This goes
+    according to a recipie in
+	tclpro/modules/install/src/parts.in
+    Then, a build on Windows to make the 
+    Windows installer.  Finally, a build (generally on Unix)
+    to assemble everything for the installers.
+
+    make dist
+    (on windows) make winimage
+    make image
+
+    Again, all these makes go from the tclpro/<platform>
+    directory.
+
+Build, Build, and Rebuild
+=========================
+
+Other makefile targets are:
+
+all (default target)
+	Build every module for the current platform.
+
+<module>-deps
+	Build the specified module including every submodule that it
+	depends on.  For example, "make itcl-deps" will build and install
+	tcl, tk, and itcl, in that order.
+
+<module>
+	Build the specified module only.  This assumes that you have
+	already built and installed every submodule.  If you haven't then
+	you will most likely get error messages during the configure stage
+	of the module.
+
+<module>-test
+	Test the specified module only.  If you want to add additional
+	arguments to be used with the test suite, you can set your TCLTESTARGS
+	environment variable to contain any additional test arguments.  For
+	example, to generate a verbose listing of the test results you could do
+	either of the following:
+
+	% TCLTESTARGS="-verbose pbs" ; export TCLTESTARGS
+	% make tclchecker-test
+	
+	or
+
+	% make tclchecker-test TCLTESTARGS="-verbose pbs"
+
+	Please note that in order for this to work, the Makefile for the
+	individual module must be written to accept this TCLTESTARGS setting.
+	Currently not all of the modules for Scriptics Connect support
+	this.
+
+test
+	Test every module for the current platform.  The comments in the
+	<module>-test target about using TCLTESTARGS to add additional test
+	arguments also applies to the test target.
+
+<module>-deplist
+	Print out the list of submodules that the specified module depends
+	on, in the order that they would be built.  For example,
+	"make scdebug-deplist" returns the string
+	"tcl tk tclparser cmdline tcldebugger tbcload projectInfo scdebug"
+
+<module>-clean
+	Runs "make clean" in the build directory for the specified module.
+	The effect of this is dependent on the implementation of the 'clean'
+	target for each individual module, but in general it will delete
+	all C object files, compiled .tbc files, and other generated code files.
+
+<module>-distclean
+	Runs "make distclean" in the build directory for the specified module.
+	The effect of this is dependent on the implementation of the 'distclean'
+	target for each individual module, but in general it will run
+	"make clean" and then delete the temporary configure files.  The
+	configure script is usually not deleted.
+
+<module>-clean
+	Deletes the build directory for the specified module.  This is the
+	brute-force approach to running "make distclean" in that it assures
+	that all files have been deleted and the next build should be fresh.
+
+module-deplist
+	Print out the list of all modules in the order they would be built
+	if you ran "make all"
+
+clean
+	Instructs you to use "make cleanall" instead.  Warns of the dire
+	results of using this command.
+
+cleanall
+	Deletes the build directory for the current platform.
+	
+distclean
+	Deletes the build directory and the configure files for the
+	current platform (config.*, configure, Makefile, tools/*)
+
+update
+	Runs "cvs update" for every module.  By default the current branch
+	is not changed.  If you want to move from one cvs code branch to
+	another, you can set your CVSUPARGS environment variable to contain
+	any additional cvs arguments.  For example, to move code that is
+	on the main branch to a development branch, you could do either
+	of the following:
+
+	% CVSUPARGS="-r scriptics-sc-1-0-branch" ; export CVSUPARGS
+	% make update
+	
+	or
+
+	% make update CVSUPARGS="-r scriptics-sc-1-0-branch"
+
+<module>-update
+	Runs "cvs update" for the specified module.  See also the notes on the
+	"make update" command for more info on using CVSUPARGS to change
+	code branches or add additional cvs flags.
+
+checkout
+	Check out/update the sources for all modules on all platforms.
+	This is useful when new modules have been added that you don't
+	yet have.
+
+Hints and Tips
+==============
+
+*   Other useful configure switches:
+
+    --with-flavor=Release|Debug
+	    Build the corresponding flavor of tclpro.  The Debug
+	    flavor builds everything with symbols and does not compile
+	    .tcl files into .tbc files.
+
+    --with-toolsdir=
+	    Use the tools in the specified directory.  Programs such as
+	    tclsh and wish are used from here.
+
+    --with-protools=
+	    Use the TclPro installation rooted at the specified directory.
+	    The build environment looks for prowrap and procomp in this
+	    location.
+
+*   To be safe, always reference the "configure" program with a relative or
+    absolute path.  This will prevent your shell from picking up another
+    program or script named "configure" from somewhere else on your path.
+
+*   Note to Windows users:  Use Cygnus style paths when running configure.
+    Cygnus "bash" will not behave properly if you use the "\" character,
+    and may not handle the z:/foo/bar notation correctly either.  Example:
+
+    % ./configure --with-tcldir=//z/cvs/lib
+
+*   When you run configure on Windows may see the following warning:
+
+    "not updating unwritable cache ./config.cache"
+
+    This means that you are running configure in the bash shell, not sh
+    as it was intended.  Make sure your c:/bin/sh is sh and not bash.
+
+*   Another Windows note:  Make sure the cygwin bin directory is at the
+    very start of your path, before /tools and before mks.  If it's not then
+    the configure script will start calling the wrong programs and generate
+    very non-intuitive results.
+
+*   If the configure script generates an error, and it's not obvious what
+    caused the error, try looking at the "config.log" file located in
+    the same directory where the configure script was run.  This file
+    contains a log of everything that happened during the configure and can
+    help track down some elusive errors.
+
+*   If you get an error on Windows about not being able to find
+    the sources, and the error lines run together, try creating a
+    subdirectory, cd into it, and run configure with a relative path
+    like:
+
+    % mkdir win
+    % cd win
+    % sh ../configure
+
+*   If you want to build a single module, including all of its dependent
+    modules, run "make <module>-deps".  This will run "make install"
+    on all of the dependent modules, and then "make install" on the
+    specified module.
+
+    % make tclexpat-deps
+
+*   This can get tedious if you're constantly rebuilding a module that
+    depends on Tcl; every time you rebuild, you have to wait for it to
+    run "make install-libraries" on Tcl, which can be time-consuming.
+    To avoid this, you can rebuild a single module without rebuilding
+    its dependencies.  To do this, run make on the module name only:
+
+    % make tclexpat
+
+*   To see the list of all modules in the order that they will
+    be built, run:
+
+    % make module-deplist
+
+*   The build environment for the tclpro module will try to build every
+    known module, even if some of the first modules did not build
+    completely.  This can result in a cascade of errors as it tries to
+    build, for example, tclexpat, even if the Tcl build failed.  This is
+    desired behaviour, since a small error in one module may not actually
+    have any effect on the rest of the build.
+
+    If you want to see the history of the build, I would suggest using
+    the "tee" program to log the output of the "make" command.  Using the
+    bash shell, you would say:
+
+    % make 2>&1 | tee make.log
+
+    csh/tcsh users should use:
+
+    % make |& tee make.log
+
+    This will fork the output from "make" to a file as well as to standard
+    output.  When the build is finished, you can search for the string
+    "error" in the log file to see where errors occurred.
+
+*   Make sure the directories tcl8.2, tk8.2, tclx8.2, itcl3.1.0, and
+    expect5.31.3 exist, even if they are just links to the actual source
+    directories.  The installer needs the version numbers in the directory name
+    (for now)
+
+*   Building a Debug and Release version of tclpro and all of the
+    modules on 3 platforms, including an installable image, will require
+    roughly 1 Gb of disk space.

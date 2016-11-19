@@ -1,0 +1,29 @@
+AC_INIT(scicons.rc)
+
+AC_PROG_INSTALL
+
+PACKAGE=icons
+VERSION=
+
+AC_SUBST(PACKAGE)
+AC_SUBST(VERSION)
+
+#--------------------------------------------------------------------
+# "cygpath" is used on windows to generate native path names for include
+# files.
+# These variables should only be used with the compiler and linker since
+# they generate native path names.
+#
+# Unix tclConfig.sh points SRC_DIR at the top-level directory of
+# the Tcl sources, while the Windows tclConfig.sh points SRC_DIR at
+# the win subdirectory.  Hence the different usages of SRC_DIR below.
+#
+# This must be done before calling SC_PUBLIC_TCL_HEADERS
+#--------------------------------------------------------------------
+
+SC_SET_PLATFORM
+
+AC_SUBST(CYGPATH)
+
+AC_OUTPUT([Makefile],
+	chmod +x ${srcdir}/install-sh ${srcdir}/mkinstalldirs)

@@ -1,0 +1,98 @@
+[lpage::head Documentation "License Server Installation Notes"]
+<p>
+Ajuba Solutions License Server should be installed and run on a server
+machine because it must be accessible for TclPro products to work
+with shared network license keys.
+Once running, you administer the server using a Web Browser,
+and applications also contact the server using the HTTP protocol.
+<p>
+Normally Ajuba Solutions License Server
+is started from scripts under /etc when the machine
+boots up.  These scripts are created by the normal installation
+process if you install as root.  Otherwise, a file named
+prolserver.boot is created in your installation directory and
+your system administrator must install this into the proper location.
+<p>
+The listening port for the server is probably not the standard
+port for web servers, so you must specify a URL that
+includes the port number when accessing the server:
+<pre>
+http://<i>hostname</i>:<i>port</i>/
+</pre>
+This is the URL for this server:
+<pre>
+<a href='http://$Httpd(name):$Httpd(port)/'>http://$Httpd(name):$Httpd(port)/</a>
+</pre>
+
+<h3>Files and Installation</h3>
+The <b>prolserver</b> application is a stand-alone application that
+does not depend on the TclPro installation.  This means you can
+install it on a different host than the file server that contains
+the rest of the TclPro software.
+<p>
+The installation of Ajuba Solutions License server creates a number
+of files.  These are explained below, although they should
+be created automatically during a successful installation.
+
+<dl>
+<dt>/etc/init.d/prolserver
+<dd>
+This script is only created if you install the server while
+running as the root user.
+This is a shell script that starts the server when the
+machine boots.
+You can use run this script with the "start" or "stop" argument
+to start or stop the server.
+This may actually be in a slightly
+different location depending on your operating system
+(e.g., /etc/init.d, /etc/rc.d/init.d, or /sbin/init.d.)
+There are also symbolic links to this file from the peer rc2.d and rc0.d
+directories that are actually the files that cause the
+server to start during boot and halt when the machine shuts down.
+The exact configuration of links varies depending on the operating system.
+
+<dt>/etc/prolserver.boot
+<dd>
+This script is only created if you do not install the server as root.
+This is a copy of the script that needs to be installed under
+/etc/init.d in order to automatically launch the server when the
+machine boots up.  The exact location depends on the operating
+system.  Consult your system administrator for help when copying
+this into the correct location.
+
+<dt>&lt;installDir&gt;/prolserver
+<dd>
+This is the application program.  This is a stand-alone application
+that does not depend on the other TclPro software.
+
+<dt>&lt;installDir&gt;/prolserver.conf
+<dd>
+This is the main configuration file.  This file captures the
+installation settings for your server.  Changes to this file take
+place when you restart the server.
+
+<dt>&lt;installDir&gt;/prolserver.state
+<dd>
+This is a state checkpoint file.  This file is tamper-resistant so
+you should not edit this file.  Doing so will cause you to lose the
+state of active licenses, administrator passwords, and 
+notification email addresses.
+
+<dt>&lt;installDir&gt;/prolserver.pid
+<dd>
+This file records the process ID of Ajuba Solutions License Server so
+it can be shutdown.
+
+<dt>&lt;logDir&gt;/prolserver.$Httpd(port).log
+<dd>
+This is the log file for the server.  This keeps weekly, daily,
+and current usage statistics.  It is compacted automatically so
+it should not get too large.  Each day at midnight the
+records about the
+current usage are collected into one daily record, and
+each week records about daily usage are collected into
+one weekly record.  Restarting the server does not truncate
+this log.
+</dl>
+
+[lpage::footer]

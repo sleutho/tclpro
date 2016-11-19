@@ -1,0 +1,34 @@
+# Site configuration for the license server HTML interface
+
+# lmgr::site contains lists that define the site structure
+
+namespace eval lpage {
+    variable site
+
+    set site(sections)	{
+	/index.tml		Home	
+	/admin/index.tml	"Administration"
+	/reports/index.tml	"Reports"
+	/doc/index.tml		"Documentation"	
+	/ajuba.tml		"Ajuba Solutions"	
+    }
+    set site(Administration) {
+	/admin/license.tml	"Manage Licenses"
+	/admin/revoke.tml	"Revoke Licenses"
+	/admin/email.tml	"Email"
+	/admin/dateformat.tml	"Date Format"
+	/admin/password.tml	"Passwords"
+    }
+    set site(Reports) {
+	/reports/users.tml	"Current Users"
+	/reports/daily.tml	"Daily Usage"
+	/reports/weekly.tml	"Weekly Usage"
+	/srvr/logview		"Debug Log"
+    }
+    set site(Documentation) {
+	/doc/general.tml	"Introduction"
+	/doc/install.tml	"Installation Notes"
+    }
+
+}
+

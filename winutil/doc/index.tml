@@ -1,0 +1,111 @@
+[InternalPage "dbgext" stanton]
+
+Author: Scott Stanton<br>
+Created: 3/31/2000<br>
+Modified: 3/31/2000<br>
+Usage: For internal use only<br>
+Called by: tcldebugger, appFramework<br>
+Depends on: tcl, tk
+
+<h3>Overview</h3>
+The <i>dbgext</i> package is a collection of small utility functions
+used by the tcldebugger and appFramework modules on the Windows
+platform.  It provides four commands: <code>kill</code>,
+<code>winHelp</code>, <code>shortname</code>, and <code>start</code>.
+
+<h3>Commands</h3>
+
+<p>
+<code>
+package require dbgext 1.0
+</code>
+
+<dl>
+<dt><code><b>kill</b> <i>pid</i></code>
+<dd>
+Kill a running process.
+<br>
+<br>
+Does the following:
+<ul>
+<li>Opens the process handle associated with a process id.
+<li>Calls TerminateProcess on the process handle.
+<li>Closes the process handle and returns.
+</ul>
+<p>
+Arguments:
+<dl>
+<dt>pid<dd>The process id of the process to terminate.  This is a
+standard Windows <i>dwProcessId</i> value.
+</dl>
+
+<p>Result:
+None.  If the <i>pid</i> is not a valid process identifier, then an
+"invalid pid" error is returned.
+<p>
+</dl>
+
+<dl>
+<dt><code><b>winHelp</b> <i>path</i> ?<i>section</i>?</code>
+<dd>
+Launch the Windows help application (winhelp.exe) and display an entry
+in the specified help file.
+<p>
+Arguments: <br>
+<dl>
+<dt>path<dd>The file path to a Windows .HLP file.
+<dt>section<dd>Specifies the Windows context identifier for the help
+topic to display.  Must be an integer value.  If not specified, then
+the Help Topics dialog box is opened instead of a specific topic.
+</dl>
+<p>
+Result:<br>
+None.
+</dl>
+
+<p>
+<dl>
+<dt><code><b>shortname</b> <i>path</i></code>
+<dd>
+Computes the short name of a Windows path name.  The resulting name is
+guaranteed to be a DOS 8.3 filename.
+<br>
+<p>
+Arguments: <br>
+<dl>
+<dt>path<dd>A Windows file path.
+</dl>
+<p>
+Result:<br>
+Returns the short form of <i>path</i>.  May return a Windows error
+message if the conversion fails.
+</dl>
+
+<p>
+<dl>
+<dt><code><b>start</b> <i>executable cmdargs startdir</i></code>
+<dd>
+Invokes an external program using the same mechanism as the Windows
+"Start Menu".  Calls ShellExecuteEx with the specified program and
+arguments. This command can be used to open files based on their
+extension by simply invoking the name of the file as the executable
+argument.
+<br>
+<p>
+Arguments: <br>
+<dl>
+<dt>executable<dd>The name of the file to execute.  May be any file
+type, not just .exe or .com.
+<dt>cmdargs<dd>The remainder of the command line to pass to the
+external program.  This is a Windows argument list, not a Tcl list,
+and therefore follows the normal Windows command line argument quoting
+rules.
+<dt>startdir<dd>The current working directory of the new program.
+</dl>
+<p>
+Result:<br>
+Returns a Windows error message if the ShellExecuteEx fails, otherwise
+returns nothing.
+</dl>
+
+[InternalFooter]

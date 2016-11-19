@@ -1,0 +1,116 @@
+/*
+ * Resource file for the statically linked TclPro wish executable.
+ * Contains the VS_VERSION_INFO resource, main icon, and Tk resources.
+ *
+ * Copyright (c) 1998-1999 by Scriptics Corporation. 
+ * All rights reserved.
+ *
+ */
+
+#define RESOURCE_INCLUDED
+#include "tcl.h"
+
+/*
+ * Icon
+ */
+
+/*
+ * Icon with lowest ID value placed first to ensure application icon
+ * remains consistent on all systems.
+ */
+
+TCLPRO_ICON	ICON	DISCARDABLE	"rc/sampleAppWish.ico"
+
+#ifdef TK_BASE
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+BUTTONS                 BITMAP  DISCARDABLE     "../../src/tk8.2b2/win/rc/buttons.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Cursor
+//
+X_CURSOR                CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor00.cur"
+ARROW                   CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor02.cur"
+BASED_ARROW_DOWN        CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor04.cur"
+BASED_ARROW_UP          CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor06.cur"
+BOAT                    CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor08.cur"
+BOGOSITY                CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor0a.cur"
+BOTTOM_LEFT_CORNER      CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor0c.cur"
+BOTTOM_RIGHT_CORNER     CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor0e.cur"
+BOTTOM_SIDE             CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor10.cur"
+BOTTOM_TEE              CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor12.cur"
+BOX_SPIRAL              CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor14.cur"
+CENTER_PTR              CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor16.cur"
+CIRCLE                  CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor18.cur"
+CLOCK                   CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor1a.cur"
+COFFEE_MUG              CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor1c.cur"
+CROSS                   CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor1e.cur"
+CROSS_REVERSE           CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor20.cur"
+CROSSHAIR               CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor22.cur"
+DIAMOND_CROSS           CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor24.cur"
+DOT                     CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor26.cur"
+DOTBOX                  CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor28.cur"
+DOUBLE_ARROW            CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor2a.cur"
+DRAFT_LARGE             CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor2c.cur"
+DRAFT_SMALL             CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor2e.cur"
+DRAPED_BOX              CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor30.cur"
+EXCHANGE                CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor32.cur"
+FLEUR                   CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor34.cur"
+GOBBLER                 CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor36.cur"
+GUMBY                   CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor38.cur"
+HAND1                   CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor3a.cur"
+HAND2                   CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor3c.cur"
+HEART                   CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor3e.cur"
+ICON                    CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor40.cur"
+IRON_CROSS              CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor42.cur"
+LEFT_PTR                CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor44.cur"
+LEFT_SIDE               CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor46.cur"
+LEFT_TEE                CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor48.cur"
+LEFTBUTTON              CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor4a.cur"
+LL_ANGLE                CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor4c.cur"
+LR_ANGLE                CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor4e.cur"
+MAN                     CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor50.cur"
+MIDDLEBUTTON            CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor52.cur"
+MOUSE                   CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor54.cur"
+PENCIL                  CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor56.cur"
+PIRATE                  CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor58.cur"
+PLUS                    CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor5a.cur"
+QUESTION_ARROW          CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor5c.cur"
+RIGHT_PTR               CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor5e.cur"
+RIGHT_SIDE              CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor60.cur"
+RIGHT_TEE               CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor62.cur"
+RIGHTBUTTON             CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor64.cur"
+RTL_LOGO                CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor66.cur"
+SAILBOAT                CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor68.cur"
+SB_DOWN_ARROW           CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor6a.cur"
+SB_H_DOUBLE_ARROW       CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor6c.cur"
+SB_LEFT_ARROW           CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor6e.cur"
+SB_RIGHT_ARROW          CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor70.cur"
+SB_UP_ARROW             CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor72.cur"
+SB_V_DOUBLE_ARROW       CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor74.cur"
+SHUTTLE                 CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor76.cur"
+SIZING                  CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor78.cur"
+SPIDER                  CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor7a.cur"
+SPRAYCAN                CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor7c.cur"
+STAR                    CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor7e.cur"
+TARGET                  CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor80.cur"
+TCROSS                  CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor82.cur"
+TOP_LEFT_ARROW          CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor84.cur"
+TOP_LEFT_CORNER         CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor86.cur"
+TOP_RIGHT_CORNER        CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor88.cur"
+TOP_SIDE                CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor8a.cur"
+TOP_TEE                 CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor8c.cur"
+TREK                    CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor8e.cur"
+UL_ANGLE                CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor90.cur"
+UMBRELLA                CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor92.cur"
+UR_ANGLE                CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor94.cur"
+WATCH                   CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor96.cur"
+XTERM                   CURSOR  DISCARDABLE     "../../src/tk8.2b2/win/rc/cursor98.cur"
+
+#endif /* TK_BASE */
+

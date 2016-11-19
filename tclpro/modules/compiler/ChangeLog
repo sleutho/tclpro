@@ -1,0 +1,29 @@
+2001-2-8  Brent Welch <welch@ajubasolutions.com>
+
+	* procomp.tcl: Changed printCopyright to false.
+	Changed -nologo to -logo for cmdline arg.
+
+2001-1-30  Brent Welch <welch@ajubasolutions.com>
+
+	* Makefile.in: Eliminated use of .tbc files.
+
+2000-8-24  Brent Welch <welch@ajubasolutions.com>
+
+	* src/procomp.tcl:
+	Made printing the copyright the default.
+
+2000-8-07  Brent Welch <welch@ajubasolutions.com>
+
+	* doc/procomp.1:
+	Added the man page.
+
+2000-7-19  Brent Welch <welch@ajubasolutions.com>
+
+	* Makefile.in - Added make rules for procomp.tbc
+	* configure.in - Fixed WRAPPER_SCRIPT
+	* startup.tcl - Overhauled the way it finds procomp.tcl or procomp.tbc
+	* procomp.tcl - Fixed use of "version" module to be projectInfo
+
+2000-7-18  Brent Welch <welch@ajubasolutions.com>
+
+	* Initial working version for TclPro 1.4

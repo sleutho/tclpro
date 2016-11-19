@@ -1,0 +1,16 @@
+These are a few examples that use Unix Makefiles
+to organize some simple applications:
+
+App1
+
+A single Tcl file that is compiled and wrapped.
+
+App2
+
+A simple C program that embeds a Tcl interpreter.
+
+App3
+
+A C++ application that extends [incr Tcl] by providing a Stack class implementation in C++.
+It creates a custom shell with this extention, and then wraps up a script that
+uses the extension.

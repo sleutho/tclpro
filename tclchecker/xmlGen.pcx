@@ -1,0 +1,138 @@
+# xmlGen.pcx --
+#
+#	This file implements the TclPro Checker extension for the XML
+#	Generation API.
+#
+# Copyright (c) 1999-2000 Ajuba Solutions
+# All rights reserved.
+# 
+# RCS: @(#) $Id: xmlGen.pcx,v 1.12 2000/05/30 22:28:58 wart Exp $
+
+package require checker
+package provide xmlGen 1.0
+
+checker::register xmlGen 1.0
+set configure::verTable(xmlGen,1.0) $::projectInfo::baseTclVers
+
+package require analyzer 1.0
+namespace import -force ::analyzer::*
+
+namespace eval xmlGen {
+
+    # aliasCmds --
+    # Define the set of commands that are created as aliases of the
+    # corresponding xmlgen::* commands.
+    
+    variable aliasCmds {
+	startDocument endDocument startElement endElement element
+	text rawText
+    }
+
+    # scanCmdsX.X --
+    # Define the set of commands that need to be recuresed into when 
+    # generating a list of user defiend procs, namespace and Class 
+    # contexts and procedure name resolutions info.
+
+    variable scanCmds1.0 {
+	element-TPC-SCAN		1		
+	xmlgen::element-TPC-SCAN	1		
+    }
+
+    # Define the set of command-specific checkers used by this package.
+
+    variable checkers1.0 {
+	startDocument		{checkSimpleArgs 0 -1 {{checkSwitches 1 {
+		{-name {checkWord}}
+		{-channel {checkWord}}
+		{-variable {checkVarName}}
+		{-noprolog {}}
+		{-pretty {}}
+	    } {}}}}
+	endDocument		{checkSimpleArgs 1 1 checkWord}
+	startElement		{checkSimpleArgs 2 3 {
+	    checkWord checkWord checkList}}
+	endElement		{checkSimpleArgs 1 2 checkWord}
+	element		{checkSimpleArgs 2 4 {
+	    checkWord checkWord checkList checkBody}}
+	text		{checkSimpleArgs 2 4 {
+	    checkWord checkWord checkList checkWord}}
+	rawText		{checkSimpleArgs 2 2 checkWord}
+    }
+}
+
+proc ::xmlGen::init {ver} {
+
+    foreach name [lsort [info vars ::xmlGen::scanCmds*]] {
+	analyzer::addScanCmds [set $name]
+	if {$name == "::xmlGen::scanCmds$ver"} {
+	    break
+	}
+    }
+    foreach name [lsort [info vars ::xmlGen::checkers*]] {
+	analyzer::addCheckers [set $name]
+	if {$name == "::xmlGen::checkers$ver"} {
+	    break
+	}
+    }
+
+    # messages --
+    # Define the set of message types and their human-readable translations. 
+
+    variable messages
+    array set messages {
+    }
+
+    # Add aliased checkers.
+    # Alias the standard xmlgen::* commands so the namespace qualifier 
+    # appears in the command name.
+
+    set aliases {}
+    foreach name $::xmlGen::aliasCmds {
+	if {[analyzer::topChecker $name] != {}} {
+	    lappend aliases xmlgen::$name [analyzer::topChecker $name]
+	}
+    }
+    analyzer::addCheckers $aliases
+}
+
+# xmlGen::getMessage --
+#
+#	Convert the message type into a human readable
+#	string.  
+#
+# Arguments:
+#	mid	The messageID to look up.
+#
+# Results:
+#	Return the message string or empty string if the
+#	message type is undefined.
+
+proc xmlGen::getMessage {mid} {
+    variable messages
+
+    if {[info exists messages($mid)]} {
+	return [lindex $messages($mid) 0]
+    } else {
+	return $mid
+    }
+}
+
+# xmlGen::getTypes --
+#
+#	Convert the message id into a list of message types.
+#
+# Arguments:
+#	mid	The messageID to look up.
+#
+# Results:
+#	Return the list of message type keywords.
+
+proc xmlGen::getTypes {mid} {
+    variable messages
+
+    if {[info exists messages($mid)]} {
+	return [lrange $messages($mid) 1 end]
+    } else {
+	return err
+    }
+}

@@ -1,0 +1,65 @@
+[lpage::head Home "Set Initial Configuration"]
+<p>
+[lserver::checksetup /index.tml ] 
+<p>
+Welcome!
+<form action=/srvr/setup method=post>
+<p>
+Please enter the information requested below in order
+to complete the installation of the Ajuba Solutions License Server.
+
+<p>
+<font color=red>[ncgi::value msg]</font>
+
+<h3>Company Name</h3>
+Please personalize this server for your company.
+Your company name will appear on the main page of the license
+server web interface.  This name will also be displayed
+by programs that get licenses from this server.
+<table>
+[html::textInputRow "Company Name" org size=30]
+</table>
+<p>
+<h3>Password</h3>
+The password is used to protect access to the administrative pages
+used to manage the license server.  
+<table>
+[html::textInputRow "User Name" name]
+[html::passwordInputRow "New Password" password1]
+[html::passwordInputRow "Repeat Password" password2]
+</table>
+<h3>Email Notifications</h3>
+<p>
+The license server will send email messages to the site administrator
+that contain usage reports as well as problem notifications.
+You can tune the messages you recieve in the Administration Preferences
+section of the web site.
+<br>
+Email Address: <input type=text [html::formValue email] size=30>
+<p>
+The license server can optionally send email messages to Ajuba Solutions
+that contain summary reports as well as problem notifications.
+<br>
+OK to email Ajuba Solutions:
+[ncgi::setDefaultValue ajuba 1]
+[html::checkbox ajuba 1]
+<!--
+[if {[string length [ncgi::value msg]]} {
+    # This is a redirect back to this page
+    html::checkbox ajuba 1
+} else {
+    # First visit to this page
+    set _ "<input type=checkbox name=ajuba value=1 CHECKED>"
+}]
+ -->
+<p>
+<h3>Complete Setup</h3>
+Press the Complete Setup button to complete the initial setup.
+The next page will give you an opportunity to enter your first
+license key.
+<p>
+<input type=submit value="Complete Setup">
+</form>
+
+
+[lpage::footer]

@@ -1,0 +1,21 @@
+With the acquisition of Scriptics/Ajuba by Interwoven the
+TclPro product line has been discontinued and moved into
+the open source community.
+
+The files in this directory require license keys in order to
+use the development tools (e.g, TclPro Debugger, TclPro Checker,
+TclPro Compiler, and TclPro Wrapper).  Here are keys for
+different versions.
+
+TclPro		(Tcl/Tk)	Key
+1.2		8.0.5		1K14-2207-0H34-1U24-R8ZJ
+1.3		8.2.0		1V45-2209-1G37-1U35-R8Y6
+1.4.1		8.3.2		1094-320C-1G38-2U24-P8YY
+
+
+If you run the TclPro network license server, the keys are different:
+
+TclPro		Key for 10 seats
+1.2		2N06-0H35-04U2-5R8Y-X2H0
+1.3		2M09-1H27-04V2-5P9Z-188S
+1.4.1		2M1C-1H28-34U3-4P8Z-DRG2

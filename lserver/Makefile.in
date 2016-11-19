@@ -1,0 +1,191 @@
+# Makefile.in --
+#
+#	This file is a Makefile for the License Server
+#
+# Copyright (c) 1999-2000 Ajuba Solutions
+#
+# See the file "license.terms" for information on usage and redistribution
+# of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+#
+# RCS: @(#) $Id: Makefile.in,v 1.5 2000/08/29 00:06:14 welch Exp $
+
+PROG = prolserver$(BIN_EXEEXT)
+
+TCL_FILES = audit.tcl \
+	startup.tcl \
+	lserver.tcl \
+	install.tcl \
+	page.tcl \
+	pkgIndex.tcl
+
+TBC_FILES = audit.tbc \
+	startup.tbc \
+	lserver.tbc \
+	install.tbc \
+	page.tbc \
+	pkgIndex.tcl
+
+# FILES is configured as TCL_FILES or TBC_FILES
+FILES = @FILES@
+STARTUP_FILE = @STARTUP_FILE@
+STARTUP_TBC = startup.tbc
+STARTUP_TCL = startup.tcl
+
+#========================================================================
+# Nothing of the variables below this line need to be changed.
+#========================================================================
+
+SHELL = @SHELL@
+EXEEXT	= @EXEEXT@
+
+# No .bin - no shell wrappers
+#BIN_EXEEXT = @BIN_EXEEXT@
+BIN_EXEEXT = 
+
+TCLSH_PROG = @TCLSH_PROG@
+
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+libdir = @libdir@
+
+top_builddir = .
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+
+PACKAGE = @PACKAGE@
+VERSION = @VERSION@
+TCLSH = @TCLSH@
+PROWRAP = @PROWRAP@
+PROCOMP = @PROCOMP@ -nologo
+AUTOCONF = autoconf
+CYGPATH=@CYGPATH@
+mkinstalldirs = $(SHELL) $(top_srcdir)/config/mkinstalldirs
+
+
+#========================================================================
+# TEA TARGETS.  Please note that the "libraries:" target refers to platform
+# independent files, and the "binaries:" target inclues executable programs and
+# platform-dependent libraries.  Modify these targets so that they install
+# the various pieces of your package.  The make and install rules
+# for the BINARIES that you specified above have already been done.
+#========================================================================
+
+BINARIES = $(PROG)
+
+all: binaries libraries
+
+binaries: $(BINARIES)
+
+libraries:
+
+doc:
+
+install: install-binaries
+
+test:
+	TCL_LIBRARY=$(TCL_LIBRARY_DIR) \
+	LD_LIBRARY_PATH=$(BUILD_DIR):$(TCL_BIN_DIR):$(LD_LIBRARY_PATH) \
+	PATH="$(BUILD_DIR)":"$(TCL_BIN_DIR)":"$(PATH)" \
+	$(TCLSH_PROG) `@CYGPATH@ $(srcdir)/tests/all.tcl` \
+		-exedir `@CYGPATH@ $(bindir)` $(TCLTESTARGS)
+
+depend:
+
+#========================================================================
+# VI macro to replace "foo.tcl" with the PROCOMP rule below
+#
+#:s,^\(.*\).tcl$,\1.tbc : $(srcdir)/src/\1.tcl
+#	$(PROCOMP) -out \1.tbc `@CYGPATH@ $(srcdir)/src/\1.tcl`,
+#
+#:s,^\(.*\).tcl$,\1.tcl : $(srcdir)/src/\1.tcl
+#	cp $(srcdir)/src/\1.tcl \1.tcl
+#========================================================================
+
+audit.tcl : $(srcdir)/src/audit.tcl
+	cp $(srcdir)/src/audit.tcl audit.tcl
+startup.tcl : $(srcdir)/src/startup.tcl
+	cp $(srcdir)/src/startup.tcl startup.tcl
+lserver.tcl : $(srcdir)/src/lserver.tcl
+	cp $(srcdir)/src/lserver.tcl lserver.tcl
+install.tcl : $(srcdir)/src/install.tcl
+	cp $(srcdir)/src/install.tcl install.tcl
+page.tcl : $(srcdir)/src/page.tcl
+	cp $(srcdir)/src/page.tcl page.tcl
+pkgIndex.tcl : $(srcdir)/src/pkgIndex.tcl
+	cp $(srcdir)/src/pkgIndex.tcl pkgIndex.tcl
+
+audit.tbc : $(srcdir)/src/audit.tcl
+	$(PROCOMP) -out audit.tbc `@CYGPATH@ $(srcdir)/src/audit.tcl`
+startup.tbc : $(srcdir)/src/startup.tcl
+	$(PROCOMP) -out startup.tbc `@CYGPATH@ $(srcdir)/src/startup.tcl`
+lserver.tbc : $(srcdir)/src/lserver.tcl
+	$(PROCOMP) -out lserver.tbc `@CYGPATH@ $(srcdir)/src/lserver.tcl`
+install.tbc : $(srcdir)/src/install.tcl
+	$(PROCOMP) -out install.tbc `@CYGPATH@ $(srcdir)/src/install.tcl`
+page.tbc : $(srcdir)/src/page.tcl
+	$(PROCOMP) -out page.tbc `@CYGPATH@ $(srcdir)/src/page.tcl`
+
+$(PROG): $(FILES)
+	SRCS_NATIVE=`for i in $(FILES); do \
+	    $(CYGPATH) $$i; \
+	done`; \
+	PREFIX_NATIVE=`$(CYGPATH) $(prefix)`; \
+	SRC_DIR_NATIVE=`$(CYGPATH) $(srcdir)`; \
+	$(PROWRAP) -nologo \
+		-uses "bigtclsh-lite" \
+		-out $@ \
+		-verbose \
+		-startup $(STARTUP_FILE) \
+		$$SRCS_NATIVE \
+		-relativeto $$SRC_DIR_NATIVE \
+		$$SRC_DIR_NATIVE/htdocs/* \
+		$$SRC_DIR_NATIVE/htdocs/images/* \
+		$$SRC_DIR_NATIVE/htdocs/admin/* \
+		$$SRC_DIR_NATIVE/htdocs/admin/.tclaccess \
+		$$SRC_DIR_NATIVE/htdocs/doc/* \
+		$$SRC_DIR_NATIVE/htdocs/reports/* \
+		$$SRC_DIR_NATIVE/htdocs/.tml \
+		$$SRC_DIR_NATIVE/templates/* \
+		-relativeto $$PREFIX_NATIVE \
+		$$PREFIX_NATIVE/lib/projectInfo*/projectInfo.tcl \
+		$$PREFIX_NATIVE/lib/projectInfo*/pkgIndex.tcl \
+		$$PREFIX_NATIVE/lib/license*/* \
+		$$PREFIX_NATIVE/lib/tclhttpd*/*
+
+install-binaries: installdirs $(BINARIES)
+	@for i in $(BINARIES); do \
+		echo Installing $$i in $(bindir); \
+		$(INSTALL_PROGRAM) $$i $(bindir); \
+	done
+
+installdirs:
+	$(mkinstalldirs) $(pkglibdir)
+
+clean:  
+	-test -z "$(BINARIES)" || rm -f $(BINARIES)
+	-rm -f *.o core *.core
+	-rm -f *.$(OBJEXT)
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
+
+distclean: clean
+	-rm -f *.tab.c
+	-rm -f Makefile $(CONFIG_CLEAN_FILES)
+	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+	-rm -f config.status
+
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
+	cd $(top_builddir) \
+	  && CONFIG_FILES=$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+.PHONY: all binaries clean depend distclean doc install installdirs \
+libraries test
+
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:

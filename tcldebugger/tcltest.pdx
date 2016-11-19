@@ -1,0 +1,23 @@
+# tcltest.pdx --
+#
+#	This file implements custom instrumenter extensions
+#	for the tcltest package.
+#
+# Copyright (c) 1998-2000 Ajuba Solutions
+# All rights reserved.
+#
+# RCS: @(#) $Id: tcltest.pdx,v 1.4 2000/05/30 22:54:53 hershey Exp $
+
+# Register the tcltest extension
+
+instrument::addExtension 2.0 {parseTest}
+
+namespace eval parseTest {
+}
+
+# Register handlers for each of the tcltest commands
+
+instrument::addCommand test		{parseTail 4 {
+		       parseWord parseBody parseWord}}
+instrument::addCommand tcltest::test	{parseTail 4 {
+		       parseWord parseBody parseWord}}

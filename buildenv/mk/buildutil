@@ -1,0 +1,10 @@
+# -*- tcl -*-
+
+module buildutil {
+    version		1.0
+    configure.loc	{} .
+    configure.with	\
+	    {}		"--with-wrap-sh=pro_wrap.sh"	\
+	    win32-ix86	"--with-wrap-sh="
+    testsuite	tests
+}

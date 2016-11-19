@@ -1,0 +1,60 @@
+2001-2-8  Brent Welch <welch@ajubasolutions.com>
+
+	* prowrap.tcl: Changed printCopyright to false.
+	Changed -nologo to -logo.
+
+2001-1-30  Brent Welch <welch@ajubasolutions.com>
+
+	* Makefile.in: Eliminated use of .tbc files.
+
+2000-8-24  Brent Welch <welch@ajubasolutions.com>
+
+	* src/prowrap.tcl:
+	Made printing the copyright the default.
+
+2000-8-07  Brent Welch <welch@ajubasolutions.com>
+
+	* doc/prowrapper.1:
+	Added the man page.
+
+2000-8-03  Brent Welch <welch@ajubasolutions.com>
+
+	* src/startup.tcl:
+	Restored proper formatting of error messages.
+	Added hook so the license is required to run.
+
+2000-7-25  Brent Welch <welch@ajubasolutions.com>
+
+	* Changed search path for boot wrapper to look for
+	the shell built in the proshells module instead
+	of the one built (wrongly) in the tclwrapper module.
+
+2000-7-22  Brent Welch <welch@ajubasolutions.com>
+
+	* Factored out the Demo files for Tk and Iwidgets,
+	and the help files for TclX and TkX into separate
+	modules as known by the prowrapUses.tcl file.
+	Introduced the bigwish-lite and bigtclsh-lite
+	uses file that leave these modules out.
+
+2000-7-14  Brent Welch <welch@ajubasolutions.com>
+
+	* src/prowrap.tcl: Added -debug flag and worked around
+	windows bugs in file join and empty pathnames.
+
+2000-7-12  Brent Welch <welch@ajubasolutions.com>
+
+	* prowrapUses.tcl: Changed the "load" procedure to allow loading of
+	packages that are alread statically loaded. 
+
+2000-7-11  Brent Welch <welch@ajubasolutions.com>
+
+	* configure/Make: Changed build so that we can bootstrap the
+	prowrap application from the prowrap14U shell.
+	* src/prowrap.tcl: Added use of "file nativename" in several
+	places to help ensure compatible file name comparisions between
+	examples like z:/cvs/pro1.4 and z:\cvs\pro1.4
+
+2000-6-22  Brent Welch <welch@ajubasolutions.com>
+
+	* Initial working version for TclPro 1.4

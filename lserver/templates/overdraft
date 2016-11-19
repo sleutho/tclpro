@@ -1,0 +1,26 @@
+Overdraft Status Warning
+
+At $info(date), $info(time) there were already $info(N) users using
+$info(name), and your license is for $info(max) users.
+
+However, based on Ajuba Solutions overdraft policy,
+Ajuba Solutions License Server has issued an overdraft license to allow
+$info(user) at $info(host) to use $info(app) anyway.
+
+Please make sure you have enough licenses for all of your users.
+Ajuba Solutions provides you with an overdraft buffer to help you ensure
+that your users can always access TclPro when they need it,
+even when you are over your license limit.
+
+There are $info(overdraft) overdraft days left before the server begins
+denying requests for licenses.  Each day a user causes the server
+to enter overdraft status uses one day from a total of 10 days allotted.
+Any number of users can use overdraft licenses on a single overdraft day.
+
+Please contact sales@ajubasolutions.com for more information and to
+purchase additional licenses.
+
+This message was sent automatically from
+Ajuba Solutions License Server.  To remove yourself
+from its mailing list, please visit
+http://$Httpd(name):$Httpd(port)/admin/preferences.tml

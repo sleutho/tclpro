@@ -1,0 +1,5 @@
+[autorun]
+open = SETUP.EXE
+icon = TCLPRO.ICO
+shell\setup = &Setup
+shell\setup\command = SETUP.EXE

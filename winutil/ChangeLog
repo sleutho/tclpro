@@ -1,0 +1,18 @@
+2001-03-14  Karl Lehenbauer <karl@procplace.com>
+
+	* mkIndex.tcl.in: Altered Nativepath proc to work correctly with 
+	  new Cygwin drive specification syntax when running on Windows.
+	  (Was //d/foo -> D:/foo   Now also /cygdrive/d/foo -> D:/foo)
+
+2000-07-25  Brent Welch  <welch@ajubasolutions.com>
+
+	* configure.in, Makefile.in - fixes for static builds
+
+2000-04-03  Scott Stanton  <stanton@scriptics.com>
+
+	* doc/index.tml: Added documentation for dbgext package.
+
+	* dbgext.c: Changed to return TCL_ERROR instead of calling abort()
+	if stub initialization fails.  Changed StartObjCmd to return
+	nothing on success instead of returning the hProcess, which is of
+	no use.  Fixed handle leaks in KillObjCmd and StartObjCmd.

@@ -1,0 +1,214 @@
+# boot83.uses --
+#
+#	This file returns the command line parameters to prowrap
+#	to create a:
+#
+#		TclPro Tcl Shell - Statically Linked
+# THIS ONE USED ONLY WHEN WRAPPING PROWRAP!!
+#
+# Copyright (c) 1998-1999 by Scriptics Corporation.
+# Copyright (c) 2000 by Ajuba Solutions.
+# All rights reserved.
+#
+# RCS: @(#) $Id: boot83.uses.in,v 1.2 2000/07/12 08:41:47 welch Exp $
+
+set path [file join {@SRCDIR_NATIVE@} lib prowrapUses.tcl]
+puts stderr "boot83 looking for $path"
+source $path
+
+### OVERRIDE existing settings.
+
+namespace eval prowrapUses {
+
+    set relTo {@PREFIX_NATIVE@}
+
+    variable WRAP_TCL		wraptclsh83
+    variable WRAP_TK		wrapwish83
+    variable WRAP_BIG_TCL	wrapbigtclsh83
+    variable WRAP_BIG_TK	wrapbigwish83
+    # The list of library files, library initialization code, and code
+    # to be added to the dynamic "pkgIndex.tcl" file for Tcl.
+
+    set library_files(tcl) {
+	lib/tcl8.3/encoding/ascii.enc
+	lib/tcl8.3/encoding/big5.enc
+	lib/tcl8.3/encoding/cp1250.enc
+	lib/tcl8.3/encoding/cp1251.enc
+	lib/tcl8.3/encoding/cp1252.enc
+	lib/tcl8.3/encoding/cp1253.enc
+	lib/tcl8.3/encoding/cp1254.enc
+	lib/tcl8.3/encoding/cp1255.enc
+	lib/tcl8.3/encoding/cp1256.enc
+	lib/tcl8.3/encoding/cp1257.enc
+	lib/tcl8.3/encoding/cp1258.enc
+	lib/tcl8.3/encoding/cp437.enc
+	lib/tcl8.3/encoding/cp737.enc
+	lib/tcl8.3/encoding/cp775.enc
+	lib/tcl8.3/encoding/cp850.enc
+	lib/tcl8.3/encoding/cp852.enc
+	lib/tcl8.3/encoding/cp855.enc
+	lib/tcl8.3/encoding/cp857.enc
+	lib/tcl8.3/encoding/cp860.enc
+	lib/tcl8.3/encoding/cp861.enc
+	lib/tcl8.3/encoding/cp862.enc
+	lib/tcl8.3/encoding/cp863.enc
+	lib/tcl8.3/encoding/cp864.enc
+	lib/tcl8.3/encoding/cp865.enc
+	lib/tcl8.3/encoding/cp866.enc
+	lib/tcl8.3/encoding/cp869.enc
+	lib/tcl8.3/encoding/cp874.enc
+	lib/tcl8.3/encoding/cp932.enc
+	lib/tcl8.3/encoding/cp936.enc
+	lib/tcl8.3/encoding/cp949.enc
+	lib/tcl8.3/encoding/cp950.enc
+	lib/tcl8.3/encoding/dingbats.enc
+	lib/tcl8.3/encoding/euc-cn.enc
+	lib/tcl8.3/encoding/euc-jp.enc
+	lib/tcl8.3/encoding/euc-kr.enc
+	lib/tcl8.3/encoding/gb12345.enc
+	lib/tcl8.3/encoding/gb1988.enc
+	lib/tcl8.3/encoding/gb2312.enc
+	lib/tcl8.3/encoding/iso2022-jp.enc
+	lib/tcl8.3/encoding/iso2022-kr.enc
+	lib/tcl8.3/encoding/iso2022.enc
+	lib/tcl8.3/encoding/iso8859-1.enc
+	lib/tcl8.3/encoding/iso8859-2.enc
+	lib/tcl8.3/encoding/iso8859-3.enc
+	lib/tcl8.3/encoding/iso8859-4.enc
+	lib/tcl8.3/encoding/iso8859-5.enc
+	lib/tcl8.3/encoding/iso8859-6.enc
+	lib/tcl8.3/encoding/iso8859-7.enc
+	lib/tcl8.3/encoding/iso8859-8.enc
+	lib/tcl8.3/encoding/iso8859-9.enc
+	lib/tcl8.3/encoding/jis0201.enc
+	lib/tcl8.3/encoding/jis0208.enc
+	lib/tcl8.3/encoding/jis0212.enc
+	lib/tcl8.3/encoding/koi8-r.enc
+	lib/tcl8.3/encoding/ksc5601.enc
+	lib/tcl8.3/encoding/macCentEuro.enc
+	lib/tcl8.3/encoding/macCroatian.enc
+	lib/tcl8.3/encoding/macCyrillic.enc
+	lib/tcl8.3/encoding/macDingbats.enc
+	lib/tcl8.3/encoding/macGreek.enc
+	lib/tcl8.3/encoding/macIceland.enc
+	lib/tcl8.3/encoding/macJapan.enc
+	lib/tcl8.3/encoding/macRoman.enc
+	lib/tcl8.3/encoding/macRomania.enc
+	lib/tcl8.3/encoding/macThai.enc
+	lib/tcl8.3/encoding/macTurkish.enc
+	lib/tcl8.3/encoding/macUkraine.enc
+	lib/tcl8.3/encoding/shiftjis.enc
+	lib/tcl8.3/encoding/symbol.enc
+	lib/tcl8.3/http2.3/http.tcl
+	lib/tcl8.3/http2.3/pkgIndex.tcl
+	lib/tcl8.3/http1.0/http.tcl
+	lib/tcl8.3/http1.0/pkgIndex.tcl
+	lib/tcl8.3/msgcat1.0/msgcat.tcl
+	lib/tcl8.3/msgcat1.0/pkgIndex.tcl
+	lib/tcl8.3/auto.tcl
+	lib/tcl8.3/history.tcl
+	lib/tcl8.3/init.tcl
+	lib/tcl8.3/ldAout.tcl
+	lib/tcl8.3/package.tcl
+	lib/tcl8.3/parray.tcl
+	lib/tcl8.3/safe.tcl
+	lib/tcl8.3/word.tcl
+	lib/tcl8.3/tclIndex
+    }
+
+    set library_code(tcl) {
+	set tcl_library {lib/tcl8.3}
+    }
+
+    # The list of library files, library initialization code, and code
+    # to be added to the dynamic "pkgIndex.tcl" file for Tk.
+
+    set library_files(tk) {
+	lib/tk8.3/bgerror.tcl
+	lib/tk8.3/button.tcl
+	lib/tk8.3/clrpick.tcl
+	lib/tk8.3/comdlg.tcl
+	lib/tk8.3/console.tcl
+	lib/tk8.3/dialog.tcl
+	lib/tk8.3/entry.tcl
+	lib/tk8.3/focus.tcl
+	lib/tk8.3/listbox.tcl
+	lib/tk8.3/menu.tcl
+	lib/tk8.3/msgbox.tcl
+	lib/tk8.3/obsolete.tcl
+	lib/tk8.3/optMenu.tcl
+	lib/tk8.3/palette.tcl
+	lib/tk8.3/safetk.tcl
+	lib/tk8.3/scale.tcl
+	lib/tk8.3/scrlbar.tcl
+	lib/tk8.3/tearoff.tcl
+	lib/tk8.3/text.tcl
+	lib/tk8.3/tk.tcl
+	lib/tk8.3/tkfbox.tcl
+	lib/tk8.3/xmfbox.tcl
+	lib/tk8.3/tclIndex
+	lib/tk8.3/prolog.ps
+    }
+    set library_code(tk) {
+	set tk_library {lib/tk8.3}
+    }
+
+
+    set library_files(tclx) {
+	lib/tclX8.3/autoload.tcl
+	lib/tclX8.3/buildidx.tcl
+	lib/tclX8.3/tcl.tlib
+	lib/tclX8.3/tcl.tndx
+	lib/tclX8.3/tclx.tcl
+    }
+
+    set pkgIndex_script(tclx) {
+  	prowrapUses::appendWrappedFile $prowrapUses::staticPkgIndexFilePath {
+  	    package ifneeded Tclx 8.3 {
+  		set tclx_library {lib/tclX8.3}
+  		load {} Tclx
+  		foreach __cmd {
+  		    abs acos apropos asin assign_fields atan atan2
+  		    auto_commands auto_load_file auto_packages buildhelp
+  		    ceil cexpand convert_lib convertclock copyfile cos cosh
+  		    dirs double edprocs exp fabs floor fmod fmtclock
+  		    for_array_keys for_file for_recursive_glob frename
+  		    etclock help helpcd helppwd int intersect intersect3
+  		    log log10 lrmdups mainloop mkdir popd pow profrep pushd
+  		    read_file recursive_glob rmdir round saveprocs searchpath
+  		    server_cntl server_connect server_info server_open
+  		    server_send showproc sin sinh sqrt tan tanh union unlink
+  		    write_file kill
+  		} {
+  		    set auto_index($__cmd) {
+  			source [file join $tclx_library tcl.tlib]
+  		    }
+  		}
+  		unset __cmd
+  	    }
+  	}
+    }
+
+
+    # The list of library files, library initialization code, and code
+    # to be added to the dynamic "pkgIndex.tcl" file for Tkx.
+    
+    set library_files(tkx) {
+	lib/tkX8.3/tkx.tcl
+    }
+
+    set pkgIndex_script(tkx) {
+	prowrapUses::appendWrappedFile $prowrapUses::staticPkgIndexFilePath {
+	    package ifneeded Tkx 8.3 {
+		set tkx_library {lib/tkX8.3}
+		load {} Tkx
+	    }
+	}
+    }
+}
+
+
+set cmdline [prowrapUses::buildCommandLine \
+		[file join $prowrapUses::inDir wraptclsh83s.in] \
+		tcl]
+return $cmdline

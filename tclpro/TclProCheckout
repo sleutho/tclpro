@@ -1,0 +1,52 @@
+#!/bin/csh
+
+# Modules I have write access to
+foreach f (buildenv buildutil infozip license lserver proshells tbcload tclchecker tclcompiler \
+	tcldebugger tclparser tclpro tclwrapper winutil )
+    if ( ! -d $f ) then
+	echo $f
+	cvs -z3 -dwelch@cvs.sourceforge.net:/cvsroot/tclpro co $f
+    endif
+end
+foreach f (tcl tclhttpd)
+    if ( ! -d $f ) then
+	echo $f
+	cvs -z3 -dwelch@cvs.sourceforge.net:/cvsroot/$f co $f
+    endif
+end
+
+# Modules with read-only access
+foreach f (tcllib tclx expect)
+    if ( ! -d $f ) then
+	echo $f
+	cvs -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/$f login
+	cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/$f co $f
+    endif
+end
+
+# Special cases
+if  (! -d tk) then
+    echo tk
+    cvs -z3 -dwelch@cvs.sourceforge.net:/cvsroot/tktoolkit co tk
+endif
+if  (! -d itcl) then
+    echo itcl
+    cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/incrtcl co -d itcl incrTcl
+endif
+
+# mclistbox isn't anywhere yet
+
+
+# Make sure the config module is included everywhere
+
+set config=welch@cvs.sourceforge.net:/cvsroot/tclpro
+#cvs -d$config login
+cvs -z3 -d$config co config
+foreach f (*) 
+    if ( -d $f ) then
+	if ( ! -e $f/config ) then
+	    echo $f
+	    ln -s ../config $f/config
+	endif
+    endif
+end

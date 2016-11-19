@@ -1,0 +1,66 @@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+srcdir = @srcdir@
+bindir = @bindir@
+top_srcdir = @top_srcdir@
+PLATFORM = @PLATFORM@
+patchpkglibdir = $(prefix)/lib/patchinstall1.0
+VERSION = @VERSION@
+PACKAGEDIR = @PACKAGEDIR@
+CYGPATH = @CYGPATH@
+TCLSH_PROG = @TCLSH_PROG@
+
+TCL_LIBDIR = @TCL_LIBDIR@
+
+CONFIGDIR = $(srcdir)/config
+mkinstalldirs = $(SHELL) $(CONFIGDIR)/mkinstalldirs
+
+SHELL = @SHELL@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+INSTALL_STRIP_FLAG =
+transform = @program_transform_name@
+
+WRAP_SH=@WRAP_SH@
+ETC_FILES = \
+	$(WRAP_SH) \
+	wrapUses.tcl \
+	$(srcdir)/common.uses
+
+all:  binaries libraries doc
+
+binaries:
+
+libraries:
+
+doc:
+
+install:  installdirs install-binaries install-libraries install-doc
+
+# This target simply copies the openssl directory tree for the current
+# platform to the out directory.
+#
+# It also copies the windows dlls into the bin directory containing tclsh
+# so that they can be found at run time.
+
+install-binaries: binaries
+	$(INSTALL_SCRIPT) $(srcdir)/patchinstall_startup.tcl $(prefix)/bin
+
+install-libraries: libraries
+	for i in $(ETC_FILES) ; do \
+	    $(INSTALL_PROGRAM) $$i $(prefix)/etc ; \
+	done;
+	$(INSTALL_SCRIPT) $(srcdir)/patchinstall.tcl $(patchpkglibdir)
+	$(INSTALL_SCRIPT) $(srcdir)/patchpkgIndex.tcl $(patchpkglibdir)/pkgIndex.tcl
+
+install-doc: doc
+
+test: $(TCLSH_PROG)
+	$(TCLSH_PROG) `@CYGPATH@ $(srcdir)/tests/all.tcl` \
+		-exedir `@CYGPATH@ $(bindir)` $(TESTFLAGS)
+
+installdirs:
+	$(mkinstalldirs) $(prefix)/etc $(prefix)/bin $(patchpkglibdir)

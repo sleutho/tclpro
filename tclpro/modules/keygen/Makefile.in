@@ -1,0 +1,136 @@
+# Makefile.in --
+#
+#	This file is a Makefile for the keygen utilities
+#
+# Copyright (c) 1999-2000 Ajuba Solutions
+#
+# See the file "license.terms" for information on usage and redistribution
+# of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+#
+# RCS: @(#) $Id: Makefile.in,v 1.2 2000/07/14 18:00:26 welch Exp $
+
+KEYGEN = keygen$(BIN_EXEEXT)
+WRAPPER_SCRIPT = @WRAPPER_SCRIPT@
+STARTUP_FILE = genkeygui.tcl
+KEYGEN_FILES = genkeygui.tcl licgen.tcl
+WRAP_SH = @WRAP_SH@
+
+#========================================================================
+# Nothing of the variables below this line need to be changed.
+#========================================================================
+
+SHELL = @SHELL@
+EXEEXT	= @EXEEXT@
+BIN_EXEEXT = @BIN_EXEEXT@
+
+TCLSH_PROG = @TCLSH_PROG@
+
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+libdir = @libdir@
+
+top_builddir = .
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+
+PACKAGE = @PACKAGE@
+VERSION = @VERSION@
+TCLSH = @TCLSH@
+PROWRAP = @PROWRAP@
+PROCOMP = @PROCOMP@ -nologo
+AUTOCONF = autoconf
+CYGPATH=@CYGPATH@
+mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+
+
+#========================================================================
+# TEA TARGETS.  Please note that the "libraries:" target refers to platform
+# independent files, and the "binaries:" target inclues executable programs and
+# platform-dependent libraries.  Modify these targets so that they install
+# the various pieces of your package.  The make and install rules
+# for the BINARIES that you specified above have already been done.
+#========================================================================
+
+BINARIES = $(KEYGEN) $(WRAPPER_SCRIPT)
+
+all: binaries libraries
+
+binaries: $(BINARIES)
+
+libraries:
+
+doc:
+
+install: install-binaries
+
+test:
+	TCL_LIBRARY=$(TCL_LIBRARY_DIR) \
+	LD_LIBRARY_PATH=$(BUILD_DIR):$(TCL_BIN_DIR):$(LD_LIBRARY_PATH) \
+	PATH="$(BUILD_DIR)":"$(TCL_BIN_DIR)":"$(PATH)" \
+	$(TCLSH_PROG) `@CYGPATH@ $(srcdir)/tests/all.tcl` \
+		-exedir `@CYGPATH@ $(bindir)` $(TCLTESTARGS)
+
+depend:
+
+licgen.tcl : $(srcdir)/src/licgen.tcl
+	cp $(srcdir)/src/licgen.tcl licgen.tcl
+
+genkeygui.tcl : $(srcdir)/src/genkeygui.tcl
+	cp $(srcdir)/src/genkeygui.tcl genkeygui.tcl
+
+$(KEYGEN): $(KEYGEN_FILES)
+	KEYGEN_SRCS_NATIVE=`for i in $(KEYGEN_FILES); do \
+	    $(CYGPATH) $$i; \
+	done`; \
+	PREFIX_NATIVE=`$(CYGPATH) $(prefix)`; \
+	$(PROWRAP) -nologo \
+		-uses "" \
+		-executable `$(CYGPATH) $(libdir)/wrapwish83.in` \
+		-out $@ \
+		-startup $(STARTUP_FILE) \
+		$$KEYGEN_SRCS_NATIVE \
+		-relativeto $$PREFIX_NATIVE \
+		$$PREFIX_NATIVE/lib/license*/* \
+		$$PREFIX_NATIVE/lib/projectInfo*/*
+
+$(WRAPPER_SCRIPT):
+	sed -e 's#@PRODUCTHOME@#$(exec_prefix)#' -e 's#@STEM@#keygen#' < $(WRAP_SH) > ./$(WRAPPER_SCRIPT)
+	chmod +x ./$(WRAPPER_SCRIPT)
+
+install-binaries: installdirs $(BINARIES)
+	@for i in $(BINARIES); do \
+		echo Installing $$i in $(bindir); \
+		$(INSTALL_PROGRAM) $$i $(bindir); \
+	done
+
+installdirs:
+	$(mkinstalldirs) $(pkglibdir)
+
+clean:  
+	-test -z "$(BINARIES)" || rm -f $(BINARIES)
+	-rm -f *.o core *.core
+	-rm -f *.$(OBJEXT)
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
+
+distclean: clean
+	-rm -f *.tab.c
+	-rm -f Makefile $(CONFIG_CLEAN_FILES)
+	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+	-rm -f config.status
+
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
+	cd $(top_builddir) \
+	  && CONFIG_FILES=$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+.PHONY: all binaries clean depend distclean doc install installdirs \
+libraries test
+
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:

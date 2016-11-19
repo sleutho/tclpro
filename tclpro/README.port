@@ -1,0 +1,111 @@
+Notes about adding support for different architectures.
+
+Each platform is identified by a string like:
+solaris-sparc, linux-ix86, or win-ix86
+
+Our sample new architecture will be FreeBSD on Intel, and its
+tag will be "freebsd-ix86".  The main place this appears is in
+the platform-specific subdirectory (or --exec-prefix), but
+you'll see it show up in several configuration files.
+
+The parts list file, modules/install/src/parts.in, uses a shorter
+variant of this tag, (e.g., "bsd")
+
+Below are notes about each file that has platform-specific information.
+
+*** module_data.tcl.in ***
+Need to add a default Configure switch:
+
+    set configureSwitch(linux-ix86) "--enable-gcc"
++   set configureSwitch(freebsd-ix86) "--enable-gcc"
+    set configureSwitch(solaris-sparc) "--enable-gcc"
+
+And fix a foreach loop that includes all the architectures (about line 540)
+
+!  foreach a {linux-ix86 freebsd-ix86 solaris-sparc irix-mips hpux-parisc} {
+
+
+*** modules/install/src/setup.sh
+
+Need to add a case branch for FreeBSD* that selects the
+Tcl or Wish interpreter to run the installation.
+The "pt*" file is a Tclsh, and the "pw*" file is a Wish.
+These are wrapped shells so they can run standalone.
+You'll see them again in the parts list file.
+The name patterns are in both cases because they are
+sometimes all-caps on CD roms.
+
+   HOST_TYPE=irix-mips
+      ;;
+
++     FreeBSD*)
++  $TEXT_MODE && programList="ptbsd* PTBSD*"
++  $GUI_MODE && programList="pwbsd* PWBSD*"
++  HOST_TYPE=freebsd-ix86
++  ;; 
++     
+    *)  
+	  echo 1>&2 "Error: $HOST_TYPE is not a supported platform."
+
+
+*** modules/install/src/install.tcl ***
+
+This file has several arrays that are indexed by the architecture tags.
+
+    Ignore these arrays, which are not needed:
+	acrobat
+	acrobatInstallPrefix
+	serverPlatform
+
+    Update these arrays.  The code has comments that describe them.
+	unzipNames
+	installNames
+	platforms
+	zipfiles
+
+	
+*** modules/install/src/genImage.tcl ***
+
+Update the switch statement based on the tcl_platform(os)
+
+  Irix {
+      set plat irix-mips
+  }
++  FreeBSD {
++      set plat freebsd-ix86
++  }
+
+In parseManifest, about line 370, update the switch statement to
+include tags for your architecture:
+
+> 		c-aix -
+> 		c-bsd -
+
+Update the foreach loop on about line 580.  In this case, the
+short name is the same as the archtecture tag in the parts list
+(e.g., "lin"), and the long name is used in the file names
+(e.g., tclpro.linux.tar.gz)
+
+!     foreach {type tarSuffix} {hp hpux sol solaris lin linux sgi irix bsd freebsd} {
+
+*** modules/install/src/parts.in ***
+
+This is the master parts list file.  It has the recipie for how
+files are copied out of the output area into the "dist" area.
+It is read by the makeDist.tcl and makeImage.tcl programs.
+
+There are short tag names for each architecture, e.g., "bsd".  This
+value appears for each file in the parts list specific to that
+architecture.  This also gets mapped to a slightly longer name for the
+tar files (e.g., freebsd) and to a pretty name for the architecture
+selection by the "platforms" array in install.tcl (e.g., "FreeBSD")
+
+You'll have to wade through this and cut and paste entries for your platform.
+
+*** modules/install/src/cdparts.in ***
+
+This file has the recipie for assembling files from the "dist" area
+into the installer images.
+
+1) modules/extra/Makefile
+	

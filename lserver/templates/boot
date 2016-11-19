@@ -1,0 +1,7 @@
+Ajuba Solutions License Server at $info(host):$info(port)
+started at $info(date) $info(time). $info(reset)
+
+This message was sent automatically from
+Ajuba Solutions License Server.  To remove yourself
+from its mailing list, please visit
+http://$info(host):$info(port)/admin/preferences.tml

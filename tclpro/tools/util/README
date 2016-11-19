@@ -1,0 +1,19 @@
+
+tools/util:
+
+    Utilities for the xmlserver software.
+
+
+
+    version.tcl
+
+    Contains versioning information that is
+    used by the xmlserver installer.
+
+
+    util.tcl
+    
+    Miscellaneous utilities.  Used by the
+    xmlserver installer.
+
+

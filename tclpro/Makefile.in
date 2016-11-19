@@ -1,0 +1,282 @@
+# Makefile for TclPro
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+build_prefix = @build_prefix@
+top_srcdir = @top_srcdir@
+srcdir = @srcdir@
+
+PACKAGE = @PACKAGE@
+
+FLAVOR = @build_flavor@
+MODULE_LIST = @MODULE_LIST@
+MODULE_DATA_FILE = ./module_data.tcl
+MODULE_DEPS = @MODULE_DEPS@
+MODULE_DIR_tools = @MODULE_DIR_tools@
+MODULE_DIR_buildenv = @MODULE_DIR_buildenv@
+BUILD_MODULE = @BUILD_MODULE@
+CYGPATH = @CYGPATH@
+PROTOOLSDIR = @PROTOOLSDIR@
+WSDIR = @WSDIR@
+DISTDIR = @WSDIR@/dist
+IMAGEDIR = @WSDIR@/image
+PLATFORM = @PLATFORM@
+
+TCLSH_OUT_DIR = @exec_prefix@/bin
+
+TCLSH = @TCLSH_PROG@
+
+#========================================================================
+# Default is to build all modules
+#========================================================================
+
+all: install
+
+install:
+	$(TCLSH) $(BUILD_MODULE) -module tclpro -flavor $(FLAVOR) \
+		-data $(MODULE_DATA_FILE) -makeAction install -recurse
+
+reinstall:
+	$(TCLSH) $(BUILD_MODULE) -module tclpro -flavor $(FLAVOR) \
+		-data $(MODULE_DATA_FILE) -makeAction reinstall -recurse
+
+update:
+	@echo "$(MAKE):  updating sources for all modules:  `$(TCLSH) \
+		$(MODULE_DEPS) \
+		-module tclpro \
+		-data $(MODULE_DATA_FILE)`"
+	$(TCLSH) $(BUILD_MODULE) \
+		-module tclpro \
+		-data $(MODULE_DATA_FILE) \
+		-makeAction update \
+		-recurse
+
+install-binaries:
+	@echo "Building all modules:  `$(TCLSH) $(MODULE_DEPS) \
+		-module tclpro \
+		-data $(MODULE_DATA_FILE)`"
+	@for module in `$(TCLSH) $(MODULE_DEPS) \
+	    	-module tclpro \
+		-data $(MODULE_DATA_FILE)` ; do \
+	    echo "Building module $$module" ; \
+	    $(TCLSH) $(BUILD_MODULE) \
+		    -module $$module -flavor $(FLAVOR) \
+		    -data $(MODULE_DATA_FILE) \
+		    -makeAction install-binaries; \
+	done
+
+dist:
+	$(TCLSH) $(srcdir)/modules/install/src/makeDist.tcl $(WSDIR) $(DISTDIR) $(prefix) $(exec_prefix)
+
+image:
+	$(TCLSH) $(srcdir)/modules/install/src/genImage.tcl $(WSDIR) $(DISTDIR) $(IMAGEDIR) $(MODULE_DIR_tools) $(PROTOOLSDIR) \
+		$(prefix) $(exec_prefix)
+
+winimage:
+	$(TCLSH) `$(CYGPATH) $(srcdir)/modules/install/src/genWinImage.tcl` `$(CYGPATH) $(WSDIR)` `$(CYGPATH) $(DISTDIR)` `$(CYGPATH) $(MODULE_DIR_tools)/$(PLATFORM)`
+
+test:
+	$(TCLSH) $(BUILD_MODULE) \
+		-module tclpro -flavor $(FLAVOR) \
+		-data $(MODULE_DATA_FILE) \
+		-makeAction test \
+		-recurse
+
+#========================================================================
+# Caution people about the "clean" target.
+#========================================================================
+
+clean:
+	@echo "The clean target has been replaced with 'cleanall'."
+	@echo "Warning:  The cleanall target will remove the build"
+	@echo "directories for _every_ module in $(build_prefix)"
+
+cleanall:
+	@echo "Removing build directory $(build_prefix)"
+	rm -rf "$(build_prefix)"
+	rm -f SOFTSTATUS
+
+distclean: cleanall
+	@echo "Removing configure files"
+	rm -f Makefile config.* module_data.tcl
+
+cleanout:
+	@echo "This will delete the entire out directory ($$prefix and"
+	@echo "$$exec_prefix).  If the out directory contains files that"
+	@echo "were not created by the build environment, THEY WILL BE"
+	@echo "DELETED."
+	@echo "Commands that will be run:"
+	@echo "rm -rf $(exec_prefix)"
+	@echo "rm -rf $(prefix)"
+	@echo "Use 'make cleanout-force' to execute these commands."
+
+cleanout-force:
+	rm -rf $(exec_prefix)
+	rm -rf $(prefix)
+
+#========================================================================
+# List all modules in the order in which they will be built.  Two targets
+# are listed here because I can never remember if I made it plural or not.
+#========================================================================
+
+modules-deplist: module-deplist
+
+module-deplist:
+	@echo `$(TCLSH) $(MODULE_DEPS) \
+		-module tclpro -data $(MODULE_DATA_FILE) -noecho`
+
+%-deplist:
+	@echo `$(TCLSH) $(MODULE_DEPS) \
+		-module $(*F) -data $(MODULE_DATA_FILE)`
+
+#========================================================================
+# Module targets.  Very obscure Makefile magic going on here...
+#
+# Bonus points for whomever can abstract out the "-all" and "-install"
+# part of the target and use it as the argument to "-makeAction", thus
+# reducing this all to one rule.
+#========================================================================
+
+$(MODULE_LIST) :
+	@echo "$(MAKE):  building module $@"; \
+	$(TCLSH) $(BUILD_MODULE) -module $@ -flavor $(FLAVOR) \
+		-data $(MODULE_DATA_FILE) -makeAction install
+
+modules:
+	echo "$(MAKE):  building modules $(LIST)"; \
+	$(TCLSH) $(BUILD_MODULE) \
+		-modulelist "$(MODULE_LIST)" -flavor $(FLAVOR) \
+		-data $(MODULE_DATA_FILE) -makeAction install
+
+%-all:
+	@echo "$(MAKE):  building module $(*F)"; \
+	$(TCLSH) $(BUILD_MODULE) -module $(*F) -flavor $(FLAVOR) \
+		-data $(MODULE_DATA_FILE) -makeAction all
+
+%-configure:
+	@echo "$(MAKE):  configuring module $(*F)"; \
+	$(TCLSH) $(BUILD_MODULE) -module $(*F) -flavor $(FLAVOR) \
+		-data $(MODULE_DATA_FILE) -makeAction configure
+
+%-install:
+	@echo "$(MAKE):  installing module $(*F)"; \
+	$(TCLSH) $(BUILD_MODULE) -module $(*F) -flavor $(FLAVOR) \
+		-data $(MODULE_DATA_FILE) -makeAction install
+
+%-binaries:
+	@echo "$(MAKE):  making binaries for module $(*F)"; \
+	$(TCLSH) $(BUILD_MODULE) -module $(*F) -flavor $(FLAVOR) \
+		-data $(MODULE_DATA_FILE) -makeAction binaries
+
+%-install-binaries:
+	@echo "$(MAKE):  installing binaries for module $(*F)"; \
+	$(TCLSH) $(BUILD_MODULE) -module $(*F) -flavor $(FLAVOR) \
+		-data $(MODULE_DATA_FILE) -makeAction install-binaries
+
+%-libraries:
+	@echo "$(MAKE):  building libraries for module $(*F)"; \
+	$(TCLSH) $(BUILD_MODULE) -module $(*F) -flavor $(FLAVOR) \
+		-data $(MODULE_DATA_FILE) -makeAction libraries
+
+%-install-libraries:
+	@echo "$(MAKE):  installing libraries for module $(*F)"; \
+	$(TCLSH) $(BUILD_MODULE) -module $(*F) -flavor $(FLAVOR) \
+		-data $(MODULE_DATA_FILE) -makeAction install-libraries
+
+%-doc:
+	@echo "$(MAKE):  building docs for module $(*F)"; \
+	$(TCLSH) $(BUILD_MODULE) -module $(*F) -flavor $(FLAVOR) \
+		-data $(MODULE_DATA_FILE) -makeAction doc
+
+%-install-doc:
+	@echo "$(MAKE):  installing docs for module $(*F)"; \
+	$(TCLSH) $(BUILD_MODULE) -module $(*F) -flavor $(FLAVOR) \
+		-data $(MODULE_DATA_FILE) -makeAction install-doc
+
+%-update:
+	@echo "$(MAKE):  updating sources for module $(*F)"; \
+	$(TCLSH) $(BUILD_MODULE) -module $(*F) \
+		-makeAction update -data $(MODULE_DATA_FILE)
+
+%-test:
+	@echo "$(MAKE):  testing module $(*F)"; \
+	$(TCLSH) $(BUILD_MODULE) -module $(*F) -flavor $(FLAVOR) \
+		-data $(MODULE_DATA_FILE) -makeAction test
+
+%-test-dep:
+	@echo "$(MAKE):  testing module $(*F)"; \
+	$(TCLSH) $(BUILD_MODULE) -module $(*F) -flavor $(FLAVOR) \
+		-data $(MODULE_DATA_FILE) -recurse -makeAction test
+
+# No configure step needed for "clean" and "distclean"
+
+%-clean:
+	$(TCLSH) $(BUILD_MODULE) -module $(*F) -flavor $(FLAVOR) \
+		-data $(MODULE_DATA_FILE) -makeAction clean
+
+%-distclean:
+	$(TCLSH) $(BUILD_MODULE) -module $(*F) -flavor $(FLAVOR) \
+		-data $(MODULE_DATA_FILE) -makeAction distclean
+
+%-hose:
+	rm -r "$(build_prefix)/$(*F)"
+
+%-clean:
+	rm -r "$(build_prefix)/$(*F)"
+
+
+#========================================================================
+# Sometimes we want to rebuild a module as well as everything it depends on.
+#========================================================================
+
+%-deps:
+	@echo "$(MAKE):  building module $(*F)";
+	$(TCLSH) $(BUILD_MODULE) -module $(*F) -flavor $(FLAVOR) \
+		-data $(MODULE_DATA_FILE) -recurse -makeAction install
+
+%-all-deps:
+	@echo "$(MAKE):  building module $(*F)";
+	$(TCLSH) $(BUILD_MODULE) -module $(*F) -flavor $(FLAVOR) \
+		-data $(MODULE_DATA_FILE) -recurse -makeAction all
+
+%-install-deps:
+	@echo "$(MAKE):  installing module $(*F)";
+	$(TCLSH) $(BUILD_MODULE) -module $(*F) -flavor $(FLAVOR) \
+		-data $(MODULE_DATA_FILE) -recurse -makeAction install
+
+%-binaries-deps:
+	@echo "$(MAKE):  building binaries for module $(*F)";
+	$(TCLSH) $(BUILD_MODULE) -module $(*F) -flavor $(FLAVOR) \
+		-data $(MODULE_DATA_FILE) -recurse -makeAction binaries
+
+%-install-binaries-deps:
+	@echo "$(MAKE):  installing binaries for module $(*F)";
+	$(TCLSH) $(BUILD_MODULE) -module $(*F) -flavor $(FLAVOR) \
+		-data $(MODULE_DATA_FILE) -recurse -makeAction install-binaries
+
+%-libraries-deps:
+	@echo "$(MAKE):  building libraries for module $(*F)";
+	$(TCLSH) $(BUILD_MODULE) -module $(*F) -flavor $(FLAVOR) \
+		-data $(MODULE_DATA_FILE) -recurse -makeAction libraries
+
+%-install-libraries-deps:
+	@echo "$(MAKE):  installing libraries for module $(*F)";
+	$(TCLSH) $(BUILD_MODULE) -module $(*F) -flavor $(FLAVOR) \
+		-data $(MODULE_DATA_FILE) -recurse \
+		-makeAction install-libraries
+
+%-doc-deps:
+	@echo "$(MAKE):  building docs module $(*F)";
+	$(TCLSH) $(BUILD_MODULE) -module $(*F) -flavor $(FLAVOR) \
+		-data $(MODULE_DATA_FILE) -recurse -makeAction doc
+
+%-install-doc-deps:
+	@echo "$(MAKE):  installing docs for module $(*F)";
+	$(TCLSH) $(BUILD_MODULE) -module $(*F) -flavor $(FLAVOR) \
+		-data $(MODULE_DATA_FILE) -recurse -makeAction install-doc
+
+%-update-deps:
+	@echo "$(MAKE):  updating sources for module $(*F)"; \
+	$(TCLSH) $(BUILD_MODULE) -module $(*F) \
+		-recurse -makeAction update -data $(MODULE_DATA_FILE)
+

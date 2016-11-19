@@ -1,0 +1,5 @@
+[lpage::head Reports "Weekly Usage"]
+
+[lserver::report weekly]
+
+[lpage::footer]

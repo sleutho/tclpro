@@ -1,0 +1,6 @@
+
+2001-03-15 Karl Lehenbauer <karl@procplace.com>
+	* postpro.tcl, bundle.tcl: Added lassign proc for compatibility.
+	  Yes this should be picked up from somewhere else, although it
+	  actually appears all over the place even within many of the tclpro
+	  modules.

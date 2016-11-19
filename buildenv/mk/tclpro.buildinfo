@@ -1,0 +1,645 @@
+# -*- tcl -*-
+# Build information for all modules in the TclPro distribution
+# ------------------------------------------------------------
+
+if {0} {
+    module documentation {
+	configure.with {} "--with-product=tclpro" ; # Nonsense now, no ?
+    }
+}
+
+# Not part of the SourceForge setup, unknown what this is or contains.
+
+module icons {
+    configure.with {} "\
+	    --with-tcl=[file join %bld:tcl% %arch%] \
+	    --enable-shared"
+
+    derived icons_static {
+    }
+}
+
+module license {
+}
+module lserver {
+    depends.on bigtclsh tclhttpd projectInfo license prowrap
+}
+
+
+# ============================================================
+# === Base modules ===========================================
+# ============================================================
+
+module tcl {
+    # We must build the static versions first because they install
+    # tclConfig.sh files that we don't really want.  Then, when
+    # Tcl is built next, it installs the tclConfig.sh that we want.
+
+    version 8.3.2
+    depends.on tcl_static
+    testsuite  tests
+    configure.loc \
+	    {}         unix \
+	    win32-ix86 win
+
+    # The non-static versions of Tcl and Tk don't need any extra flags
+
+    derived tcl_static {
+	depends.on *clear*
+	configure.with {} "--disable-shared"
+    }
+}
+
+module tk {
+    version 8.3.2
+    depends.on tcl tk_static
+    testsuite  tests
+    configure.loc           \
+	    {}         unix \
+	    win32-ix86 win
+
+    derived tk_static {
+	depends.on *clear*
+	depends.on tcl_static
+	configure.with {} " \
+		--disable-shared \
+		--with-tcl=[file join %bld:tcl_static% %arch%]"
+    }
+}
+
+module winico {
+    depends.on tk
+    configure.with {} "--with-tk=[file join %bld:tk% %arch%]"
+}
+
+module winutil {
+    configure.with {} "--with-tk=[file join %bld:tk% %arch%]"
+    platform win32-ix86
+}
+
+module expect {
+    version 5.32
+    depends.on tcl tk expect_static
+    testsuite  tests
+    configure.loc {} .
+
+    platform linux-ix86 solaris-sparc irix-mips hpux-parisc aix-risc freebsd-ix86
+    # Actually: all platforms except for win32. Can't be expressed right now.
+
+    configure.with {} "\
+	    -with-tk=[file join %bld:tk% %arch%]           \
+	    --with-tclinclude=[file join %top:tcl% generic] \
+	    --with-tkinclude=[file  join %top:tk%  generic] \
+	    --enable-shared"
+
+    derived expect_static {
+	depends.on *clear*
+	depends.on tcl_static tk_static
+	configure.with {} "\
+		-with-tk=[file join %bld:tk_static% %arch%]     \
+		--with-tclinclude=[file join %top:tcl% generic] \
+		--with-tkinclude=[file  join %top:tk%  generic]"
+    }
+}
+
+module itcl {
+    version 3.2
+    depends.on tk tcl itcl_static
+    testsuite  tests
+
+    configure.with {} "\
+	    --with-tcl=[file join %bld:tcl% %arch%] \
+	    --with-tk=[file  join %bld:tk%  %arch%] \
+	    --enable-shared"
+
+    derived itcl_static {
+	depends.on *clear*
+	depends.on tk_static tcl_static
+	configure.with {} "\
+		--with-tcl=[file join %bld:tcl_static% %arch%] \
+		--with-tk=[file  join %bld:tk_static%  %arch%] \
+		--disable-shared"
+    }
+}
+
+module tclx {
+    version 8.3
+    depends.on tclx_static tcl tk
+    configure.loc           \
+	    {}         unix \
+	    win32-ix86 win
+
+    testsuite [file join tcl tests] [file join tk tests]
+
+    configure.with {} " \
+	    --enable-shared \
+	    --with-tcl=[file join %bld:tcl% %arch%] \
+	    --with-tk=[file  join %bld:tk%  %arch%] \
+	    --with-help=./help_out"
+
+    derived tclx_static {
+	depends.on *clear*
+	depends.on tcl_static tk_static
+
+	configure.with {} "\
+		--disable-shared  \
+		--with-tcl=[file join %bld:tcl_static% %arch%] \
+		--with-tk=[file  join %bld:tk_static%  %arch%] \
+		--with-help=./help_out"
+    }
+}
+
+module mclistbox {
+    depends.on tk
+}
+
+module tclhttpd {
+    depends.on tcl
+}
+
+module tcllib {
+    depends.on tcl
+}
+
+# module protools, tclPro -- don't exist per se, were used in the old
+# system to contain some location to refer too (topDir namely).
+
+module tbcload {
+    # tbcload has a DEPENDENCIES file that overrides this
+    depends.on tbcload_static tbcload_dyn tcl
+    testsuite tests
+
+    # Three versions of tbcload.
+    # "tbcload" - vanilla extention compiled for dynamic linking, stubs,
+    #	and the dynamic link windows runtime.
+    # "tbcload_static" - vanilla static build, no stubs, static runtime.
+    # "tbcload_dyn" - static build, no stubs, dynamic runtime.  This last
+    #	version is used to statically link tbcload into a dynamic wrapper core.
+
+    configure.with {} "--enable-shared --with-tcl=[file join %bld:tcl% %arch%]"
+
+    derived tbcload_static {
+	depends.on *clear*
+	depends.on tcl_static
+	configure.with {} "--disable-shared --with-tcl=[file join %bld:tcl_static% %arch%]"
+    }
+    derived tbcload_dyn {
+	depends.on *clear*
+	depends.on tcl
+	configure.with {} "--disable-shared --with-tcl=[file join %bld:tcl% %arch%]"
+    }
+}
+
+# ============================================================
+# === TclPro extensions ======================================
+# ============================================================
+
+module tclcompiler {
+    depends.on tcl
+    derived tclcompiler_static {
+	depends.on *clear*
+	depends.on tcl_static
+	configure.with {} " \
+		--with-protools=%tclpro_installation% \
+		--with-tcl=[file join %bld:tcl_static% %arch%] \
+		--disable-shared \
+		--with-tbcload=%bld:tbcload_static%"
+    }
+}
+
+module tclchecker {
+    # tclchecker has a DEPENDENCIES file that overrides this
+    depends.on prowrap procheckU tclparser_static buildutil
+    testsuite tests
+    configure.with {} " \
+	    --with-protools=%tclpro_installation% \
+	    --with-wrap-sh=[file join %prefix% etc pro_wrap.sh]"
+
+}
+
+module tcldebugger {
+    # tcldebugger has a DEPENDENCIES file that overrides this
+    depends.on tk tclparser_static tcllib projectInfo winico winutil buildutil
+
+    testsuite  tests
+    configure.with {} " \
+	    --with-protools=%tclpro_installation% \
+	    --with-wrap-sh=[file join %prefix% etc pro_wrap.sh]"
+}
+
+module tclwrapper {
+    depends.on unzip tcl tk tbcload
+    configure.with {} " \
+	    --with-protools=%tclpro_installation% \
+	    --with-tcl=[file join %bld:tcl% %arch%] \
+	    --with-tk=[file  join %bld:tk%  %arch%] \
+	    --with-unzip-build=%bld:unzip% \
+	    --with-tbcload=%bld:tbcload%"
+
+    derived tclwrapper_static {
+	depends.on *clear*
+	depends.on unzip_static tbcload_static tcl_static tk_static
+	configure.with {} " \
+		--with-protools=%tclpro_installation% \
+		--with-tcl=[file join %bld:tcl_static% %arch%] \
+		--with-tk=[file  join %bld:tk_static%  %arch%] \
+		--disable-shared \
+		--enable-prowrapu \
+		--with-unzip-build=%bld:unzip_static% \
+		--with-tbcload=%bld:tbcload_static%"
+    }
+
+    derived tclwrapper_dyn {
+	depends.on *clear*
+	depends.on unzip_dyn tcl tk tbcload_dyn
+	configure.with {} " \
+		--with-protools=%tclpro_installation% \
+		--with-tcl=[file join %bld:tcl% %arch%] \
+		--with-tk=[file  join %bld:tk%  %arch%] \
+		--disable-shared \
+		--with-lib-mark=x \
+		--with-unzip-build=%bld:unzip_dyn% \
+		--with-tbcload=%bld:tbcload_dyn%"
+    }
+}
+
+module tclparser {
+    # tclparser has a DEPENDENCIES file that overrides this
+
+    depends.on tcl
+    testsuite  tests
+    configure.with {} " \
+	    --with-protools=%tclpro_installation% \
+	    --enable-shared \
+	    --with-tbcload=%bld:tbcload%"
+
+    derived tclparser_static {
+	depends.on *clear*
+	depends.on tcl_static
+	configure.with {} " \
+		--with-protools=%tclpro_installation% \
+		--with-tcl=[file join %bld:tcl_static% %arch%] \
+		--disable-shared \
+		--with-tbcload=%bld:tbcload_static%"
+    }
+}
+
+# ============================================================
+# === TclPro shell configurations (shells for the TclPro =====
+# === applications and standard wrappable cores) =============
+# ============================================================
+
+module procompU {
+    # procompU is tclsh + the parser + compiler
+    location [file join proshells prowish]
+    depends.on \
+	    tclcompiler_static \
+	    tclparser_static \
+	    tclwrapper_static
+
+    configure.with {} "\
+	    --with-tcl=[file join %bld:tcl_static% %arch%] \
+	    --with-libwrapper=%bld:tclwrapper_static% \
+	    --with-parser=%bld:tclparser_static% \
+	    --with-compiler=%bld:tclcompiler_static% \
+	    --with-tbcload=%bld:tbcload_static% \
+	    --with-exename=procompUs \
+	    --with-product-name=ProComp \
+	    --with-major-version=%vmajor:tclpro% \
+	    --with-minor-version=%vminor:tclpro% \
+	    --with-patchlevel=%vpatchlvl:tclpro% \
+	    --with-build-id=%build_id% \
+	    --with-icon=[file join %exec_prefix% lib icons compiler.ico] \
+	    --with-wrapext=.in \
+	    --disable-shared"
+}
+
+module procheckU {
+    location [file join proshells prowish]
+    depends.on	tcl_static tclparser_static tbcload_static buildutil icons
+    configure.with {} " \
+	    --with-tcl=[file join %bld:tcl_static% %arch%] \
+	    --with-libwrapper=%bld:tclwrapper_static% \
+	    --with-parser=%bld:tclparser_static% \
+	    --with-tbcload=%bld:tbcload_static% \
+	    --with-exename=procheckUs \
+	    --with-product-name=ProCheck \
+	    --with-major-version=%vmajor:tclpro% \
+	    --with-minor-version=%vminor:tclpro% \
+	    --with-patchlevel=%vpatchlvl:tclpro% \
+	    --with-build-id=%build_id% \
+	    --with-icon=[file join %exec_prefix% lib icons checker.ico] \
+	    --with-wrapext=.in \
+	    --disable-shared"
+}
+
+module prodebugU {
+    # prodebugU is wish + the parser
+
+    location   [file join proshells prowish]
+    depends.on tcl_static tk_static tclparser_static tbcload_static buildutil icons_static icons
+
+    configure.with {} " \
+	    --with-tcl=[file join %bld:tcl_static% %arch%] \
+	    --with-tk=[file join %bld:tk_static% %arch%] \
+	    --with-tbcload=%bld:tbcload_static% \
+	    --with-libwrapper=%bld:tclwrapper_static% \
+	    --with-parser=%bld:tclparser_static% \
+	    --with-exename=prodebugUs \
+	    --with-product-name=ProDebug \
+	    --with-major-version=%vmajor:tclpro% \
+	    --with-minor-version=%vminor:tclpro% \
+	    --with-patchlevel=%vpatchlvl:tclpro% \
+	    --with-build-id=%build_id% \
+	    --with-icon=[file join %exec_prefix% lib icons dbg.ico] \
+	    --with-wrapext=.in \
+	    --disable-shared"
+}
+
+module prowrapU {
+    location [file join proshells prowish]
+    depends.on	tcl tcllib tclwrapper_static icons
+    configure.with {} " \
+	    --with-tcl=[file join %bld:tcl_static% %arch%] \
+	    --with-libwrapper=%bld:tclwrapper_static% \
+	    --with-tbcload=%bld:tbcload_static% \
+	    --with-exename=prowrapUs \
+	    --with-product-name=ProWrap \
+	    --with-major-version=%vmajor:tclpro% \
+	    --with-minor-version=%vminor:tclpro% \
+	    --with-patchlevel=%vpatchlvl:tclpro% \
+	    --with-build-id=%build_id% \
+	    --with-icon=[file join %exec_prefix% lib icons wrapper.ico] \
+	    --with-wrapext=.exe \
+	    --disable-shared"
+}
+
+module wraptclshdyn {
+    location       [file join proshells prowish]
+    depends.on     tcl unzip_dyn tclwrapper_dyn tbcload_dyn icons
+    configure.with {} " \
+	    --with-libwrapper=%bld:tclwrapper_dyn% \
+	    --with-tbcload=%bld:tbcload_dyn% \
+	    --with-exename=wraptclsh%vmajor:tcl%%vminor:tcl% \
+	    --with-product-name=tcl \
+	    --with-major-version=%vmajor:tcl% \
+	    --with-minor-version=%vminor:tcl% \
+	    --with-patchlevel=%vpatchlvl:tcl% \
+	    --with-build-id=%build_id% \
+	    --with-wrapext=.in"
+}
+
+module wrapwishdyn {
+    location   [file join proshells prowish]
+    depends.on tcl tk unzip_dyn tclwrapper_dyn tbcload_dyn icons
+    configure.with {} " \
+	    --with-tk=[file join %bld:tk% %arch%] \
+	    --with-libwrapper=%bld:tclwrapper_dyn% \
+	    --with-tbcload=%bld:tbcload_dyn% \
+	    --with-exename=wrapwish%vmajor:tcl%%vminor:tcl% \
+	    --with-major-version=%vmajor:tcl% \
+	    --with-minor-version=%vminor:tcl% \
+	    --with-patchlevel=%vpatchlvl:tcl% \
+	    --with-build-id=%build_id% \
+	    --with-product-name=Tk \
+	    --with-wrapext=.in"
+}
+
+module wraptclsh {
+    location   [file join proshells prowish]
+    depends.on tcl_static tclwrapper_static tbcload_static icons
+    configure.with {} " \
+	    --with-tcl=[file join %bld:tcl_static% %arch%] \
+	    --with-libwrapper=%bld:tclwrapper_static% \
+	    --with-tbcload=%bld:tbcload_static% \
+	    --with-exename=wraptclsh%vmajor:tcl%%vminor:tcl%s \
+	    --with-major-version=%vmajor:tcl% \
+	    --with-minor-version=%vminor:tcl% \
+	    --with-patchlevel=%vpatchlvl:tcl% \
+	    --with-build-id=%build_id% \
+	    --with-wrapext=.in \
+	    --disable-shared"
+}
+
+module wrapwish {
+    location [file join proshells prowish]
+    depends.on tcl_static tk_static tclwrapper_static tbcload_static icons
+    configure.with {} " \
+	    --with-tcl=[file join %bld:tcl_static% %arch%] \
+	    --with-tk=[file  join %bld:tk_static%  %arch%] \
+	    --with-tbcload=%bld:tbcload_static% \
+	    --with-libwrapper=%bld:tclwrapper_static% \
+	    --with-exename=wrapwish%vmajor:tcl%%vminor:tcl%s \
+	    --with-major-version=%vmajor:tcl% \
+	    --with-minor-version=%vminor:tcl% \
+	    --with-patchlevel=%vpatchlvl:tcl% \
+	    --with-build-id=%build_id% \
+	    --with-product-name=Tk \
+	    --with-wrapext=.in \
+	    --disable-shared"
+}
+
+module bigtclshdyn {
+   location [file join proshells prowish]
+
+    depends.on	tcl unzip_dyn tclx itcl tclwrapper_dyn tbcload_dyn icons itcl tclx expect
+    configure.with {} 	"\
+	--with-itcl=[file join %bld:itcl% itcl] \
+	--with-tbcload=%bld:tbcload_dyn% \
+	--with-expect=%bld:expect% \
+	--with-libwrapper=%bld:tclwrapper_dyn% \
+	--with-exename=wrapbigtclsh%vmajor:tcl%%vminor:tcl% \
+	--with-major-version=%vmajor:tcl% \
+	--with-minor-version=%vminor:tcl% \
+	--with-patchlevel=%vpatchlvl:tcl% \
+	--with-build-id=%build_id% \
+	--with-product-name=BigTcl \
+	--with-wrapext=.in"
+
+    configure.with win32-ix86 "--with-tclx=[file join %bld:tclx% win]" 
+
+    foreach a {linux-ix86 solaris-sparc irix-mips hpux-parisc aix-risc freebsd-ix86} {
+	configure.with $a "--with-tclx=[file join %bld:tclx% tcl unix]" 
+    }
+}
+
+module bigwishdyn {
+    location [file join proshells prowish]
+    depends.on	tcl tk unzip_dyn tclx itcl tclwrapper_dyn tbcload_dyn icons itcl tclx expect
+    configure.with {} 	"\
+	--with-itcl=[file join %bld:itcl% itcl] \
+	--with-itk=[file  join %bld:itcl% itk] \
+	--with-expect=%bld:expect% \
+	--with-tk=[file join %bld:tk% %arch%] \
+	--with-libwrapper=%bld:tclwrapper_dyn% \
+	--with-tbcload=%bld:tbcload_dyn% \
+	--with-product-name=BigTk \
+	--with-exename=wrapbigwish%vmajor:tcl%%vminor:tcl% \
+	--with-major-version=%vmajor:tcl% \
+	--with-minor-version=%vminor:tcl% \
+	--with-patchlevel=%vpatchlvl:tcl% \
+	--with-build-id=%build_id% \
+	--with-wrapext=.in"
+
+    configure.with win32-ix86 " \
+	    --with-tclx=[file join %bld:tclx% win] \
+	    --with-tkx=[file  join %bld:tclx% win]"
+
+    foreach a {linux-ix86 solaris-sparc irix-mips hpux-parisc aix-risc freebsd-ix86} {
+	configure.with $a " \
+		--with-tclx=[file join %bld:tclx% tcl unix] \
+		--with-tkx=[file  join %bld:tclx% tk  unix]"
+    }
+}
+
+module bigtclsh {
+    location [file join proshells prowish]
+
+    depends.on	\
+	    tcl_static unzip_static tclx_static itcl_static \
+	    expect_static tclwrapper_static tbcload_static icons
+
+    configure.with {} 	"\
+	--with-tcl=[file  join %bld:tcl_static%  %arch%] \
+	--with-itcl=[file join %bld:itcl_static% itcl] \
+	--with-libwrapper=%bld:tclwrapper_static% \
+	--with-tbcload=%bld:tbcload_static% \
+	--with-expect=%bld:expect_static% \
+	--with-exename=wrapbigtclsh%vmajor:tcl%%vminor:tcl%s \
+	--with-major-version=%vmajor:tcl% \
+	--with-minor-version=%vminor:tcl% \
+	--with-patchlevel=%vpatchlvl:tcl% \
+	--with-build-id=%build_id% \
+	--with-product-name=BigTcl \
+	--with-wrapext=.in \
+	--disable-shared"
+
+    configure.with win32-ix86 "--with-tclx=[file join %bld:tclx_static% win]" 
+
+    foreach a {linux-ix86 solaris-sparc irix-mips hpux-parisc aix-risc freebsd-ix86} {
+	configure.with $a "--with-tclx=[file join %bld:tclx_static% tcl unix]" 
+    }
+}
+
+module bigwish {
+    location [file join proshells prowish]
+
+    depends.on \
+	    tcl_static tk_static unzip_static tclx_static itcl_static \
+	    expect_static tclwrapper_static tbcload_static icons
+
+    configure.with {} 	"\
+	--with-tcl=[file  join %bld:tcl_static%  %arch%] \
+	--with-tk=[file   join %bld:tk_static%   %arch%] \
+	--with-itcl=[file join %bld:itcl_static% itcl] \
+	--with-itk=[file  join %bld:itcl_static% itk] \
+	--with-expect=%bld:expect_static% \
+	--with-libwrapper=%bld:tclwrapper_static% \
+	--with-tbcload=%bld:tbcload_static% \
+	--with-wrapext=.in \
+	--with-product-name=BigTk \
+	--with-exename=wrapbigwish%vmajor:tcl%%vminor:tcl%s \
+	--with-major-version=%vmajor:tcl% \
+	--with-minor-version=%vminor:tcl% \
+	--with-patchlevel=%vpatchlvl:tcl% \
+	--with-build-id=%build_id% \
+	--disable-shared"
+
+    configure.with win32-ix86 " \
+	    --with-tclx=[file join %bld:tclx_static% win] \
+	    --with-tkx=[file  join %bld:tclx_static% win]"
+
+    foreach a {linux-ix86 solaris-sparc irix-mips hpux-parisc aix-risc freebsd-ix86} {
+	configure.with $a " \
+		--with-tclx=[file join %bld:tclx_static% tcl unix] \
+		--with-tkx=[file  join %bld:tclx_static% tk  unix]"
+    }
+}
+
+# ============================================================
+# === TclPro applications ====================================
+# ============================================================
+
+module extras {
+    location [file join tclpro modules extras]
+    depends.on tk buildutil
+    configure.with {} " \
+	    --with-wrap-sh=[file join %prefix% etc pro_wrap.sh] \
+	    --with-toolsdir=no_tools_dir"
+}
+
+module procomp {
+    location   [file join tclpro modules compiler]
+    depends.on procompU buildutil
+
+    configure.with {} " \
+	    --with-protools=%tclpro_installation% \
+	    --with-procompU=[file join %bld:procompU% procompUs.in] \
+	    --with-wrap-sh=[file  join %prefix% etc pro_wrap.sh]"
+}
+
+module procheck {
+    location [file join tclpro modules checker]
+    depends.on tcllib prowrap tclchecker projectInfo buildutil icons procheckU
+    configure.with {} " \
+	    --with-protools=%tclpro_installation% \
+	    --with-procheckU=[file join %bld:procheckU% procheckUs.in] \
+	    --with-wrap-sh=[file join %prefix% etc pro_wrap.sh]"
+}
+
+module prodebug {
+    location [file join tclpro modules debugger]
+    depends.on	prowrap tcldebugger projectInfo winico winutil prodebugU buildutil tcllib
+    configure.with {} " \
+	    --with-protools=%tclpro_installation% \
+	    --with-prodebugU=[file join %bld:prodebugU% prodebugUs.in] \
+	    --with-wrap-sh=[file join %prefix% etc pro_wrap.sh]"
+}
+
+module prowrap {
+    location [file join tclpro modules wrapper]
+    depends.on \
+	    prowrapU tclwrapper tcllib winico winutil \
+	    libwrapper zip projectInfo \
+	    unzip tbcload tcl_static tk_static itcl_static \
+	    expect_static tclx_static buildutil
+
+    configure.with {} " \
+	    --with-boot-wrapper=%bld:prowrapU% \
+	    --with-wrap-sh=[file join %prefix% etc pro_wrap.sh]"
+}
+
+module projectInfo {
+    location [file join tclpro modules projectInfo]
+}
+
+# ============================================================
+# === TclPro distribution ====================================
+# ============================================================
+
+if {0} {
+    # TclPro is currently more of a container for some code and also
+    # serves as the umbrella under which the rest of the distribution
+    # is packed under and not a real module in its own right. So don't
+    # try to configure or compile it.
+
+    module tclpro {
+	version 1.5
+	depends.on tcl tcl_static tk tk_static icons_static
+	depends.on winico winutil expect expect_static itcl itcl_static tclx tclx_static
+	depends.on mclistsbox tclhttpd tcllib
+	depends.on tbcload     tbcload_static    tbcload_dyn
+	depends.on tclwrapper  tclwrapper_static tclwrapper_dyn
+	depends.on tclcompiler tclcompiler_static
+	depends.on tclparser   tclparser_static
+	depends.on tclchecker  tcldebugger
+	depends.on wraptclshdyn wrapwishdyn wraptclsh wrapwish
+	depends.on bigtclshdyn  bigwishdyn  bigtclsh  bigwish
+	depends.on procompU procheckU prodebugU prowrapU
+	depends.on procomp  procheck  prodebug  prowrap
+	depends.on extras projectInfo
+
+	testsuite  tests
+	configure.with {} "--with-protools=%tclpro_installation%"
+    }
+}

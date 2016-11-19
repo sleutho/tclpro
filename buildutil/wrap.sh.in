@@ -1,0 +1,66 @@
+#! /bin/sh
+#
+#  This shell script sets up LD_LIBRARY_PATH and SHLIB_PATH so that the 
+#  Product libraries are found first.
+#
+# Copyright (c) 1998-2000 by Ajuba Solutions
+# All rights reserved
+# 
+# RCS: @(#) $Id: wrap.sh.in,v 1.3 2001/03/07 08:58:12 karll Exp $
+
+PRODUCTHOME='@PRODUCTHOME@'
+PRODUCTBIN=${PRODUCTHOME}/bin
+PRODUCTLIB=${PRODUCTHOME}/lib
+
+PRODUCTEXEFILE=${PRODUCTBIN}/@STEM@.bin
+
+PRODUCT_JRE=${PRODUCTHOME}/jre
+
+# set up the environment
+
+HOST_TYPE=`uname -srvm`
+
+case $HOST_TYPE in
+    Linux*)
+        if [ "X$LD_LIBRARY_PATH" != "X" ]; then
+            PRODUCT_LD_LIBRARY_PATH="${LD_LIBRARY_PATH}"
+            export PRODUCT_LD_LIBRARY_PATH
+        fi
+	PRODUCT_JRELIB=${PRODUCT_JRE}/lib/`uname -m`
+	PRODUCT_JRELIBPATH=${PRODUCT_JRELIB}:${PRODUCT_JRELIB}/native_threads
+        ;;
+    SunOS*)
+        if (set -u; JUNK=${LD_LIBRARY_PATH}) 2>&- >&- ; then
+            PRODUCT_LD_LIBRARY_PATH="${LD_LIBRARY_PATH}"
+            export PRODUCT_LD_LIBRARY_PATH
+        fi
+	# use the following to use a local copy of the JRE:
+	# PRODUCT_JRELIBPATH=${PRODUCT_JRE}/lib
+
+	# use the locally installed Java 1.1 on Solaris 2.6+
+	PRODUCT_JRELIBPATH=/usr/java1.1/lib
+        ;;
+    *)
+	echo "Platform not supported."
+	exit 1
+        if (set -u; JUNK=${SHLIB_PATH}) 2>&- >&- ; then
+            PRODUCT_SHLIB_PATH="${SHLIB_PATH}"
+            export PRODUCT_SHLIB_PATH
+        fi
+        ;;
+esac
+
+PRODUCT_LIB_PATH=${PRODUCTLIB}:${PRODUCT_JRELIBPATH}
+
+SHLIB_PATH="${PRODUCT_LIB_PATH}:${SHLIB_PATH}"
+export SHLIB_PATH
+
+LD_LIBRARY_PATH="${PRODUCT_LIB_PATH}:${LD_LIBRARY_PATH}"
+export LD_LIBRARY_PATH
+
+TCL_LIBRARY=${PRODUCTHOME}/../lib/@TCL_LIBDIR@
+export TCL_LIBRARY
+
+# invoke the real executable
+
+exec "$PRODUCTEXEFILE" "$@"

@@ -1,0 +1,218 @@
+# This file contains tests for the module_hints.tcl file.
+#
+# This file contains a collection of tests for one or more Tcl commands.
+# Sourcing this file into Tcl runs the tests and generates output for
+# errors.  No output means no errors were found.
+#
+# Copyright (c) 1998-2000 Ajuba Solutions
+# All rights reserved.
+#
+# RCS: @(#) $Id: module_hints.test,v 1.3 2000/05/31 01:42:07 wart Exp $
+
+package require tcltest
+namespace import -force ::tcltest::*
+
+source [file join [file dirname [info script]] ../module_hints.tcl]
+
+# createModuleDataFile --
+#	Create a module_data.tcl file for testing.
+#
+# Arguments:
+#	None.
+#
+# Side effects:
+#	Variables in the ModuleHints namespace will be set.
+#
+# Results:
+#	Returns the name of the file created
+
+proc createModuleDataFile {} {
+    set moduleDataFile [file join $::tcltest::temporaryDirectory moduleDataFile]
+    ::tcltest::makeFile {
+	namespace eval ModuleData {
+	    variable platform test-platform
+	    variable srcSubDir
+
+	    # Don't set any values for "moduleNULL"
+
+	    set srcSubDir(moduleA,test-platform)	srcDirA
+	    set srcSubDir(moduleB)			srcDirB
+	    set topDir(moduleA,test-platform)	topDirA
+	    set topDir(moduleB)			topDirB
+
+	    set moduleDep(moduleA)		moduleB
+	    set moduleDep(moduleB)		moduleB
+	}
+    } $moduleDataFile
+
+    return $moduleDataFile
+}
+
+# resetModuleDataFile --
+#	Erase the knowledge gained from calling createModuleDataFile.
+#
+# Arguments:
+#	fileName	Name of the module data file returned from
+#			createModuleDataFile
+#
+# Results:
+#	Returns the name of the file created
+
+proc resetModuleDataFile {fileName} {
+    ::tcltest::removeFile $fileName
+    set ModuleHints::dataFile {}
+
+    namespace delete ModuleHints::ModuleData
+}
+
+# Test groups:
+#	1.x	ModuleHints::getDataFile
+#	2.x	ModuleHints::setDataFile
+#	3.x	ModuleHints::getModuleSrcSubDir
+#	4.x	ModuleHints::getModuleTopDir
+#	5.x	ModuleHints::getDependencies
+
+test moduleHints-1.1 {moduleHints::getDataFile, value not set} {
+    list [catch {ModuleHints::getDataFile} msg] $msg
+} {0 {}}
+
+test moduleHints-1.2 {moduleHints::getDataFile, value set} {
+    set origDataFile $ModuleHints::dataFile
+
+    set sourceDataFile [file join $::tcltest::temporaryDirectory sourceDataFile]
+    tcltest::makeFile {
+    } $sourceDataFile
+
+    ModuleHints::setDataFile $sourceDataFile
+    set result [string match $sourceDataFile [ModuleHints::getDataFile]]
+
+    set ModuleHints::dataFile $origDataFile
+
+    set result
+} {1}
+
+test moduleHints-2.1 {moduleHints::setDataFile, nonexistent file} {
+    list [catch {ModuleHints::setDataFile nosuchfile} msg] $msg
+} {1 {couldn't read file "nosuchfile": no such file or directory}}
+
+test moduleHints-2.2 {moduleHints::setDataFile, file readable} {
+    set dataFile [createModuleDataFile]
+
+    ModuleHints::setDataFile $dataFile
+    set result [list [string match $dataFile $ModuleHints::dataFile] \
+	    $ModuleHints::ModuleData::platform]
+
+    resetModuleDataFile $dataFile
+
+    set result
+} {1 test-platform}
+
+test moduleHints-3.1 {moduleHints::getModuleSrcSubDir on module,platform} {
+    set dataFile [createModuleDataFile]
+
+    ModuleHints::setDataFile $dataFile
+    set result [ModuleHints::getModuleSrcSubDir moduleA]
+
+    resetModuleDataFile $dataFile
+
+    set result
+} {srcDirA}
+
+test moduleHints-3.2 {moduleHints::getModuleSrcSubDir on module} {
+    set dataFile [createModuleDataFile]
+
+    ModuleHints::setDataFile $dataFile
+    set result [ModuleHints::getModuleSrcSubDir moduleB]
+
+    resetModuleDataFile $dataFile
+
+    set result
+} {srcDirB}
+
+test moduleHints-3.3 {moduleHints::getModuleSrcSubDir on nonexistent module} {
+    set dataFile [createModuleDataFile]
+
+    ModuleHints::setDataFile $dataFile
+    set result [ModuleHints::getModuleSrcSubDir moduleNULL]
+
+    resetModuleDataFile $dataFile
+
+    set result
+} {}
+
+test moduleHints-4.1 {moduleHints::getModuleTopDir on module,platform} {
+    set dataFile [createModuleDataFile]
+
+    ModuleHints::setDataFile $dataFile
+    set result [ModuleHints::getModuleTopDir moduleA]
+
+    resetModuleDataFile $dataFile
+
+    set result
+} {}
+
+test moduleHints-4.2 {moduleHints::getModuleTopDir on module} {
+    set dataFile [createModuleDataFile]
+
+    ModuleHints::setDataFile $dataFile
+    set result [ModuleHints::getModuleTopDir moduleB]
+
+    resetModuleDataFile $dataFile
+
+    set result
+} {topDirB}
+
+test moduleHints-4.3 {moduleHints::getModuleTopDir on nonexistent module} {
+    set dataFile [createModuleDataFile]
+
+    ModuleHints::setDataFile $dataFile
+    set result [ModuleHints::getModuleTopDir moduleNULL]
+
+    resetModuleDataFile $dataFile
+
+    set result
+} {}
+
+test moduleHints-5.1 {moduleHints::getDependencies with none defined} {
+    set dataFile [createModuleDataFile]
+
+    ModuleHints::setDataFile $dataFile
+    set result [ModuleHints::getDependencies moduleNULL]
+
+    resetModuleDataFile $dataFile
+
+    set result
+} {}
+
+test moduleHints-5.2 {moduleHints::getDependencies with one defined} {
+    set dataFile [createModuleDataFile]
+
+    ModuleHints::setDataFile $dataFile
+    set result [ModuleHints::getDependencies moduleA]
+
+    resetModuleDataFile $dataFile
+
+    set result
+} {moduleB}
+
+# Test does not properly clean up after itself.
+#test moduleHints-5.3 {moduleHints::getDependencies using DEPENDENCIES file} {
+#    ::tcltest::makeDirectory topDirB
+#    ::tcltest::makeFile {
+#	foobar
+#    } topDirB/DEPENDENCIES
+#
+#    set dataFile [createModuleDataFile]
+#
+#    ModuleHints::setDataFile $dataFile
+#    set result [ModuleHints::getDependencies moduleB]
+#
+#    resetModuleDataFile $dataFile
+#    ::tcltest::removeFile topDirB/DEPENDENCIES
+#    ::tcltest::removeDirectory topDirB
+#
+#    set result
+#} {foobar}
+
+::tcltest::cleanupTests
+return
